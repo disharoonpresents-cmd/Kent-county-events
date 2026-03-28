@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kent County — What's On</title>
+<title>Kent County — The Goings-on</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -20,14 +20,23 @@
   --chart-ln: rgba(46,107,138,0.10);
 }
 
-/* WATERLINE strip at bottom of masthead */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* WATERLINE strip */
 .waterline {
   position: relative;
   height: 48px;
   background: var(--white);
-  border-bottom: none;
   overflow: hidden;
-  margin-top: 0;
 }
 .waterline svg {
   position: absolute;
@@ -62,10 +71,7 @@
   font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
   text-transform: uppercase; color: var(--ink3);
 }
-.weather-forecast {
-  display: flex; gap: 0;
-  padding-left: 8px;
-}
+.weather-forecast { display: flex; gap: 0; padding-left: 8px; }
 .forecast-day {
   display: flex; flex-direction: column; align-items: center;
   gap: 3px; padding: 6px 16px;
@@ -76,7 +82,6 @@
 .fc-icon { font-size: 14px; }
 .fc-hi   { font-size: 13px; font-weight: 600; color: var(--ink); }
 .fc-rain { font-size: 9px; color: var(--tide); }
-
 .weather-tide {
   margin-left: auto;
   padding-left: 24px;
@@ -87,30 +92,10 @@
 .tide-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); }
 .tide-val   { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: var(--ink2); }
 
-@media (max-width: 620px) {
-  .weather-strip { padding: 10px 16px; }
-  .weather-tide  { display: none; }
-  .forecast-day  { padding: 6px 10px; }
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: 'Instrument Sans', sans-serif;
-  font-weight: 400;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* no grid background */
-
 /* MASTHEAD */
 .masthead {
   position: relative;
   background: var(--white);
-  border-bottom: none;
   overflow: hidden;
   z-index: 1;
 }
@@ -188,8 +173,98 @@ body {
   color: var(--ink3);
 }
 
+/* ABOUT */
+.about-block {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  padding: 32px 36px;
+  max-width: 680px;
+}
+.about-lede {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule2);
+}
+.about-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink2);
+}
+.about-subhead {
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink3);
+  margin-top: 24px; margin-bottom: 8px;
+}
+.about-note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--ink3);
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule2);
+}
+
+/* SOURCES DIRECTORY */
+.sources-directory {
+  background: var(--white);
+  border: 1px solid var(--rule);
+}
+.source-dir-item {
+  display: flex; align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rule2);
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+}
+.source-dir-item:last-child { border-bottom: none; }
+.source-dir-item:hover { background: var(--paper); }
+.source-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--marsh); flex-shrink: 0; }
+.source-dir-name { font-size: 13px; font-weight: 600; flex: 1.2; }
+.source-dir-url {
+  font-size: 11px; color: var(--tide);
+  flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.source-dir-arrow { color: var(--rule); font-size: 14px; flex-shrink: 0; }
+.source-dir-item:hover .source-dir-arrow { color: var(--ink3); }
+.sources-empty {
+  padding: 24px 20px;
+  font-size: 13px; color: var(--ink3); font-style: italic;
+}
+
+/* SUBMIT FORM */
+.submit-wrap {
+  background: var(--white);
+  border: 1px solid var(--rule);
+}
+.submit-intro {
+  padding: 20px 24px 0;
+  font-size: 13px; color: var(--ink2); line-height: 1.6;
+}
+.submit-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; padding: 16px 24px 24px;
+}
+.submit-grid .span2 { grid-column: span 2; }
+
+/* PENDING BADGE */
+.pending-note {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--marsh);
+  padding: 10px 24px;
+  border-top: 1px solid var(--rule2);
+  background: var(--paper);
+}
+
 /* INPUTS */
-input[type=text], input[type=password], input[type=url], input[type=date], textarea {
+input[type=text], input[type=url], input[type=date], input[type=email], textarea {
   background: var(--paper); border: 1px solid var(--rule);
   color: var(--ink); font-family: 'Instrument Sans', sans-serif;
   font-size: 14px; padding: 10px 14px; outline: none; width: 100%;
@@ -200,15 +275,11 @@ input::placeholder, textarea::placeholder { color: var(--ink3); }
 input:focus, textarea:focus { border-color: var(--tide); background: var(--white); }
 textarea { resize: vertical; min-height: 64px; }
 
-/* FIELD */
 .field-label {
   display: block; font-size: 9px; font-weight: 600;
   letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--ink3); margin-bottom: 8px;
 }
-.hint { font-size: 11px; color: var(--ink3); margin-top: 7px; line-height: 1.6; }
-.hint a { color: var(--tide); text-decoration: none; }
-.hint a:hover { text-decoration: underline; }
 
 /* BUTTONS */
 .btn {
@@ -222,80 +293,15 @@ textarea { resize: vertical; min-height: 64px; }
   white-space: nowrap; border-radius: 0;
 }
 .btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.btn-fetch {
-  background: var(--tide); color: var(--white); border: none;
-  width: 100%; padding: 16px;
+.btn-submit {
+  background: var(--marsh); color: var(--white); border: none;
+  width: 100%; padding: 14px;
   font-family: 'Instrument Sans', sans-serif;
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.18em; text-transform: uppercase;
-  cursor: pointer; margin-top: 16px;
-  transition: background 0.2s; border-radius: 0;
+  cursor: pointer; transition: background 0.2s; border-radius: 0;
 }
-.btn-fetch:hover:not(:disabled) { background: #245571; }
-.btn-fetch:disabled { background: var(--ink3); cursor: not-allowed; }
-
-.btn-remove {
-  background: none; border: none; color: var(--rule);
-  cursor: pointer; font-size: 18px; line-height: 1;
-  padding: 2px 6px; transition: color 0.15s; flex-shrink: 0;
-}
-.btn-remove:hover { color: var(--ink); }
-
-/* API CARD */
-.api-card {
-  background: var(--white); border: 1px solid var(--rule);
-  padding: 20px 24px;
-  display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap;
-}
-.api-card-left { flex: 1; min-width: 200px; }
-
-/* SOURCE LIST */
-.sources-wrap { background: var(--white); border: 1px solid var(--rule); }
-.source-list { list-style: none; }
-.source-item {
-  display: flex; align-items: center; padding: 12px 16px;
-  border-bottom: 1px solid var(--rule2); gap: 12px;
-  transition: background 0.12s;
-}
-.source-item:last-child { border-bottom: none; }
-.source-item:hover { background: var(--paper); }
-.source-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--marsh); flex-shrink: 0; }
-.source-name { font-size: 13px; font-weight: 600; flex: 1.2; }
-.source-url { font-size: 11px; color: var(--ink3); flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-.add-source-row {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  padding: 14px 16px;
-  background: var(--paper); border-top: 1px solid var(--rule2);
-}
-.add-source-row .name-f { flex: 1; min-width: 120px; }
-.add-source-row .url-f  { flex: 2; min-width: 160px; }
-
-/* PROGRESS */
-.progress-panel {
-  background: var(--tide-lt); border: 1px solid var(--tide);
-  border-top: none; padding: 14px 20px; display: none;
-}
-.progress-track { background: rgba(46,107,138,0.2); height: 2px; width: 100%; margin-bottom: 12px; }
-.progress-fill  { height: 2px; background: var(--tide); transition: width 0.4s; width: 0%; }
-.progress-log   { font-size: 11px; color: var(--tide); max-height: 80px; overflow-y: auto; line-height: 1.8; }
-
-/* ERROR */
-.err {
-  background: #fdf0ee; border-left: 3px solid #c0513a;
-  padding: 10px 14px; font-size: 12px; color: #a03020;
-  margin-top: 10px; display: none;
-}
-
-/* MANUAL */
-.manual-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; padding: 20px 24px;
-  background: var(--white); border: 1px solid var(--rule);
-}
-.manual-grid .span2 { grid-column: span 2; }
+.btn-submit:hover { background: #3a6347; }
 
 /* EVENTS */
 .month-label {
@@ -310,7 +316,6 @@ textarea { resize: vertical; min-height: 64px; }
   font-family: 'Instrument Sans', sans-serif;
   letter-spacing: 0.1em; color: var(--ink3); font-weight: 400;
 }
-
 .event-card {
   display: grid; grid-template-columns: 80px 1fr;
   border-bottom: 1px solid var(--rule2);
@@ -324,7 +329,6 @@ textarea { resize: vertical; min-height: 64px; }
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .ev-datecol {
   padding: 22px 14px 18px 0;
   border-right: 1px solid var(--rule2);
@@ -334,7 +338,6 @@ textarea { resize: vertical; min-height: 64px; }
 .ev-month { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--tide); }
 .ev-day   { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 34px; line-height: 1; color: var(--ink); }
 .ev-dow   { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); }
-
 .ev-body  { padding: 18px 0 18px 24px; }
 .ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--marsh); margin-bottom: 6px; }
 .ev-title  { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 21px; line-height: 1.2; color: var(--ink); margin-bottom: 8px; }
@@ -346,17 +349,39 @@ textarea { resize: vertical; min-height: 64px; }
 .state-empty { text-align: center; padding: 80px 20px; color: var(--ink3); }
 .state-empty-glyph { font-size: 40px; margin-bottom: 20px; opacity: 0.3; }
 .state-empty h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 26px; color: var(--ink2); margin-bottom: 8px; }
-.state-empty p { font-size: 13px; }
+.state-empty p  { font-size: 13px; }
 
-/* MOBILE */
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--ink); color: var(--white);
+  padding: 10px 20px; font-size: 12px;
+  font-family: 'Instrument Sans', sans-serif;
+  letter-spacing: 0.08em; z-index: 9999;
+  animation: riseIn 0.2s ease;
+}
+
+/* SUCCESS STATE */
+.submit-success {
+  display: none;
+  padding: 24px;
+  text-align: center;
+  color: var(--marsh);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+}
+
 @media (max-width: 620px) {
   .masthead-inner { flex-direction: column; padding: 0 20px; }
   .masthead-brand { border-right: none; border-bottom: 1px solid var(--rule); padding: 28px 0 20px; }
   .masthead-meta  { padding: 16px 0 20px; }
+  .weather-strip  { padding: 10px 16px; }
+  .weather-tide   { display: none; }
+  .forecast-day   { padding: 6px 10px; }
   .page           { padding: 0 20px 60px; }
-  .manual-grid    { grid-template-columns: 1fr; }
-  .manual-grid .span2 { grid-column: span 1; }
-  .api-card       { flex-direction: column; gap: 12px; }
+  .submit-grid    { grid-template-columns: 1fr; }
+  .submit-grid .span2 { grid-column: span 1; }
   .event-card     { grid-template-columns: 62px 1fr; }
   .ev-day         { font-size: 26px; }
   .ev-title       { font-size: 18px; }
@@ -406,7 +431,7 @@ textarea { resize: vertical; min-height: 64px; }
   <div class="masthead-inner">
     <div class="masthead-brand">
       <div class="masthead-eyebrow">Kent County, Maryland</div>
-      <div class="masthead-title">What's<br><em>On</em></div>
+      <div class="masthead-title">The<br><em>Goings-on</em></div>
     </div>
     <div class="masthead-meta">
       <div class="masthead-date" id="todayDate"></div>
@@ -432,51 +457,60 @@ textarea { resize: vertical; min-height: 64px; }
 
 <div class="page">
 
-  <div class="section-head"><h2>Setup</h2></div>
-  <div class="api-card">
-    <div class="api-card-left">
-      <label class="field-label" for="apiKey">Anthropic API Key</label>
-      <input type="password" id="apiKey" placeholder="sk-ant-…" />
-      <div class="hint">Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> — stored only in your browser, never sent anywhere except Anthropic's API.</div>
+  <!-- ABOUT -->
+  <div class="section-head"><h2>About This Project</h2></div>
+  <div class="about-block">
+    <div class="about-lede">
+      The community calendar for Kent County and the Eastern Shore, gathered so you don't have to hunt.
     </div>
-    <button class="btn" onclick="saveApiKey()">Save Key</button>
-  </div>
-
-  <div class="section-head"><h2>Event Sources</h2></div>
-  <div class="sources-wrap">
-    <ul class="source-list" id="sourceList"></ul>
-    <div class="add-source-row">
-      <input class="name-f" type="text" id="newSourceName" placeholder="Name (e.g. Kent Cultural Alliance)" />
-      <input class="url-f"  type="url"  id="newSourceUrl"  placeholder="https://…" />
-      <button class="btn" onclick="addSource()">Add</button>
+    <div class="about-body">
+      <p>The Goings-on is a volunteer-run event aggregator for Kent County, Maryland, built for anyone tired of the digital scavenger hunt. We gather upcoming events from local venues, arts organizations, and community calendars into a single, streamlined listing. It's updated regularly so you can stay in the loop without checking a dozen different websites or staying tethered to Facebook.</p>
+    </div>
+    <div class="about-subhead">How it works</div>
+    <div class="about-body">
+      <p>Our AI handles the heavy lifting, extracting event data from the sources below to keep things in chronological order. We also hand-fill the gaps with local events that don't appear elsewhere.</p>
+    </div>
+    <div class="about-subhead">Have an event?</div>
+    <div class="about-body">
+      <p>If you're hosting something or know of an event that isn't on our radar yet, don't let it be a secret. Use the submission form below to suggest it for the listing. Submissions are reviewed before being added.</p>
+    </div>
+    <div class="about-note">
+      This project is community-built and independent — not affiliated with any county organization.
     </div>
   </div>
-  <div class="err" id="sourceError"></div>
 
-  <button class="btn-fetch" id="fetchBtn" onclick="fetchAllEvents()">
-    Fetch Events from All Sources
-  </button>
-
-  <div class="progress-panel" id="progressPanel">
-    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
-    <div class="progress-log" id="progressLog"></div>
+  <!-- SOURCES DIRECTORY -->
+  <div class="section-head"><h2>Sources</h2></div>
+  <div class="sources-directory" id="sourcesDirectory">
+    <div class="sources-empty">Loading sources…</div>
   </div>
-  <div class="err" id="fetchError"></div>
 
-  <div class="section-head"><h2>Add Event Manually</h2></div>
-  <div class="manual-grid">
-    <input type="text" id="manTitle"    placeholder="Event title *" />
-    <div>
-      <label class="field-label" for="manDate">Date</label>
-      <input type="date" id="manDate" />
+  <!-- SUBMIT AN EVENT -->
+  <div class="section-head"><h2>Suggest an Event</h2></div>
+  <div class="submit-wrap">
+    <div class="submit-intro">
+      Know of something happening in Kent County that isn't listed here? Submit it below and we'll review it for inclusion.
     </div>
-    <input type="text" id="manTime"     placeholder="Time (e.g. 7:00 PM)" />
-    <input type="text" id="manLocation" placeholder="Location" />
-    <textarea class="span2" id="manDesc" placeholder="Description (optional)"></textarea>
-    <input type="text" id="manSource"   placeholder="Organizer / Source" />
-    <button class="btn" onclick="addManualEvent()" style="align-self:stretch;">Add to List</button>
+    <div class="submit-grid" id="submitForm">
+      <input type="text" id="subTitle"    placeholder="Event title *" />
+      <div>
+        <label class="field-label" for="subDate">Date</label>
+        <input type="date" id="subDate" />
+      </div>
+      <input type="text" id="subTime"     placeholder="Time (e.g. 7:00 PM)" />
+      <input type="text" id="subLocation" placeholder="Location or venue" />
+      <input class="span2" type="url"  id="subUrl"  placeholder="Link to event page (optional)" />
+      <textarea class="span2" id="subDesc" placeholder="Brief description (optional)"></textarea>
+      <input type="text" id="subOrg"   placeholder="Organizer or source" />
+      <button class="btn-submit" onclick="submitEvent()">Submit for Review</button>
+    </div>
+    <div class="submit-success" id="submitSuccess">
+      ✓ &nbsp; Thank you — your submission is under review.
+    </div>
+    <div class="pending-note">◎ &nbsp; Submissions are reviewed before appearing in the listing.</div>
   </div>
 
+  <!-- EVENTS -->
   <div class="section-head">
     <h2>Upcoming Events</h2>
     <span class="events-count" id="eventsCount"></span>
@@ -485,7 +519,7 @@ textarea { resize: vertical; min-height: 64px; }
     <div class="state-empty">
       <div class="state-empty-glyph">⚓</div>
       <h3>Nothing on the water yet</h3>
-      <p>Add a source above and click Fetch Events to get started.</p>
+      <p>Events will appear here once the calendar is updated.</p>
     </div>
   </div>
 
@@ -500,62 +534,200 @@ let allEvents    = [];
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('todayDate').textContent =
     new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const k = localStorage.getItem('kce_apikey');
-  if (k) document.getElementById('apiKey').value = k;
-  let sources = JSON.parse(localStorage.getItem('kce_sources')||'[]');
-  if (!sources.length) {
-    sources = [{ name:'Kent Cultural Alliance', url:'https://kentculture.org/events/' }];
-    localStorage.setItem('kce_sources', JSON.stringify(sources));
+
+  // Load events from localStorage (populated by admin.html)
+  const saved = JSON.parse(localStorage.getItem('kce_events') || '[]');
+  if (saved.length) {
+    allEvents = saved.map(e => ({ ...e, dateObj: e.dateObj ? new Date(e.dateObj) : null }));
+    // Filter to approved only (no pending flag, or explicitly approved)
+    allEvents = allEvents.filter(e => !e.pending);
+    renderEvents();
   }
-  renderSources();
-  const saved = JSON.parse(localStorage.getItem('kce_events')||'[]');
-  if (saved.length) { allEvents = saved; renderEvents(); }
+
+  // Render sources directory
+  renderSourcesDirectory();
+
   fetchWeather();
 });
 
+function renderSourcesDirectory() {
+  const sources = JSON.parse(localStorage.getItem('kce_sources') || '[]');
+  const el = document.getElementById('sourcesDirectory');
+  if (!sources.length) {
+    el.innerHTML = '<div class="sources-empty">No sources listed yet.</div>';
+    return;
+  }
+  el.innerHTML = sources.map(src => `
+    <a class="source-dir-item" href="${esc(src.url)}" target="_blank" rel="noopener">
+      <div class="source-pip"></div>
+      <div class="source-dir-name">${esc(src.name)}</div>
+      <div class="source-dir-url">${esc(src.url)}</div>
+      <div class="source-dir-arrow">→</div>
+    </a>`).join('');
+}
+
+function submitEvent() {
+  const title = document.getElementById('subTitle').value.trim();
+  if (!title) { alert('Please enter an event title.'); return; }
+
+  const date    = document.getElementById('subDate').value;
+  const dateObj = date ? new Date(date + 'T12:00:00') : null;
+
+  const pending = JSON.parse(localStorage.getItem('kce_pending') || '[]');
+  pending.push({
+    title,
+    date: dateObj ? dateObj.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '',
+    dateObj: dateObj ? dateObj.toISOString() : null,
+    time:        document.getElementById('subTime').value.trim() || null,
+    location:    document.getElementById('subLocation').value.trim() || null,
+    description: document.getElementById('subDesc').value.trim() || null,
+    url:         document.getElementById('subUrl').value.trim() || null,
+    source:      document.getElementById('subOrg').value.trim() || 'Community Submission',
+    pending:     true,
+    submittedAt: new Date().toISOString()
+  });
+  localStorage.setItem('kce_pending', JSON.stringify(pending));
+
+  // Hide form, show success
+  document.getElementById('submitForm').style.display = 'none';
+  document.getElementById('submitSuccess').style.display = 'block';
+}
+
+function renderEvents() {
+  const out = document.getElementById('eventsOutput');
+  const cnt = document.getElementById('eventsCount');
+  if (!allEvents.length) {
+    out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Events will appear here once the calendar is updated.</p></div>`;
+    cnt.textContent = '';
+    return;
+  }
+  cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+
+  const groups = {}, noDate = [];
+  allEvents.forEach(e => {
+    if (!e.dateObj) { noDate.push(e); return; }
+    const key = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`;
+    if (!groups[key]) groups[key] = { month: MONTH_FULL[e.dateObj.getMonth()], year: e.dateObj.getFullYear(), events: [] };
+    groups[key].events.push(e);
+  });
+
+  let html = '';
+  Object.keys(groups).sort().forEach(k => {
+    const { month, year, events } = groups[k];
+    html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`;
+    events.forEach((e, i) => { html += eventCard(e, i); });
+  });
+  if (noDate.length) {
+    html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`;
+    noDate.forEach((e, i) => { html += eventCard(e, i); });
+  }
+  out.innerHTML = html;
+}
+
+function eventCard(e, i) {
+  const d = e.dateObj;
+  const inner = `
+    <div class="ev-datecol">
+      <div class="ev-month">${d ? MONTHS[d.getMonth()] : ''}</div>
+      <div class="ev-day">${d ? d.getDate() : '<span style="color:var(--rule2);font-size:20px;">–</span>'}</div>
+      <div class="ev-dow">${d ? DAYS[d.getDay()] : ''}</div>
+    </div>
+    <div class="ev-body">
+      ${e.source ? `<div class="ev-source">${esc(e.source)}</div>` : ''}
+      <div class="ev-title">${esc(e.title)}</div>
+      <div class="ev-meta">
+        ${e.time ? `<span class="ev-time">${esc(e.time)}</span>` : ''}
+        ${e.location ? `<span class="ev-loc">${esc(e.location)}</span>` : ''}
+      </div>
+      ${e.description ? `<div class="ev-desc">${esc(e.description)}</div>` : ''}
+    </div>`;
+  const style = `animation-delay:${i * 0.04}s`;
+  return e.url
+    ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`
+    : `<div class="event-card" style="${style}">${inner}</div>`;
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── WEATHER ─────────────────────────────────────────────────────── */
+const wmoIcon = code => {
+  if (code === 0) return '☀️';
+  if (code <= 2)  return '⛅';
+  if (code <= 3)  return '☁️';
+  if (code <= 49) return '🌫️';
+  if (code <= 59) return '🌦️';
+  if (code <= 69) return '🌧️';
+  if (code <= 79) return '❄️';
+  if (code <= 82) return '🌧️';
+  if (code <= 84) return '🌨️';
+  if (code <= 99) return '⛈️';
+  return '🌡️';
+};
+const wmoText = code => {
+  if (code === 0) return 'Clear';
+  if (code <= 2)  return 'Partly cloudy';
+  if (code <= 3)  return 'Overcast';
+  if (code <= 49) return 'Foggy';
+  if (code <= 59) return 'Drizzle';
+  if (code <= 69) return 'Rain';
+  if (code <= 79) return 'Snow';
+  if (code <= 82) return 'Showers';
+  if (code <= 99) return 'Thunderstorm';
+  return 'Mixed';
+};
+
+async function fetchWithTimeout(url, ms = 8000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    return res;
+  } catch(e) {
+    clearTimeout(id);
+    throw e;
+  }
+}
+
 async function fetchWeather() {
   const strip = document.getElementById('weatherStrip');
+  strip.innerHTML = `<div style="font-size:11px;color:var(--ink3);letter-spacing:0.1em;">Loading weather…</div>`;
+
+  // ── WEATHER (open-meteo, no key required, CORS-open) ──────────────
+  let weatherHTML = '';
+  let forecastHTML = '';
   try {
-    console.log('[weather] fetching open-meteo...');
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=39.2043&longitude=-76.0632&current=temperature_2m,weather_code&daily=temperature_2m_max,weather_code,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=5');
-    if (!res.ok) throw new Error('weather fetch failed');
+    const url = 'https://api.open-meteo.com/v1/forecast'
+      + '?latitude=39.2043&longitude=-76.0632'
+      + '&current=temperature_2m,weather_code'
+      + '&daily=temperature_2m_max,weather_code,precipitation_probability_max'
+      + '&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=5';
+
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const d = await res.json();
 
-    const wmoIcon = code => {
-      if (code === 0) return '☀️';
-      if (code <= 2) return '⛅';
-      if (code <= 3) return '☁️';
-      if (code <= 49) return '🌫️';
-      if (code <= 59) return '🌦️';
-      if (code <= 69) return '🌧️';
-      if (code <= 79) return '❄️';
-      if (code <= 82) return '🌧️';
-      if (code <= 84) return '🌨️';
-      if (code <= 99) return '⛈️';
-      return '🌡️';
-    };
-    const wmoText = code => {
-      if (code === 0) return 'Clear';
-      if (code <= 2) return 'Partly cloudy';
-      if (code <= 3) return 'Overcast';
-      if (code <= 49) return 'Foggy';
-      if (code <= 59) return 'Drizzle';
-      if (code <= 69) return 'Rain';
-      if (code <= 79) return 'Snow';
-      if (code <= 82) return 'Showers';
-      if (code <= 99) return 'Thunderstorm';
-      return 'Mixed';
-    };
+    if (!d.current || d.current.temperature_2m == null) throw new Error('Unexpected response shape');
 
-    console.log('[weather] open-meteo OK', d);
-    const cur = d.current;
-    const temp = Math.round(cur.temperature_2m);
-    const icon = wmoIcon(cur.weather_code);
-    const cond = wmoText(cur.weather_code);
-    const dow  = dt => DAYS[new Date(dt+'T12:00:00').getDay()];
+    const temp = Math.round(d.current.temperature_2m);
+    const icon = wmoIcon(d.current.weather_code);
+    const cond = wmoText(d.current.weather_code);
 
-    const forecastHTML = d.daily.date.map((dt, i) => {
-      if (i === 0) return ''; // skip today in forecast strip
+    weatherHTML = `
+      <div class="weather-now">
+        <div class="weather-icon">${icon}</div>
+        <div>
+          <div class="weather-temp">${temp}°</div>
+          <div class="weather-cond">${cond} · Chestertown</div>
+        </div>
+      </div>`;
+
+    const dow = dt => DAYS[new Date(dt + 'T12:00:00').getDay()];
+    forecastHTML = '<div class="weather-forecast">' + d.daily.date.map((dt, i) => {
+      if (i === 0) return '';
       const hi   = Math.round(d.daily.temperature_2m_max[i]);
       const ic   = wmoIcon(d.daily.weather_code[i]);
       const rain = d.daily.precipitation_probability_max[i];
@@ -563,259 +735,49 @@ async function fetchWeather() {
         <div class="fc-dow">${dow(dt)}</div>
         <div class="fc-icon">${ic}</div>
         <div class="fc-hi">${hi}°</div>
-        ${rain >= 20 ? `<div class="fc-rain">${rain}%</div>` : '<div class="fc-rain">&nbsp;</div>'}
+        <div class="fc-rain">${rain >= 20 ? rain + '%' : '&nbsp;'}</div>
       </div>`;
-    }).join('');
+    }).join('') + '</div>';
 
-    // Chester River tide note (NOAA station 8570283 - approximate next tide)
-    let tideHTML = '';
-    try {
-      console.log('[weather] fetching NOAA tides...');
-      const tRes = await fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=whats_on_kent&begin_date=' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '&range=24&format=json');
-      const td = await tRes.json();
-      if (td.predictions && td.predictions.length) {
-        const now = new Date();
-        const next = td.predictions.find(p => new Date(p.t) > now);
-        if (next) {
-          const tType = next.type === 'H' ? 'High tide' : 'Low tide';
-          const tTime = new Date(next.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-          const tFt   = parseFloat(next.v).toFixed(1);
-          tideHTML = `<div class="weather-tide">
-            <div class="tide-label">Chester River</div>
-            <div class="tide-val">${tType} ${tFt}ft at ${tTime}</div>
-          </div>`;
-        }
-      }
-    } catch(_) {
-      tideHTML = `<div class="weather-tide"><div class="tide-label">Chester River</div><div class="tide-val" style="font-size:11px;font-style:normal;">NOAA station 8570283</div></div>`;
-    }
-
-    strip.innerHTML = `
-      <div class="weather-now">
-        <div class="weather-icon">${icon}</div>
-        <div>
-          <div class="weather-temp">${temp}°</div>
-          <div class="weather-cond">${cond} · Chestertown</div>
-        </div>
-      </div>
-      <div class="weather-forecast">${forecastHTML}</div>
-      ${tideHTML}`;
   } catch(err) {
-    strip.innerHTML = `<div style="font-size:11px;color:#a03020;padding:4px 0;">Weather error: ${err.message} — <a href="https://api.open-meteo.com/v1/forecast?latitude=39.2043&longitude=-76.0632&current=temperature_2m,weather_code&daily=temperature_2m_max,weather_code,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=5" target="_blank" style="color:var(--tide)">test API</a></div>`;
-  }
-}
-
-function saveApiKey() {
-  const k = document.getElementById('apiKey').value.trim();
-  if (!k) return;
-  localStorage.setItem('kce_apikey', k);
-  showToast('Key saved');
-}
-
-function getSources() { return JSON.parse(localStorage.getItem('kce_sources')||'[]'); }
-function saveSources(s) { localStorage.setItem('kce_sources', JSON.stringify(s)); }
-
-function renderSources() {
-  const s = getSources();
-  const el = document.getElementById('sourceList');
-  if (!s.length) {
-    el.innerHTML='<li class="source-item"><span style="color:var(--ink3);font-size:13px;">No sources yet.</span></li>'; return;
-  }
-  el.innerHTML = s.map((src,i) => `
-    <li class="source-item">
-      <div class="source-pip"></div>
-      <div class="source-name">${esc(src.name)}</div>
-      <div class="source-url">${esc(src.url)}</div>
-      <button class="btn-remove" onclick="removeSource(${i})">×</button>
-    </li>`).join('');
-}
-
-function addSource() {
-  const name = document.getElementById('newSourceName').value.trim();
-  const url  = document.getElementById('newSourceUrl').value.trim();
-  if (!name||!url) { showErr('sourceError','Please enter both a name and URL.'); return; }
-  const s = getSources(); s.push({name,url}); saveSources(s);
-  document.getElementById('newSourceName').value='';
-  document.getElementById('newSourceUrl').value='';
-  hideErr('sourceError'); renderSources();
-}
-
-function removeSource(i) {
-  const s = getSources(); s.splice(i,1); saveSources(s); renderSources();
-}
-
-async function fetchAllEvents() {
-  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
-  if (!apiKey) { showErr('fetchError','Please enter your Anthropic API key first.'); return; }
-  const sources = getSources();
-  if (!sources.length) { showErr('fetchError','Please add at least one source URL.'); return; }
-
-  hideErr('fetchError');
-  const btn = document.getElementById('fetchBtn');
-  btn.disabled=true; btn.textContent='Fetching…';
-  document.getElementById('progressPanel').style.display='block';
-  setProgress(0); log('Starting…');
-
-  allEvents = allEvents.filter(e => e.source==='✏️ Manual Entry');
-
-  for (let i=0; i<sources.length; i++) {
-    const src = sources[i];
-    if (i > 0) {
-      log('Pausing before next source...');
-      await new Promise(r => setTimeout(r, 8000));
-    }
-    log(`Asking Claude to fetch & extract from ${src.name}…`);
-    setProgress((i/sources.length)*100);
-    try {
-      const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
-      log(`✓ ${events.length} event${events.length!==1?'s':''} from ${src.name}`);
-      allEvents.push(...events);
-    } catch(err) {
-      if (err.message.includes('rate limit')) {
-        log(`Rate limit hit - waiting 35s then retrying ${src.name}...`);
-        await new Promise(r => setTimeout(r, 35000));
-        try {
-          const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
-          log(`✓ ${events.length} event${events.length!==1?'s':''} from ${src.name} (retry)`);
-          allEvents.push(...events);
-        } catch(err2) { log(`✗ ${src.name}: ${err2.message}`); }
-      } else {
-        log(`✗ ${src.name}: ${err.message}`);
-      }
-    }
+    console.warn('[weather] open-meteo failed:', err.message);
+    weatherHTML = `<div class="weather-now"><div style="font-size:11px;color:var(--ink3);">Weather · Chestertown</div></div>`;
   }
 
-  setProgress(100);
-  allEvents.sort((a,b)=>{ if(!a.dateObj&&!b.dateObj)return 0; if(!a.dateObj)return 1; if(!b.dateObj)return -1; return a.dateObj-b.dateObj; });
-  const today = new Date(); today.setHours(0,0,0,0);
-  allEvents = allEvents.filter(e=>!e.dateObj||e.dateObj>=today);
-  localStorage.setItem('kce_events', JSON.stringify(allEvents));
-  renderEvents();
-  btn.disabled=false; btn.textContent='Fetch Events from All Sources';
-  log('Done!');
-  setTimeout(() => { document.getElementById('progressPanel').style.display='none'; }, 2000);
-}
-
-async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
-  // Ask Claude to fetch the page using its web_search tool, then extract events.
-  // This runs server-side so CORS is never an issue.
-  const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const prompt = `Please visit this URL and extract all upcoming events listed on the page: ${sourceUrl}
-
-Today's date is ${today}. Only include events happening today or in the future — skip past events.
-
-Return ONLY a valid JSON array (no markdown, no explanation). Each item must have:
-- title: string
-- date: string (e.g. "April 5, 2026")
-- time: string or null
-- location: string or null  
-- description: string or null (1-2 sentences max)
-- url: string or null (direct link to the event if available)
-
-If you find no events, return an empty array: []`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-
-  if (!res.ok) {
-    const e = await res.json().catch(()=>({}));
-    throw new Error(e.error?.message || `API error ${res.status}`);
-  }
-
-  const data = await res.json();
-
-  // Extract text from all content blocks (Claude may interleave tool use and text)
-  const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
-  const fullText = textBlocks.join('\n');
-
-  // Parse the JSON array from the response
+  // ── TIDES (NOAA station 8570283, Chester River / Chestertown) ─────
+  let tideHTML = '';
   try {
-    const match = fullText.match(/\[[\s\S]*\]/);
-    if (!match) return [];
-    const events = JSON.parse(match[0]);
-    return events.map(e => ({
-      title: e.title || 'Untitled',
-      date: e.date || '',
-      dateObj: parseDate(e.date),
-      time: e.time || null,
-      location: e.location || null,
-      description: e.description || null,
-      url: e.url || sourceUrl,
-      source: sourceName
-    })).filter(e => e.title);
-  } catch(_) { return []; }
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const tUrl  = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter'
+      + `?station=8570283&product=predictions&datum=MLLW`
+      + `&time_zone=lst_ldt&interval=hilo&units=english`
+      + `&application=goings_on_kent&begin_date=${today}&range=24&format=json`;
+
+    const tRes = await fetchWithTimeout(tUrl);
+    if (!tRes.ok) throw new Error(`HTTP ${tRes.status}`);
+    const td = await tRes.json();
+
+    if (td.error) throw new Error(td.error.message || 'NOAA error');
+    if (!td.predictions || !td.predictions.length) throw new Error('No predictions');
+
+    const now  = new Date();
+    const next = td.predictions.find(p => new Date(p.t) > now);
+    if (next) {
+      const tType = next.type === 'H' ? 'High tide' : 'Low tide';
+      const tTime = new Date(next.t).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      const tFt   = parseFloat(next.v).toFixed(1);
+      tideHTML = `<div class="weather-tide">
+        <div class="tide-label">Chester River</div>
+        <div class="tide-val">${tType} ${tFt}ft · ${tTime}</div>
+      </div>`;
+    }
+  } catch(err) {
+    console.warn('[tides] NOAA failed:', err.message);
+    // Leave tideHTML empty — strip still shows weather
+  }
+
+  strip.innerHTML = weatherHTML + forecastHTML + tideHTML;
 }
-
-function parseDate(str) {
-  if(!str)return null;
-  const d=new Date(str); if(!isNaN(d))return d;
-  const d2=new Date(str.replace(/(\d+)(st|nd|rd|th)/gi,'$1')); return isNaN(d2)?null:d2;
-}
-
-function addManualEvent() {
-  const title = document.getElementById('manTitle').value.trim();
-  const date  = document.getElementById('manDate').value;
-  if(!title){alert('Please enter an event title.');return;}
-  const dateObj = date ? new Date(date+'T12:00:00') : null;
-  allEvents.push({ title, date:dateObj?dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}):'', dateObj, time:document.getElementById('manTime').value.trim()||null, location:document.getElementById('manLocation').value.trim()||null, description:document.getElementById('manDesc').value.trim()||null, url:null, source:document.getElementById('manSource').value.trim()||'✏️ Manual Entry' });
-  allEvents.sort((a,b)=>{ if(!a.dateObj&&!b.dateObj)return 0; if(!a.dateObj)return 1; if(!b.dateObj)return -1; return a.dateObj-b.dateObj; });
-  localStorage.setItem('kce_events',JSON.stringify(allEvents));
-  ['manTitle','manDate','manTime','manLocation','manDesc','manSource'].forEach(id=>document.getElementById(id).value='');
-  renderEvents(); showToast('Event added');
-}
-
-function renderEvents() {
-  const out = document.getElementById('eventsOutput');
-  const cnt = document.getElementById('eventsCount');
-  if(!allEvents.length){ out.innerHTML=`<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Add sources and click Fetch Events.</p></div>`; cnt.textContent=''; return; }
-  cnt.textContent=`${allEvents.length} event${allEvents.length!==1?'s':''}`;
-
-  const groups={}, noDate=[];
-  allEvents.forEach(e=>{ if(!e.dateObj){noDate.push(e);return;} const key=`${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`; if(!groups[key])groups[key]={month:MONTH_FULL[e.dateObj.getMonth()],year:e.dateObj.getFullYear(),events:[]}; groups[key].events.push(e); });
-
-  let html='';
-  Object.keys(groups).sort().forEach(k=>{ const{month,year,events}=groups[k]; html+=`<div class="month-label">${month} <span class="month-year">${year}</span></div>`; events.forEach((e,i)=>{html+=eventCard(e,i);}); });
-  if(noDate.length){ html+=`<div class="month-label">Date <span class="month-year">TBD</span></div>`; noDate.forEach((e,i)=>{html+=eventCard(e,i);}); }
-  out.innerHTML=html;
-}
-
-function eventCard(e,i) {
-  const d=e.dateObj;
-  const inner=`
-    <div class="ev-datecol">
-      <div class="ev-month">${d?MONTHS[d.getMonth()]:'—'}</div>
-      <div class="ev-day">${d?d.getDate():'—'}</div>
-      <div class="ev-dow">${d?DAYS[d.getDay()]:''}</div>
-    </div>
-    <div class="ev-body">
-      ${e.source?`<div class="ev-source">${esc(e.source)}</div>`:''}
-      <div class="ev-title">${esc(e.title)}</div>
-      <div class="ev-meta">${e.time?`<span class="ev-time">${esc(e.time)}</span>`:''}${e.location?`<span class="ev-loc">${esc(e.location)}</span>`:''}</div>
-      ${e.description?`<div class="ev-desc">${esc(e.description)}</div>`:''}
-    </div>`;
-  const style=`animation-delay:${i*0.04}s`;
-  return e.url?`<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`:`<div class="event-card" style="${style}">${inner}</div>`;
-}
-
-function setProgress(p){document.getElementById('progressBar').style.width=p+'%';}
-function log(m){const el=document.getElementById('progressLog');el.innerHTML+=m+'<br>';el.scrollTop=el.scrollHeight;}
-function showErr(id,m){const e=document.getElementById(id);e.textContent=m;e.style.display='block';}
-function hideErr(id){document.getElementById(id).style.display='none';}
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--white);padding:10px 20px;font-size:12px;font-family:Instrument Sans,sans-serif;letter-spacing:0.08em;z-index:9999;animation:riseIn 0.2s ease';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
 </script>
 </body>
 </html>
