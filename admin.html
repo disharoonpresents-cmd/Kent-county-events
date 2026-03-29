@@ -140,14 +140,6 @@ textarea { resize: vertical; min-height: 64px; }
   <div class="section-head"><h2>Setup</h2></div>
   <div class="api-card">
     <div class="api-card-left">
-      <label class="field-label" for="sbSecret">Supabase Secret Key</label>
-      <input type="password" id="sbSecret" placeholder="sb_secret_…" />
-      <div class="hint">Your Supabase secret key — stored only in this browser, never in the file. Find it at supabase.com → Project Settings → API Keys.</div>
-    </div>
-    <button class="btn" onclick="saveSecretKey()">Save</button>
-  </div>
-  <div class="api-card" style="margin-top:10px;">
-    <div class="api-card-left">
       <label class="field-label" for="apiKey">Anthropic API Key</label>
       <input type="password" id="apiKey" placeholder="sk-ant-…" />
       <div class="hint">Used only for fetching events. Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.</div>
@@ -215,18 +207,15 @@ textarea { resize: vertical; min-height: 64px; }
 
 <script>
 /* ── SUPABASE CONFIG ─────────────────────────────────────────────── */
-const SB_URL      = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
-const SB_ANON_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
-function getSecretKey() { return localStorage.getItem('kce_sb_secret') || ''; }
+const SB_URL = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
+const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 
-async function sbFetch(path, opts = {}, useSecret = false) {
-  const key = useSecret ? getSecretKey() : SB_ANON_KEY;
-  if (useSecret && !key) throw new Error('Supabase secret key not set — paste it in the Setup section.');
+async function sbFetch(path, opts = {}) {
   const res = await fetch(SB_URL + path, {
     ...opts,
     headers: {
-      'apikey': key,
-      'Authorization': 'Bearer ' + key,
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
       'Content-Type': 'application/json',
       'Prefer': opts.prefer || '',
       ...(opts.headers || {})
@@ -249,21 +238,13 @@ let allEvents = [];
 document.addEventListener('DOMContentLoaded', () => {
   const k = localStorage.getItem('kce_apikey');
   if (k) document.getElementById('apiKey').value = k;
-  const sk = localStorage.getItem('kce_sb_secret');
-  if (sk) document.getElementById('sbSecret').value = '••••••••••••';
+
   loadSources();
   loadEvents();
   loadPending();
 });
 
 /* ── API KEY ─────────────────────────────────────────────────────── */
-function saveSecretKey() {
-  const k = document.getElementById('sbSecret').value.trim();
-  if (!k || k.startsWith('•')) return;
-  localStorage.setItem('kce_sb_secret', k);
-  document.getElementById('sbSecret').value = '••••••••••••';
-  showToast('Supabase key saved');
-}
 function saveApiKey() {
   const k = document.getElementById('apiKey').value.trim();
   if (!k) return;
@@ -275,7 +256,7 @@ function saveApiKey() {
 async function loadSources() {
   const el = document.getElementById('sourceList');
   try {
-    const data = await sbFetch('/rest/v1/sources?order=name.asc', {}, true);
+    const data = await sbFetch('/rest/v1/sources?order=name.asc', {});
     renderSources(data || []);
   } catch(e) {
     el.innerHTML = `<li class="source-item"><span style="color:var(--warn);font-size:12px;">Error loading sources: ${e.message}</span></li>`;
@@ -302,7 +283,7 @@ async function addSource() {
   const url  = document.getElementById('newSourceUrl').value.trim();
   if (!name || !url) { showErr('sourceError', 'Please enter both a name and URL.'); return; }
   try {
-    await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) }, true);
+    await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) });
     document.getElementById('newSourceName').value = '';
     document.getElementById('newSourceUrl').value  = '';
     hideErr('sourceError');
@@ -314,7 +295,7 @@ async function addSource() {
 async function removeSource(id) {
   if (!confirm('Remove this source?')) return;
   try {
-    await sbFetch(`/rest/v1/sources?id=eq.${id}`, { method: 'DELETE' }, true);
+    await sbFetch(`/rest/v1/sources?id=eq.${id}`, { method: 'DELETE' });
     loadSources();
     showToast('Source removed');
   } catch(e) { alert('Error removing source: ' + e.message); }
@@ -327,7 +308,7 @@ async function fetchAllEvents() {
 
   let sources;
   try {
-    sources = await sbFetch('/rest/v1/sources?order=name.asc', {}, true);
+    sources = await sbFetch('/rest/v1/sources?order=name.asc', {});
   } catch(e) { showErr('fetchError', 'Could not load sources: ' + e.message); return; }
   if (!sources || !sources.length) { showErr('fetchError', 'Please add at least one source URL.'); return; }
 
@@ -339,7 +320,7 @@ async function fetchAllEvents() {
 
   // Delete all non-manual events first, then re-fetch
   try {
-    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' }, true);
+    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events'); }
 
   for (let i = 0; i < sources.length; i++) {
@@ -350,7 +331,7 @@ async function fetchAllEvents() {
     try {
       const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
       if (events.length) {
-        await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) }, true);
+        await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
       }
       log(`✓ ${events.length} event${events.length !== 1 ? 's' : ''} from ${src.name}`);
     } catch(err) {
@@ -359,7 +340,7 @@ async function fetchAllEvents() {
         await new Promise(r => setTimeout(r, 35000));
         try {
           const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
-          if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) }, true);
+          if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
           log(`✓ ${events.length} from ${src.name} (retry)`);
         } catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
       } else { log(`✗ ${src.name}: ${err.message}`); }
@@ -433,7 +414,7 @@ async function addManualEvent() {
         description: document.getElementById('manDesc').value.trim() || null,
         source:      document.getElementById('manSource').value.trim() || '✏️ Manual Entry'
       })
-    }, true);
+    });
     ['manTitle','manDate','manTime','manLocation','manDesc','manSource'].forEach(id => document.getElementById(id).value = '');
     loadEvents();
     showToast('Event added');
@@ -444,7 +425,7 @@ async function addManualEvent() {
 async function loadEvents() {
   try {
     const today = new Date().toISOString().split('T')[0];
-    const data = await sbFetch(`/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`, {}, true);
+    const data = await sbFetch(`/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`, {});
     allEvents = (data || []).map(e => ({ ...e, dateObj: e.date_obj ? new Date(e.date_obj) : null }));
     renderEvents();
   } catch(e) { console.error('[events]', e.message); }
@@ -455,7 +436,7 @@ async function loadPending() {
   const el = document.getElementById('pendingQueue');
   const countEl = document.getElementById('pendingCount');
   try {
-    const data = await sbFetch('/rest/v1/pending_submissions?order=submitted_at.asc', {}, true);
+    const data = await sbFetch('/rest/v1/pending_submissions?order=submitted_at.asc', {});
     const pending = data || [];
     if (!pending.length) {
       el.innerHTML = '<div class="pending-empty">No pending submissions.</div>';
@@ -487,14 +468,14 @@ async function loadPending() {
 
 async function approveSubmission(id) {
   try {
-    const rows = await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, {}, true);
+    const rows = await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, {});
     const sub = rows && rows[0];
     if (!sub) { alert('Submission not found.'); return; }
     await sbFetch('/rest/v1/events', {
       method: 'POST', prefer: 'return=minimal',
       body: JSON.stringify({ title: sub.title, date: sub.date, date_obj: sub.date_obj, time: sub.time, location: sub.location, description: sub.description, url: sub.url, source: sub.source || 'Community Submission' })
-    }, true);
-    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' }, true);
+    });
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' });
     loadPending(); loadEvents();
     showToast('Event approved & published');
   } catch(e) { alert('Error approving: ' + e.message); }
@@ -502,7 +483,7 @@ async function approveSubmission(id) {
 
 async function rejectSubmission(id) {
   try {
-    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' }, true);
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' });
     loadPending();
     showToast('Submission rejected');
   } catch(e) { alert('Error rejecting: ' + e.message); }
