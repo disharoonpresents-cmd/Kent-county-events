@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Goings-on — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:    #f7f4ee;
+  --white:    #fdfcf9;
+  --ink:      #1c2b35;
+  --ink2:     #3a4e58;
+  --ink3:     #6b7f89;
+  --rule:     #c9d4d9;
+  --rule2:    #dfe6e9;
+  --tide:     #2e6b8a;
+  --tide-lt:  #d4e8f0;
+  --marsh:    #4a7c59;
+  --warn:     #c0513a;
+  --warn-lt:  #fdf0ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-weight: 400; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+.admin-head { background: var(--ink); padding: 0 40px; }
+.admin-head-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.admin-wordmark { display: flex; align-items: center; gap: 16px; }
+.admin-badge { font-size: 8px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink); background: var(--tide-lt); padding: 4px 8px; }
+.admin-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 22px; color: var(--white); }
+.admin-title em { font-style: italic; color: var(--tide-lt); }
+.admin-pub-link { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); text-decoration: none; transition: color 0.15s; }
+.admin-pub-link:hover { color: var(--white); }
+.page { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; }
+.section-head { display: flex; align-items: baseline; gap: 14px; padding: 40px 0 0; margin-bottom: 16px; }
+.section-head h2 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
+.section-head::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+.badge-count { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
+.badge-count.pending { color: var(--warn); }
+.badge-count.normal  { color: var(--ink3); }
+input[type=text], input[type=password], input[type=url], input[type=date], textarea {
+  background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
+  font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 10px 14px;
+  outline: none; width: 100%; transition: border-color 0.15s, background 0.15s;
+  -webkit-appearance: none; border-radius: 0;
+}
+input::placeholder, textarea::placeholder { color: var(--ink3); }
+input:focus, textarea:focus { border-color: var(--tide); background: var(--white); }
+textarea { resize: vertical; min-height: 64px; }
+.field-label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.hint { font-size: 11px; color: var(--ink3); margin-top: 7px; line-height: 1.6; }
+.hint a { color: var(--tide); text-decoration: none; }
+.btn { background: var(--white); color: var(--ink); border: 1px solid var(--rule); padding: 10px 20px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap; border-radius: 0; }
+.btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-approve { background: var(--marsh); color: var(--white); border: none; padding: 7px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; border-radius: 0; }
+.btn-approve:hover { background: #3a6347; }
+.btn-reject { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 7px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; border-radius: 0; }
+.btn-reject:hover { border-color: var(--warn); color: var(--warn); }
+.btn-fetch { background: var(--tide); color: var(--white); border: none; width: 100%; padding: 16px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; margin-top: 16px; transition: background 0.2s; border-radius: 0; }
+.btn-fetch:hover:not(:disabled) { background: #245571; }
+.btn-fetch:disabled { background: var(--ink3); cursor: not-allowed; }
+.btn-remove { background: none; border: none; color: var(--rule); cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; transition: color 0.15s; flex-shrink: 0; }
+.btn-remove:hover { color: var(--ink); }
+.api-card { background: var(--white); border: 1px solid var(--rule); padding: 20px 24px; display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+.api-card-left { flex: 1; min-width: 200px; }
+.sources-wrap { background: var(--white); border: 1px solid var(--rule); }
+.source-list  { list-style: none; }
+.source-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--rule2); gap: 12px; transition: background 0.12s; }
+.source-item:last-child { border-bottom: none; }
+.source-item:hover { background: var(--paper); }
+.source-pip  { width: 6px; height: 6px; border-radius: 50%; background: var(--marsh); flex-shrink: 0; }
+.source-name { font-size: 13px; font-weight: 600; flex: 1.2; }
+.source-url  { font-size: 11px; color: var(--ink3); flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.add-source-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 14px 16px; background: var(--paper); border-top: 1px solid var(--rule2); }
+.add-source-row .name-f { flex: 1; min-width: 120px; }
+.add-source-row .url-f  { flex: 2; min-width: 160px; }
+.progress-panel { background: var(--tide-lt); border: 1px solid var(--tide); border-top: none; padding: 14px 20px; display: none; }
+.progress-track { background: rgba(46,107,138,0.2); height: 2px; width: 100%; margin-bottom: 12px; }
+.progress-fill  { height: 2px; background: var(--tide); transition: width 0.4s; width: 0%; }
+.progress-log   { font-size: 11px; color: var(--tide); max-height: 80px; overflow-y: auto; line-height: 1.8; }
+.err { background: var(--warn-lt); border-left: 3px solid var(--warn); padding: 10px 14px; font-size: 12px; color: #a03020; margin-top: 10px; display: none; }
+.manual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px 24px; background: var(--white); border: 1px solid var(--rule); }
+.manual-grid .span2 { grid-column: span 2; }
+.pending-queue { background: var(--white); border: 1px solid var(--rule); }
+.pending-empty { padding: 24px 20px; font-size: 13px; color: var(--ink3); font-style: italic; }
+.pending-item { padding: 16px 20px; border-bottom: 1px solid var(--rule2); display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }
+.pending-item:last-child { border-bottom: none; }
+.pending-item-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
+.pending-item-meta { font-size: 11px; color: var(--ink3); margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 12px; }
+.pending-item-desc { font-size: 12px; color: var(--ink3); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.pending-item-submitted { font-size: 9px; letter-spacing: 0.1em; color: var(--ink3); margin-top: 6px; }
+.pending-actions { display: flex; gap: 8px; align-items: flex-start; flex-shrink: 0; }
+.month-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--ink2); padding: 32px 0 12px; border-bottom: 1px solid var(--rule); margin-bottom: 0; display: flex; align-items: baseline; gap: 10px; }
+.month-year { font-size: 11px; font-style: normal; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.1em; color: var(--ink3); font-weight: 400; }
+.event-card { display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid var(--rule2); background: var(--white); transition: background 0.12s; text-decoration: none; color: inherit; animation: riseIn 0.35s ease both; }
+.event-card:hover { background: var(--paper); }
+@keyframes riseIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.ev-datecol { padding: 22px 14px 18px 0; border-right: 1px solid var(--rule2); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 1px; }
+.ev-month { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--tide); }
+.ev-day   { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 34px; line-height: 1; color: var(--ink); }
+.ev-dow   { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); }
+.ev-body  { padding: 18px 0 18px 24px; }
+.ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--marsh); margin-bottom: 6px; }
+.ev-title  { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 21px; line-height: 1.2; color: var(--ink); margin-bottom: 8px; }
+.ev-meta   { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--ink3); }
+.ev-time::before { content: '◷  '; font-size: 10px; }
+.ev-loc::before  { content: '◎  '; font-size: 10px; }
+.ev-desc   { font-size: 13px; color: var(--ink3); margin-top: 8px; line-height: 1.55; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.state-empty { text-align: center; padding: 80px 20px; color: var(--ink3); }
+.state-empty-glyph { font-size: 40px; margin-bottom: 20px; opacity: 0.3; }
+.state-empty h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 26px; color: var(--ink2); margin-bottom: 8px; }
+.state-empty p  { font-size: 13px; }
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--white); padding: 10px 20px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.08em; z-index: 9999; animation: riseIn 0.2s ease; }
+@media (max-width: 620px) {
+  .admin-head { padding: 0 20px; }
+  .page { padding: 0 20px 60px; }
+  .manual-grid { grid-template-columns: 1fr; }
+  .manual-grid .span2 { grid-column: span 1; }
+  .api-card { flex-direction: column; gap: 12px; }
+  .event-card { grid-template-columns: 62px 1fr; }
+  .pending-item { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="admin-head">
+  <div class="admin-head-inner">
+    <div class="admin-wordmark">
+      <span class="admin-badge">Admin</span>
+      <div class="admin-title">The <em>Goings-on</em> · Kent County</div>
+    </div>
+    <a class="admin-pub-link" href="index.html" target="_blank">View public page →</a>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- SETUP -->
+  <div class="section-head"><h2>Setup</h2></div>
+  <div class="api-card">
+    <div class="api-card-left">
+      <label class="field-label" for="sbSecret">Supabase Secret Key</label>
+      <input type="password" id="sbSecret" placeholder="sb_secret_…" />
+      <div class="hint">Your Supabase secret key — stored only in this browser, never in the file. Find it at supabase.com → Project Settings → API Keys.</div>
+    </div>
+    <button class="btn" onclick="saveSecretKey()">Save</button>
+  </div>
+  <div class="api-card" style="margin-top:10px;">
+    <div class="api-card-left">
+      <label class="field-label" for="apiKey">Anthropic API Key</label>
+      <input type="password" id="apiKey" placeholder="sk-ant-…" />
+      <div class="hint">Used only for fetching events. Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.</div>
+    </div>
+    <button class="btn" onclick="saveApiKey()">Save</button>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="section-head"><h2>Event Sources</h2></div>
+  <div class="sources-wrap">
+    <ul class="source-list" id="sourceList"><li class="source-item"><span style="color:var(--ink3);font-size:13px;">Loading…</span></li></ul>
+    <div class="add-source-row">
+      <input class="name-f" type="text" id="newSourceName" placeholder="Name (e.g. Kent Cultural Alliance)" />
+      <input class="url-f"  type="url"  id="newSourceUrl"  placeholder="https://…" />
+      <button class="btn" onclick="addSource()">Add</button>
+    </div>
+  </div>
+  <div class="err" id="sourceError"></div>
+
+  <button class="btn-fetch" id="fetchBtn" onclick="fetchAllEvents()">Fetch Events from All Sources</button>
+  <div class="progress-panel" id="progressPanel">
+    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
+    <div class="progress-log" id="progressLog"></div>
+  </div>
+  <div class="err" id="fetchError"></div>
+
+  <!-- MANUAL EVENT -->
+  <div class="section-head"><h2>Add Event Manually</h2></div>
+  <div class="manual-grid">
+    <input type="text" id="manTitle"    placeholder="Event title *" />
+    <div>
+      <label class="field-label" for="manDate">Date</label>
+      <input type="date" id="manDate" />
+    </div>
+    <input type="text" id="manTime"     placeholder="Time (e.g. 7:00 PM)" />
+    <input type="text" id="manLocation" placeholder="Location" />
+    <textarea class="span2" id="manDesc" placeholder="Description (optional)"></textarea>
+    <input type="text" id="manSource"   placeholder="Organizer / Source" />
+    <button class="btn" onclick="addManualEvent()" style="align-self:stretch;">Add to List</button>
+  </div>
+
+  <!-- PENDING QUEUE -->
+  <div class="section-head">
+    <h2>Community Submissions</h2>
+    <span class="badge-count pending" id="pendingCount"></span>
+  </div>
+  <div class="pending-queue" id="pendingQueue">
+    <div class="pending-empty">Loading submissions…</div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="section-head">
+    <h2>Upcoming Events</h2>
+    <span class="badge-count normal" id="eventsCount"></span>
+  </div>
+  <div id="eventsOutput">
+    <div class="state-empty">
+      <div class="state-empty-glyph">⚓</div>
+      <h3>Nothing on the water yet</h3>
+      <p>Add sources and click Fetch Events to get started.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── SUPABASE CONFIG ─────────────────────────────────────────────── */
+const SB_URL      = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
+const SB_ANON_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
+function getSecretKey() { return localStorage.getItem('kce_sb_secret') || ''; }
+
+async function sbFetch(path, opts = {}, useSecret = false) {
+  const key = useSecret ? getSecretKey() : SB_ANON_KEY;
+  if (useSecret && !key) throw new Error('Supabase secret key not set — paste it in the Setup section.');
+  const res = await fetch(SB_URL + path, {
+    ...opts,
+    headers: {
+      'apikey': key,
+      'Authorization': 'Bearer ' + key,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...(opts.headers || {})
+    }
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Supabase ${res.status}`);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+/* ── CONSTANTS ───────────────────────────────────────────────────── */
+const MONTHS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS       = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let allEvents = [];
+
+/* ── INIT ────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  const k = localStorage.getItem('kce_apikey');
+  if (k) document.getElementById('apiKey').value = k;
+  const sk = localStorage.getItem('kce_sb_secret');
+  if (sk) document.getElementById('sbSecret').value = '••••••••••••';
+  loadSources();
+  loadEvents();
+  loadPending();
+});
+
+/* ── API KEY ─────────────────────────────────────────────────────── */
+function saveSecretKey() {
+  const k = document.getElementById('sbSecret').value.trim();
+  if (!k || k.startsWith('•')) return;
+  localStorage.setItem('kce_sb_secret', k);
+  document.getElementById('sbSecret').value = '••••••••••••';
+  showToast('Supabase key saved');
+}
+function saveApiKey() {
+  const k = document.getElementById('apiKey').value.trim();
+  if (!k) return;
+  localStorage.setItem('kce_apikey', k);
+  showToast('Anthropic key saved');
+}
+
+/* ── SOURCES ─────────────────────────────────────────────────────── */
+async function loadSources() {
+  const el = document.getElementById('sourceList');
+  try {
+    const data = await sbFetch('/rest/v1/sources?order=name.asc', {}, true);
+    renderSources(data || []);
+  } catch(e) {
+    el.innerHTML = `<li class="source-item"><span style="color:var(--warn);font-size:12px;">Error loading sources: ${e.message}</span></li>`;
+  }
+}
+
+function renderSources(sources) {
+  const el = document.getElementById('sourceList');
+  if (!sources.length) {
+    el.innerHTML = '<li class="source-item"><span style="color:var(--ink3);font-size:13px;">No sources yet.</span></li>';
+    return;
+  }
+  el.innerHTML = sources.map(src => `
+    <li class="source-item">
+      <div class="source-pip"></div>
+      <div class="source-name">${esc(src.name)}</div>
+      <div class="source-url">${esc(src.url)}</div>
+      <button class="btn-remove" onclick="removeSource('${src.id}')">×</button>
+    </li>`).join('');
+}
+
+async function addSource() {
+  const name = document.getElementById('newSourceName').value.trim();
+  const url  = document.getElementById('newSourceUrl').value.trim();
+  if (!name || !url) { showErr('sourceError', 'Please enter both a name and URL.'); return; }
+  try {
+    await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) }, true);
+    document.getElementById('newSourceName').value = '';
+    document.getElementById('newSourceUrl').value  = '';
+    hideErr('sourceError');
+    loadSources();
+    showToast('Source added');
+  } catch(e) { showErr('sourceError', 'Error adding source: ' + e.message); }
+}
+
+async function removeSource(id) {
+  if (!confirm('Remove this source?')) return;
+  try {
+    await sbFetch(`/rest/v1/sources?id=eq.${id}`, { method: 'DELETE' }, true);
+    loadSources();
+    showToast('Source removed');
+  } catch(e) { alert('Error removing source: ' + e.message); }
+}
+
+/* ── FETCH EVENTS ────────────────────────────────────────────────── */
+async function fetchAllEvents() {
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { showErr('fetchError', 'Please enter your Anthropic API key first.'); return; }
+
+  let sources;
+  try {
+    sources = await sbFetch('/rest/v1/sources?order=name.asc', {}, true);
+  } catch(e) { showErr('fetchError', 'Could not load sources: ' + e.message); return; }
+  if (!sources || !sources.length) { showErr('fetchError', 'Please add at least one source URL.'); return; }
+
+  hideErr('fetchError');
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true; btn.textContent = 'Fetching…';
+  document.getElementById('progressPanel').style.display = 'block';
+  setProgress(0); log('Starting…');
+
+  // Delete all non-manual events first, then re-fetch
+  try {
+    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' }, true);
+  } catch(e) { log('Warning: could not clear old events'); }
+
+  for (let i = 0; i < sources.length; i++) {
+    const src = sources[i];
+    if (i > 0) { log('Pausing…'); await new Promise(r => setTimeout(r, 8000)); }
+    log(`Fetching from ${src.name}…`);
+    setProgress((i / sources.length) * 100);
+    try {
+      const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
+      if (events.length) {
+        await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) }, true);
+      }
+      log(`✓ ${events.length} event${events.length !== 1 ? 's' : ''} from ${src.name}`);
+    } catch(err) {
+      if (err.message.includes('rate limit')) {
+        log(`Rate limit — waiting 35s then retrying ${src.name}…`);
+        await new Promise(r => setTimeout(r, 35000));
+        try {
+          const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
+          if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) }, true);
+          log(`✓ ${events.length} from ${src.name} (retry)`);
+        } catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
+      } else { log(`✗ ${src.name}: ${err.message}`); }
+    }
+  }
+
+  setProgress(100);
+  log('Done! Loading updated events…');
+  await loadEvents();
+  btn.disabled = false; btn.textContent = 'Fetch Events from All Sources';
+  setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2000);
+}
+
+async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
+  const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const prompt = `Please visit this URL and extract all upcoming events: ${sourceUrl}
+
+Today is ${today}. Only include events today or in the future.
+
+Return ONLY a valid JSON array, no markdown. Each item:
+- title: string
+- date: string (e.g. "April 5, 2026")
+- time: string or null
+- location: string or null
+- description: string or null (1-2 sentences)
+- url: string or null
+
+Return [] if no events found.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages: [{ role: 'user', content: prompt }] })
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
+  const data = await res.json();
+  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+  try {
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) return [];
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    return JSON.parse(match[0]).map(e => {
+      const dateObj = parseDate(e.date);
+      if (dateObj && dateObj < today0) return null;
+      return { title: e.title||'Untitled', date: e.date||null, date_obj: dateObj ? dateObj.toISOString() : null, time: e.time||null, location: e.location||null, description: e.description||null, url: e.url||sourceUrl, source: sourceName };
+    }).filter(Boolean);
+  } catch(_) { return []; }
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  const d = new Date(str); if (!isNaN(d)) return d;
+  const d2 = new Date(str.replace(/(\d+)(st|nd|rd|th)/gi,'$1')); return isNaN(d2) ? null : d2;
+}
+
+/* ── MANUAL EVENT ────────────────────────────────────────────────── */
+async function addManualEvent() {
+  const title = document.getElementById('manTitle').value.trim();
+  if (!title) { alert('Please enter an event title.'); return; }
+  const dateVal = document.getElementById('manDate').value;
+  const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : null;
+  try {
+    await sbFetch('/rest/v1/events', {
+      method: 'POST', prefer: 'return=minimal',
+      body: JSON.stringify({
+        title,
+        date: dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
+        date_obj: dateObj ? dateObj.toISOString() : null,
+        time:        document.getElementById('manTime').value.trim() || null,
+        location:    document.getElementById('manLocation').value.trim() || null,
+        description: document.getElementById('manDesc').value.trim() || null,
+        source:      document.getElementById('manSource').value.trim() || '✏️ Manual Entry'
+      })
+    }, true);
+    ['manTitle','manDate','manTime','manLocation','manDesc','manSource'].forEach(id => document.getElementById(id).value = '');
+    loadEvents();
+    showToast('Event added');
+  } catch(e) { alert('Error adding event: ' + e.message); }
+}
+
+/* ── LOAD EVENTS ─────────────────────────────────────────────────── */
+async function loadEvents() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const data = await sbFetch(`/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`, {}, true);
+    allEvents = (data || []).map(e => ({ ...e, dateObj: e.date_obj ? new Date(e.date_obj) : null }));
+    renderEvents();
+  } catch(e) { console.error('[events]', e.message); }
+}
+
+/* ── PENDING QUEUE ───────────────────────────────────────────────── */
+async function loadPending() {
+  const el = document.getElementById('pendingQueue');
+  const countEl = document.getElementById('pendingCount');
+  try {
+    const data = await sbFetch('/rest/v1/pending_submissions?order=submitted_at.asc', {}, true);
+    const pending = data || [];
+    if (!pending.length) {
+      el.innerHTML = '<div class="pending-empty">No pending submissions.</div>';
+      countEl.textContent = ''; return;
+    }
+    countEl.textContent = `${pending.length} pending`;
+    el.innerHTML = pending.map(sub => `
+      <div class="pending-item" id="psub-${sub.id}">
+        <div>
+          <div class="pending-item-title">${esc(sub.title)}</div>
+          <div class="pending-item-meta">
+            ${sub.date ? `<span>📅 ${esc(sub.date)}</span>` : ''}
+            ${sub.time ? `<span>⏱ ${esc(sub.time)}</span>` : ''}
+            ${sub.location ? `<span>📍 ${esc(sub.location)}</span>` : ''}
+            ${sub.source ? `<span>🏷 ${esc(sub.source)}</span>` : ''}
+          </div>
+          ${sub.description ? `<div class="pending-item-desc">${esc(sub.description)}</div>` : ''}
+          <div class="pending-item-submitted">Submitted ${new Date(sub.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+        </div>
+        <div class="pending-actions">
+          <button class="btn-approve" onclick="approveSubmission('${sub.id}')">Approve</button>
+          <button class="btn-reject"  onclick="rejectSubmission('${sub.id}')">Reject</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = `<div class="pending-empty" style="color:var(--warn);">Error loading submissions: ${e.message}</div>`;
+  }
+}
+
+async function approveSubmission(id) {
+  try {
+    const rows = await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, {}, true);
+    const sub = rows && rows[0];
+    if (!sub) { alert('Submission not found.'); return; }
+    await sbFetch('/rest/v1/events', {
+      method: 'POST', prefer: 'return=minimal',
+      body: JSON.stringify({ title: sub.title, date: sub.date, date_obj: sub.date_obj, time: sub.time, location: sub.location, description: sub.description, url: sub.url, source: sub.source || 'Community Submission' })
+    }, true);
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' }, true);
+    loadPending(); loadEvents();
+    showToast('Event approved & published');
+  } catch(e) { alert('Error approving: ' + e.message); }
+}
+
+async function rejectSubmission(id) {
+  try {
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' }, true);
+    loadPending();
+    showToast('Submission rejected');
+  } catch(e) { alert('Error rejecting: ' + e.message); }
+}
+
+/* ── RENDER EVENTS ───────────────────────────────────────────────── */
+function renderEvents() {
+  const out = document.getElementById('eventsOutput');
+  const cnt = document.getElementById('eventsCount');
+  if (!allEvents.length) {
+    out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Add a source and click Fetch Events to get started.</p></div>`;
+    cnt.textContent = ''; return;
+  }
+  cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+  const groups = {}, noDate = [];
+  allEvents.forEach(e => {
+    if (!e.dateObj) { noDate.push(e); return; }
+    const key = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`;
+    if (!groups[key]) groups[key] = { month: MONTH_FULL[e.dateObj.getMonth()], year: e.dateObj.getFullYear(), events: [] };
+    groups[key].events.push(e);
+  });
+  let html = '';
+  Object.keys(groups).sort().forEach(k => {
+    const { month, year, events } = groups[k];
+    html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`;
+    events.forEach((e, i) => { html += eventCard(e, i); });
+  });
+  if (noDate.length) {
+    html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`;
+    noDate.forEach((e, i) => { html += eventCard(e, i); });
+  }
+  out.innerHTML = html;
+}
+
+function eventCard(e, i) {
+  const d = e.dateObj;
+  const inner = `
+    <div class="ev-datecol">
+      <div class="ev-month">${d ? MONTHS[d.getMonth()] : ''}</div>
+      <div class="ev-day">${d ? d.getDate() : '<span style="color:var(--rule2);font-size:20px;">–</span>'}</div>
+      <div class="ev-dow">${d ? DAYS[d.getDay()] : ''}</div>
+    </div>
+    <div class="ev-body">
+      ${e.source ? `<div class="ev-source">${esc(e.source)}</div>` : ''}
+      <div class="ev-title">${esc(e.title)}</div>
+      <div class="ev-meta">
+        ${e.time ? `<span class="ev-time">${esc(e.time)}</span>` : ''}
+        ${e.location ? `<span class="ev-loc">${esc(e.location)}</span>` : ''}
+      </div>
+      ${e.description ? `<div class="ev-desc">${esc(e.description)}</div>` : ''}
+    </div>`;
+  const style = `animation-delay:${i*0.04}s`;
+  return e.url
+    ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`
+    : `<div class="event-card" style="${style}">${inner}</div>`;
+}
+
+/* ── UTILS ───────────────────────────────────────────────────────── */
+function setProgress(p) { document.getElementById('progressBar').style.width = p + '%'; }
+function log(m) { const el = document.getElementById('progressLog'); el.innerHTML += m + '<br>'; el.scrollTop = el.scrollHeight; }
+function showErr(id, m) { const e = document.getElementById(id); e.textContent = m; e.style.display = 'block'; }
+function hideErr(id) { document.getElementById(id).style.display = 'none'; }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+</script>
+</body>
+</html>
