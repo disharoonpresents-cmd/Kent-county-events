@@ -354,11 +354,112 @@ async function fetchAllEvents() {
   setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2000);
 }
 
+/* ── iCAL PARSER ─────────────────────────────────────────────────── */
+function parseIcal(text) {
+  const events = [];
+  const blocks = text.split('BEGIN:VEVENT');
+  for (let i = 1; i < blocks.length; i++) {
+    const block = blocks[i];
+    const get = (key) => {
+      // Handle folded lines (lines starting with space are continuations)
+      const unfolded = block.replace(/\r?\n[ \t]/g, '');
+      const m = unfolded.match(new RegExp(key + '(?:;[^:]*)?:([^\r\n]+)', 'i'));
+      return m ? m[1].trim() : null;
+    };
+    const title = get('SUMMARY');
+    if (!title) continue;
+
+    // Parse DTSTART — handles both date-only (20260411) and datetime (20260411T090000)
+    const dtRaw = get('DTSTART') || '';
+    let dateObj = null;
+    const dtMatch = dtRaw.replace(/[TZ]/g, '').match(/^(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?/);
+    if (dtMatch) {
+      const [,yr,mo,dy,hr='12',mn='00'] = dtMatch;
+      dateObj = new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00`);
+      if (isNaN(dateObj)) dateObj = null;
+    }
+
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    if (dateObj && dateObj < today0) continue;
+
+    // Build human-readable time
+    let time = null;
+    if (dtRaw.includes('T')) {
+      const tMatch = dtRaw.match(/T(\d{2})(\d{2})/);
+      if (tMatch) {
+        let h = parseInt(tMatch[1]), m = tMatch[2];
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        time = `${h}:${m} ${ampm}`;
+      }
+    }
+
+    const dateStr = dateObj
+      ? dateObj.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+      : null;
+
+    // Clean description — unescape iCal escaped chars
+    let desc = get('DESCRIPTION') || null;
+    if (desc) desc = desc.replace(/\\n/g,' ').replace(/\\,/g,',').replace(/\\/g,'').slice(0, 300);
+
+    events.push({
+      title:       title.replace(/\\,/g,',').replace(/\\/g,''),
+      date:        dateStr,
+      date_obj:    dateObj ? dateObj.toISOString() : null,
+      time,
+      location:    (get('LOCATION') || '').replace(/\\,/g,',').replace(/\\/g,'') || null,
+      description: desc,
+      url:         get('URL') || null,
+    });
+  }
+  return events;
+}
+
+/* ── TRY TO FETCH iCAL FEED DIRECTLY ────────────────────────────── */
+async function tryFetchIcal(sourceUrl) {
+  // Common iCal feed URL patterns for WordPress/The Events Calendar sites
+  const candidates = [];
+  const u = new URL(sourceUrl);
+
+  // If the URL is already an .ics file or has ical=1, try it directly
+  if (sourceUrl.includes('.ics') || sourceUrl.includes('ical=1')) {
+    candidates.push(sourceUrl);
+  }
+
+  // WordPress / The Events Calendar standard feed
+  candidates.push(`${u.origin}/?post_type=tribe_events&ical=1&eventDisplay=list`);
+  candidates.push(`${u.origin}/events/?ical=1`);
+  candidates.push(`${u.origin}/ical/`);
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) {
+        return text;
+      }
+    } catch(_) { continue; }
+  }
+  return null;
+}
+
 async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
+  // ── 1. Try iCal feed first (faster, more complete, no token cost) ──
+  try {
+    const ical = await tryFetchIcal(sourceUrl);
+    if (ical) {
+      log(`  ↳ Using iCal feed for ${sourceName}`);
+      const events = parseIcal(ical);
+      return events.map(e => ({ ...e, url: e.url || sourceUrl, source: sourceName }));
+    }
+  } catch(e) { /* fall through to Claude */ }
+
+  // ── 2. Fall back to Claude web search ─────────────────────────────
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${sourceUrl}
 
-Today is ${today}. Only include events today or in the future. Extract EVERY event you find — do not truncate or limit the list.
+Today is ${today}. Only include events today or in the future. Extract EVERY event you find — including events on additional pages if there is pagination (e.g. "Next Events" links). Do not truncate or limit the list.
 
 Return ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:
 - title: string
@@ -403,7 +504,6 @@ Return [] if no events found.`;
 
     if (data.stop_reason === 'end_turn') break;
 
-    // Claude used a tool — append its response to the conversation and continue
     if (data.stop_reason === 'tool_use') {
       messages.push({ role: 'assistant', content: data.content });
       const toolResults = data.content
