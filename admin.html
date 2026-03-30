@@ -356,17 +356,17 @@ async function fetchAllEvents() {
 
 async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  const prompt = `Please visit this URL and extract all upcoming events: ${sourceUrl}
+  const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${sourceUrl}
 
-Today is ${today}. Only include events today or in the future.
+Today is ${today}. Only include events today or in the future. Extract EVERY event you find — do not truncate or limit the list.
 
-Return ONLY a valid JSON array, no markdown, no explanation. Each item:
+Return ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:
 - title: string
-- date: string (e.g. "April 5, 2026")
-- time: string or null
+- date: string in EXACTLY this format: "Month D, YYYY" — e.g. "April 5, 2026". Never abbreviate the month. Always include the 4-digit year.
+- time: string or null (e.g. "1:00 PM" or "1:00 PM – 3:30 PM")
 - location: string or null
-- description: string or null (1-2 sentences)
-- url: string or null
+- description: string or null (1-2 sentences max)
+- url: string or null (direct link to the event page if available, otherwise null)
 
 Return [] if no events found.`;
 
@@ -387,7 +387,7 @@ Return [] if no events found.`;
       headers,
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 8000,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages
       })
@@ -422,10 +422,11 @@ Return [] if no events found.`;
     .join('\n');
 
   try {
-    // Find the last JSON array in the response (avoids grabbing stray brackets)
-    const matches = [...text.matchAll(/\[[\s\S]*?\]/g)];
-    if (!matches.length) return [];
-    const raw = JSON.parse(matches[matches.length - 1][0]);
+    // Find the outermost JSON array — greedy from first [ to last ]
+    const firstBracket = text.indexOf('[');
+    const lastBracket = text.lastIndexOf(']');
+    if (firstBracket === -1 || lastBracket === -1) return [];
+    const raw = JSON.parse(text.slice(firstBracket, lastBracket + 1));
     const today0 = new Date(); today0.setHours(0,0,0,0);
     return raw.map(e => {
       const dateObj = parseDate(e.date);
@@ -446,9 +447,13 @@ Return [] if no events found.`;
 
 function parseDate(str) {
   if (!str) return null;
-  // Append noon to avoid UTC-to-local date shift
-  const clean = str.replace(/(\d+)(st|nd|rd|th)/gi, '$1');
-  const d = new Date(clean + 'T12:00:00');
+  // Remove ordinal suffixes: 4th → 4, 21st → 21
+  let clean = str.replace(/(\d+)(st|nd|rd|th)/gi, '$1');
+  // Try appending T12:00:00 to anchor to local noon (avoids UTC date shift)
+  let d = new Date(clean + 'T12:00:00');
+  if (!isNaN(d)) return d;
+  // Fallback: try as-is
+  d = new Date(clean);
   return isNaN(d) ? null : d;
 }
 
