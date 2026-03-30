@@ -159,7 +159,16 @@ textarea { resize: vertical; min-height: 64px; }
   </div>
   <div class="err" id="sourceError"></div>
 
-  <button class="btn-fetch" id="fetchBtn" onclick="fetchAllEvents()">Fetch Events from All Sources</button>
+  <div style="display:flex;gap:12px;align-items:stretch;margin-top:16px;">
+    <select id="dateRange" style="background:var(--paper);border:1px solid var(--rule);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0 14px;cursor:pointer;outline:none;border-radius:0;flex-shrink:0;">
+      <option value="1">1 Month Ahead</option>
+      <option value="2">2 Months Ahead</option>
+      <option value="3" selected>3 Months Ahead</option>
+      <option value="6">6 Months Ahead</option>
+      <option value="12">12 Months Ahead</option>
+    </select>
+    <button class="btn-fetch" id="fetchBtn" onclick="fetchAllEvents()" style="margin-top:0;flex:1;">Fetch Events from All Sources</button>
+  </div>
   <div class="progress-panel" id="progressPanel">
     <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
     <div class="progress-log" id="progressLog"></div>
@@ -323,13 +332,15 @@ async function fetchAllEvents() {
     await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events'); }
 
+  const months = parseInt(document.getElementById('dateRange').value) || 3;
+
   for (let i = 0; i < sources.length; i++) {
     const src = sources[i];
     if (i > 0) { log('Pausing…'); await new Promise(r => setTimeout(r, 8000)); }
     log(`Fetching from ${src.name}…`);
     setProgress((i / sources.length) * 100);
     try {
-      const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
+      const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
       if (events.length) {
         await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
       }
@@ -339,7 +350,7 @@ async function fetchAllEvents() {
         log(`Rate limit — waiting 35s then retrying ${src.name}…`);
         await new Promise(r => setTimeout(r, 35000));
         try {
-          const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey);
+          const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
           if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
           log(`✓ ${events.length} from ${src.name} (retry)`);
         } catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
@@ -355,7 +366,7 @@ async function fetchAllEvents() {
 }
 
 /* ── iCAL PARSER ─────────────────────────────────────────────────── */
-function parseIcal(text) {
+function parseIcal(text, months = 3) {
   const events = [];
   const blocks = text.split('BEGIN:VEVENT');
   for (let i = 1; i < blocks.length; i++) {
@@ -380,7 +391,9 @@ function parseIcal(text) {
     }
 
     const today0 = new Date(); today0.setHours(0,0,0,0);
+    const cutoff = new Date(today0); cutoff.setMonth(cutoff.getMonth() + months);
     if (dateObj && dateObj < today0) continue;
+    if (dateObj && dateObj > cutoff) continue;
 
     // Build human-readable time
     let time = null;
@@ -415,42 +428,43 @@ function parseIcal(text) {
   return events;
 }
 
-/* ── TRY TO FETCH iCAL FEED DIRECTLY ────────────────────────────── */
-async function tryFetchIcal(sourceUrl) {
-  // Common iCal feed URL patterns for WordPress/The Events Calendar sites
-  const candidates = [];
-  const u = new URL(sourceUrl);
+/* ── TRY TO FETCH iCAL FEED (via CORS proxy fallback) ───────────── */
+const CORS_PROXY = 'https://corsproxy.io/?url=';
 
-  // If the URL is already an .ics file or has ical=1, try it directly
+async function tryFetchIcal(sourceUrl) {
+  const u = new URL(sourceUrl);
+  const candidates = [];
+
   if (sourceUrl.includes('.ics') || sourceUrl.includes('ical=1')) {
     candidates.push(sourceUrl);
   }
-
-  // WordPress / The Events Calendar standard feed
   candidates.push(`${u.origin}/?post_type=tribe_events&ical=1&eventDisplay=list`);
   candidates.push(`${u.origin}/events/?ical=1`);
   candidates.push(`${u.origin}/ical/`);
 
   for (const url of candidates) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) {
-        return text;
-      }
-    } catch(_) { continue; }
+    // Try direct first, then via CORS proxy
+    for (const fetchUrl of [url, CORS_PROXY + encodeURIComponent(url)]) {
+      try {
+        const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(10000) });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) {
+          return text;
+        }
+      } catch(_) { continue; }
+    }
   }
   return null;
 }
 
-async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
+async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey, months = 3) {
   // ── 1. Try iCal feed first (faster, more complete, no token cost) ──
   try {
     const ical = await tryFetchIcal(sourceUrl);
     if (ical) {
       log(`  ↳ Using iCal feed for ${sourceName}`);
-      const events = parseIcal(ical);
+      const events = parseIcal(ical, months);
       return events.map(e => ({ ...e, url: e.url || sourceUrl, source: sourceName }));
     }
   } catch(e) { /* fall through to Claude */ }
@@ -459,7 +473,7 @@ async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${sourceUrl}
 
-Today is ${today}. Only include events today or in the future. Extract EVERY event you find — including events on additional pages if there is pagination (e.g. "Next Events" links). Do not truncate or limit the list.
+Today is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination (e.g. "Next Events" links). Do not truncate or limit the list.
 
 Return ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:
 - title: string
@@ -528,9 +542,11 @@ Return [] if no events found.`;
     if (firstBracket === -1 || lastBracket === -1) return [];
     const raw = JSON.parse(text.slice(firstBracket, lastBracket + 1));
     const today0 = new Date(); today0.setHours(0,0,0,0);
+    const cutoff = new Date(today0); cutoff.setMonth(cutoff.getMonth() + months);
     return raw.map(e => {
       const dateObj = parseDate(e.date);
       if (dateObj && dateObj < today0) return null;
+      if (dateObj && dateObj > cutoff) return null;
       return {
         title:       e.title || 'Untitled',
         date:        e.date || null,
