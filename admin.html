@@ -320,7 +320,7 @@ async function fetchAllEvents() {
 
   // Delete all non-manual events first, then re-fetch
   try {
-    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' });
+    await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events'); }
 
   for (let i = 0; i < sources.length; i++) {
@@ -360,7 +360,7 @@ async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey) {
 
 Today is ${today}. Only include events today or in the future.
 
-Return ONLY a valid JSON array, no markdown. Each item:
+Return ONLY a valid JSON array, no markdown, no explanation. Each item:
 - title: string
 - date: string (e.g. "April 5, 2026")
 - time: string or null
@@ -370,30 +370,86 @@ Return ONLY a valid JSON array, no markdown. Each item:
 
 Return [] if no events found.`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages: [{ role: 'user', content: prompt }] })
-  });
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
-  const data = await res.json();
-  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': apiKey,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+
+  const messages = [{ role: 'user', content: prompt }];
+  let data;
+
+  // Loop until Claude finishes — web_search requires multiple turns
+  for (let turn = 0; turn < 8; turn++) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      const status = res.status;
+      const msg = e.error?.message || `API ${status}`;
+      if (status === 429) throw new Error('rate limit: ' + msg);
+      throw new Error(msg);
+    }
+    data = await res.json();
+
+    if (data.stop_reason === 'end_turn') break;
+
+    // Claude used a tool — append its response to the conversation and continue
+    if (data.stop_reason === 'tool_use') {
+      messages.push({ role: 'assistant', content: data.content });
+      const toolResults = data.content
+        .filter(b => b.type === 'tool_use')
+        .map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' }));
+      messages.push({ role: 'user', content: toolResults });
+    } else {
+      break;
+    }
+  }
+
+  // Extract the final text block(s)
+  const text = (data?.content || [])
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('\n');
+
   try {
-    const match = text.match(/\[[\s\S]*\]/);
-    if (!match) return [];
+    // Find the last JSON array in the response (avoids grabbing stray brackets)
+    const matches = [...text.matchAll(/\[[\s\S]*?\]/g)];
+    if (!matches.length) return [];
+    const raw = JSON.parse(matches[matches.length - 1][0]);
     const today0 = new Date(); today0.setHours(0,0,0,0);
-    return JSON.parse(match[0]).map(e => {
+    return raw.map(e => {
       const dateObj = parseDate(e.date);
       if (dateObj && dateObj < today0) return null;
-      return { title: e.title||'Untitled', date: e.date||null, date_obj: dateObj ? dateObj.toISOString() : null, time: e.time||null, location: e.location||null, description: e.description||null, url: e.url||sourceUrl, source: sourceName };
+      return {
+        title:       e.title || 'Untitled',
+        date:        e.date || null,
+        date_obj:    dateObj ? dateObj.toISOString() : null,
+        time:        e.time || null,
+        location:    e.location || null,
+        description: e.description || null,
+        url:         e.url || sourceUrl,
+        source:      sourceName
+      };
     }).filter(Boolean);
   } catch(_) { return []; }
 }
 
 function parseDate(str) {
   if (!str) return null;
-  const d = new Date(str); if (!isNaN(d)) return d;
-  const d2 = new Date(str.replace(/(\d+)(st|nd|rd|th)/gi,'$1')); return isNaN(d2) ? null : d2;
+  // Append noon to avoid UTC-to-local date shift
+  const clean = str.replace(/(\d+)(st|nd|rd|th)/gi, '$1');
+  const d = new Date(clean + 'T12:00:00');
+  return isNaN(d) ? null : d;
 }
 
 /* ── MANUAL EVENT ────────────────────────────────────────────────── */
