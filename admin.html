@@ -60,6 +60,9 @@ textarea { resize: vertical; min-height: 64px; }
 .btn-fetch:hover:not(:disabled) { background: #245571; }
 .btn-fetch:disabled { background: var(--ink3); cursor: not-allowed; }
 .btn-remove { background: none; border: none; color: var(--rule); cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; transition: color 0.15s; flex-shrink: 0; }
+.btn-fetch-src { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 4px 10px; font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; flex-shrink: 0; border-radius: 0; }
+.btn-fetch-src:hover:not(:disabled) { border-color: var(--tide); color: var(--tide); }
+.btn-fetch-src:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-remove:hover { color: var(--ink); }
 .api-card { background: var(--white); border: 1px solid var(--rule); padding: 20px 24px; display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
 .api-card-left { flex: 1; min-width: 200px; }
@@ -283,6 +286,7 @@ function renderSources(sources) {
       <div class="source-pip"></div>
       <div class="source-name">${esc(src.name)}</div>
       <div class="source-url">${esc(src.url)}</div>
+      <button class="btn-fetch-src" id="fetchsrc-${src.id}" onclick="fetchSingleSource('${src.id}','${esc(src.name)}','${esc(src.url)}')">Fetch</button>
       <button class="btn-remove" onclick="removeSource('${src.id}')">×</button>
     </li>`).join('');
 }
@@ -386,6 +390,54 @@ async function fetchAllEvents() {
   await loadEvents();
   btn.disabled = false; btn.textContent = 'Fetch Events from All Sources';
   setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2000);
+}
+
+/* ── FETCH SINGLE SOURCE ─────────────────────────────────────────── */
+async function fetchSingleSource(id, name, url) {
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { showErr('fetchError', 'Please enter your Anthropic API key first.'); return; }
+
+  const btn = document.getElementById(`fetchsrc-${id}`);
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  hideErr('fetchError');
+  document.getElementById('progressPanel').style.display = 'block';
+  setProgress(0); log(`Fetching from ${name}…`);
+
+  const months = parseInt(document.getElementById('dateRange').value) || 3;
+
+  try {
+    // Delete only this source's existing events
+    await sbFetch(`/rest/v1/events?source=eq.${encodeURIComponent(name)}`, { method: 'DELETE' });
+  } catch(e) { log('Warning: could not clear old events for this source'); }
+
+  try {
+    let events = await fetchAndExtractWithClaude(name, url, apiKey, months);
+
+    // Deduplicate against events already in DB (other sources)
+    const existing = await sbFetch(`/rest/v1/events?select=title,date`, {});
+    const seen = new Set((existing || []).map(e =>
+      (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '')
+    ));
+    const before = events.length;
+    events = events.filter(e => {
+      const key = (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '');
+      return !seen.has(key);
+    });
+    const dupes = before - events.length;
+
+    if (events.length) {
+      await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
+    }
+    setProgress(100);
+    log(`✓ ${events.length} event${events.length !== 1 ? 's' : ''} from ${name}${dupes > 0 ? ` (${dupes} duplicate${dupes !== 1 ? 's' : ''} skipped)` : ''}`);
+    await loadEvents();
+  } catch(err) {
+    log(`✗ ${name}: ${err.message}`);
+    showErr('fetchError', `Failed to fetch ${name}: ${err.message}`);
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Fetch'; }
+  setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2500);
 }
 
 /* ── iCAL PARSER ─────────────────────────────────────────────────── */
