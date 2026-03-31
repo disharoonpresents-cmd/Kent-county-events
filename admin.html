@@ -334,6 +334,9 @@ async function fetchAllEvents() {
 
   const months = parseInt(document.getElementById('dateRange').value) || 3;
 
+  // Collect all events from all sources, then deduplicate before inserting
+  const allFetched = [];
+
   for (let i = 0; i < sources.length; i++) {
     const src = sources[i];
     if (i > 0) { log('Pausing…'); await new Promise(r => setTimeout(r, 8000)); }
@@ -341,9 +344,7 @@ async function fetchAllEvents() {
     setProgress((i / sources.length) * 100);
     try {
       const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
-      if (events.length) {
-        await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
-      }
+      allFetched.push(...events);
       log(`✓ ${events.length} event${events.length !== 1 ? 's' : ''} from ${src.name}`);
     } catch(err) {
       if (err.message.includes('rate limit')) {
@@ -351,15 +352,29 @@ async function fetchAllEvents() {
         await new Promise(r => setTimeout(r, 35000));
         try {
           const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
-          if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
+          allFetched.push(...events);
           log(`✓ ${events.length} from ${src.name} (retry)`);
         } catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
       } else { log(`✗ ${src.name}: ${err.message}`); }
     }
   }
 
+  // Deduplicate: same title (normalized) + same date = duplicate; keep first occurrence
+  const deduped = [];
+  const seen = new Set();
+  for (const ev of allFetched) {
+    const key = (ev.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (ev.date || '');
+    if (!seen.has(key)) { seen.add(key); deduped.push(ev); }
+  }
+  const dupeCount = allFetched.length - deduped.length;
+  if (dupeCount > 0) log(`Removed ${dupeCount} duplicate${dupeCount !== 1 ? 's' : ''}`);
+
+  if (deduped.length) {
+    await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(deduped) });
+  }
+
   setProgress(100);
-  log('Done! Loading updated events…');
+  log(`Done! ${deduped.length} events saved. Loading…`);
   await loadEvents();
   btn.disabled = false; btn.textContent = 'Fetch Events from All Sources';
   setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2000);
@@ -471,7 +486,9 @@ async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey, months =
 
   // ── 2. Fall back to Claude web search ─────────────────────────────
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${sourceUrl}
+  // For JS-rendered calendars, strip date params so Claude searches broadly
+  const cleanUrl = sourceUrl.replace(/[?&](view|month|day|year)=[^&]*/g, '').replace(/[?&]$/, '');
+  const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${cleanUrl}
 
 Today is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination (e.g. "Next Events" links). Do not truncate or limit the list.
 
