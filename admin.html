@@ -289,8 +289,16 @@ function renderSources(sources) {
 
 async function addSource() {
   const name = document.getElementById('newSourceName').value.trim();
-  const url  = document.getElementById('newSourceUrl').value.trim();
+  let url    = document.getElementById('newSourceUrl').value.trim();
   if (!name || !url) { showErr('sourceError', 'Please enter both a name and URL.'); return; }
+  // Normalize: ensure URL ends with / unless it has a query string or file extension
+  try {
+    const u = new URL(url);
+    if (!u.search && !u.pathname.includes('.')) {
+      if (!u.pathname.endsWith('/')) u.pathname += '/';
+    }
+    url = u.toString();
+  } catch(_) { /* leave url as-is if parsing fails */ }
   try {
     await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) });
     document.getElementById('newSourceName').value = '';
