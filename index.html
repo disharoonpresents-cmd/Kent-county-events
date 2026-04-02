@@ -26,25 +26,12 @@ body {
 }
 .waterline { position: relative; height: 48px; background: var(--white); overflow: hidden; }
 .waterline svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
-.weather-strip {
-  background: var(--white); border-top: 1px solid var(--tide-lt); border-bottom: 1px solid var(--rule);
-  padding: 10px 40px; display: flex; align-items: center; gap: 0;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-}
-.weather-now { display: flex; align-items: center; gap: 12px; padding-right: 24px; border-right: 1px solid var(--rule); flex-shrink: 0; }
-.weather-icon { font-size: 22px; line-height: 1; }
-.weather-temp { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; line-height: 1; color: var(--ink); }
-.weather-cond { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
-.weather-forecast { display: flex; gap: 0; padding-left: 8px; }
-.forecast-day { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 16px; border-right: 1px solid var(--rule2); }
-.forecast-day:last-child { border-right: none; }
-.fc-dow  { font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
-.fc-icon { font-size: 14px; }
-.fc-hi   { font-size: 13px; font-weight: 600; color: var(--ink); }
-.fc-rain { font-size: 9px; color: var(--tide); }
-.weather-tide { margin-left: auto; padding-left: 24px; border-left: 1px solid var(--rule); flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; }
-.tide-label { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); }
-.tide-val   { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: var(--ink2); }
+.masthead-tide { display: flex; flex-direction: column; gap: 4px; padding: 36px 0 32px 48px; border-left: 1px solid rgba(201,212,217,0.5); flex-shrink: 0; }
+.masthead-tide-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tide); display: flex; align-items: center; gap: 8px; }
+.masthead-tide-label::before { content: ''; display: inline-block; width: 12px; height: 1px; background: var(--tide); }
+.masthead-tide-val { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; line-height: 1; color: var(--ink); }
+.masthead-tide-sub { font-size: 11px; color: var(--ink3); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.masthead-tide-next { font-size: 11px; color: var(--ink3); margin-top: 2px; }
 .masthead { position: relative; background: var(--white); overflow: hidden; z-index: 1; }
 .masthead-chart { position: absolute; right: 0; top: 0; bottom: 0; width: 55%; height: 100%; opacity: 0.08; }
 .masthead-inner { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; align-items: stretch; gap: 0; }
@@ -61,23 +48,39 @@ body {
 .section-head h2 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
 .section-head::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 .events-count { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
+/* TWO-COLUMN INFO ROW */
+.info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
 /* ABOUT */
-.about-block { background: var(--white); border: 1px solid var(--rule); padding: 32px 36px; max-width: 680px; }
+.about-block { background: var(--white); border: 1px solid var(--rule); padding: 32px 36px; }
 .about-lede { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; line-height: 1.4; color: var(--ink); margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--rule2); }
 .about-body { font-size: 13px; line-height: 1.7; color: var(--ink2); }
 .about-subhead { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-top: 24px; margin-bottom: 8px; }
 .about-note { font-size: 11px; line-height: 1.7; color: var(--ink3); margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule2); }
 /* SOURCES */
+.sources-column { }
 .sources-directory { background: var(--white); border: 1px solid var(--rule); }
-.source-dir-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--rule2); gap: 14px; text-decoration: none; color: inherit; transition: background 0.12s; }
+.source-dir-item { display: flex; align-items: center; padding: 13px 20px; border-bottom: 1px solid var(--rule2); gap: 12px; text-decoration: none; color: inherit; transition: background 0.12s; }
 .source-dir-item:last-child { border-bottom: none; }
 .source-dir-item:hover { background: var(--paper); }
 .source-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--marsh); flex-shrink: 0; }
-.source-dir-name { font-size: 13px; font-weight: 600; flex: 1.2; }
-.source-dir-url { font-size: 11px; color: var(--tide); flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.source-dir-arrow { color: var(--rule); font-size: 14px; flex-shrink: 0; }
+.source-dir-name { font-size: 13px; font-weight: 600; color: var(--tide); flex: 1; }
+.source-dir-item:hover .source-dir-name { color: var(--ink); }
+.source-dir-arrow { color: var(--rule); font-size: 12px; flex-shrink: 0; transition: color 0.12s; }
 .source-dir-item:hover .source-dir-arrow { color: var(--ink3); }
 .sources-empty { padding: 24px 20px; font-size: 13px; color: var(--ink3); font-style: italic; }
+/* HAPPENING TODAY */
+.today-section { margin-bottom: 0; }
+.today-card { background: var(--tide); padding: 0; overflow: hidden; }
+.today-banner { padding: 10px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+.today-banner-label { font-size: 9px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+.today-banner-date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: rgba(255,255,255,0.85); margin-left: auto; }
+.today-events { }
+.today-event-card { display: grid; grid-template-columns: 1fr; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.12); text-decoration: none; color: inherit; transition: background 0.12s; }
+.today-event-card:last-child { border-bottom: none; }
+.today-event-card:hover { background: rgba(255,255,255,0.08); }
+.today-ev-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; color: var(--white); margin-bottom: 4px; }
+.today-ev-meta { font-size: 11px; color: rgba(255,255,255,0.65); display: flex; gap: 14px; flex-wrap: wrap; }
+.today-ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
 /* SUBMIT */
 .submit-wrap { background: var(--white); border: 1px solid var(--rule); }
 .submit-intro { padding: 20px 24px 0; font-size: 13px; color: var(--ink2); line-height: 1.6; }
@@ -130,10 +133,9 @@ textarea { resize: vertical; min-height: 64px; }
   .masthead-inner { flex-direction: column; padding: 0 20px; }
   .masthead-brand { border-right: none; border-bottom: 1px solid var(--rule); padding: 28px 0 20px; }
   .masthead-meta  { padding: 16px 0 20px; }
-  .weather-strip  { padding: 10px 16px; }
-  .weather-tide   { display: none; }
-  .forecast-day   { padding: 6px 10px; }
+  .masthead-tide  { padding: 16px 0 20px; border-left: none; border-top: 1px solid var(--rule); }
   .page           { padding: 0 20px 60px; }
+  .info-row       { grid-template-columns: 1fr; }
   .submit-grid    { grid-template-columns: 1fr; }
   .submit-grid .span2 { grid-column: span 1; }
   .event-card     { grid-template-columns: 62px 1fr; }
@@ -177,6 +179,12 @@ textarea { resize: vertical; min-height: 64px; }
       <div class="masthead-date" id="todayDate"></div>
       <div class="masthead-coord">38°58′N · 76°04′W · Chesapeake Bay</div>
     </div>
+    <div class="masthead-tide" id="mastheadTide">
+      <div class="masthead-tide-label">Chester River</div>
+      <div class="masthead-tide-val" id="tideVal">—</div>
+      <div class="masthead-tide-sub" id="tideSub">Loading tides…</div>
+      <div class="masthead-tide-next" id="tideNext"></div>
+    </div>
   </div>
 </header>
 
@@ -188,26 +196,41 @@ textarea { resize: vertical; min-height: 64px; }
   </svg>
 </div>
 
-<div class="weather-strip" id="weatherStrip">
-  <div style="font-size:11px;color:var(--ink3);letter-spacing:0.1em;">Loading weather…</div>
-</div>
-
 <div class="page">
 
-  <div class="section-head"><h2>About This Project</h2></div>
-  <div class="about-block">
-    <div class="about-lede">The community calendar for Kent County and the Eastern Shore, gathered so you don't have to hunt.</div>
-    <div class="about-body"><p>The Goings-on is a volunteer-run event aggregator for Kent County, Maryland, built for anyone tired of the digital scavenger hunt. We gather upcoming events from local venues, arts organizations, and community calendars into a single, streamlined listing. It's updated regularly so you can stay in the loop without checking a dozen different websites or staying tethered to Facebook.</p></div>
-    <div class="about-subhead">How it works</div>
-    <div class="about-body"><p>Our AI handles the heavy lifting, extracting event data from the sources below to keep things in chronological order. We also hand-fill the gaps with local events that don't appear elsewhere.</p></div>
-    <div class="about-subhead">Have an event?</div>
-    <div class="about-body"><p>If you're hosting something or know of an event that isn't on our radar yet, don't let it be a secret. Use the submission form below to suggest it for the listing. Submissions are reviewed before being added.</p></div>
-    <div class="about-note">This project is community-built and independent — not affiliated with any county organization.</div>
+  <div class="section-head"><h2>About &amp; Sources</h2></div>
+  <div class="info-row">
+    <div class="about-block">
+      <div class="about-lede">The community calendar for Kent County and the Eastern Shore, gathered so you don't have to hunt.</div>
+      <div class="about-body"><p>The Goings-on is a volunteer-run event aggregator for Kent County, Maryland, built for anyone tired of the digital scavenger hunt. We gather upcoming events from local venues, arts organizations, and community calendars into a single, streamlined listing.</p></div>
+      <div class="about-subhead">How it works</div>
+      <div class="about-body"><p>Our AI handles the heavy lifting, extracting event data from the sources listed here to keep things in chronological order. We also hand-fill the gaps with local events that don't appear elsewhere.</p></div>
+      <div class="about-subhead">Have an event?</div>
+      <div class="about-body"><p>Use the submission form at the bottom of the page to suggest an event for the listing. Submissions are reviewed before being added.</p></div>
+      <div class="about-note">Community-built and independent — not affiliated with any county organization.</div>
+    </div>
+    <div class="sources-column">
+      <div class="sources-directory" id="sourcesDirectory">
+        <div class="sources-empty">Loading sources…</div>
+      </div>
+    </div>
   </div>
 
-  <div class="section-head"><h2>Sources</h2></div>
-  <div class="sources-directory" id="sourcesDirectory">
-    <div class="sources-empty">Loading sources…</div>
+  <div class="section-head today-section">
+    <h2>Happening Today</h2>
+  </div>
+  <div id="todayOutput"></div>
+
+  <div class="section-head">
+    <h2>Upcoming Events</h2>
+    <span class="events-count" id="eventsCount"></span>
+  </div>
+  <div id="eventsOutput">
+    <div class="state-empty">
+      <div class="state-empty-glyph">⚓</div>
+      <h3>Nothing on the water yet</h3>
+      <p>Events will appear here once the calendar is updated.</p>
+    </div>
   </div>
 
   <div class="section-head"><h2>Suggest an Event</h2></div>
@@ -228,18 +251,6 @@ textarea { resize: vertical; min-height: 64px; }
     </div>
     <div class="submit-success" id="submitSuccess">✓ &nbsp; Thank you — your submission is under review.</div>
     <div class="pending-note">◎ &nbsp; Submissions are reviewed before appearing in the listing.</div>
-  </div>
-
-  <div class="section-head">
-    <h2>Upcoming Events</h2>
-    <span class="events-count" id="eventsCount"></span>
-  </div>
-  <div id="eventsOutput">
-    <div class="state-empty">
-      <div class="state-empty-glyph">⚓</div>
-      <h3>Nothing on the water yet</h3>
-      <p>Events will appear here once the calendar is updated.</p>
-    </div>
   </div>
 
 </div>
@@ -279,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   loadEvents();
   loadSources();
-  fetchWeather();
+  fetchTides();
 });
 
 /* ── LOAD EVENTS FROM SUPABASE ───────────────────────────────────── */
@@ -287,7 +298,6 @@ async function loadEvents() {
   const out = document.getElementById('eventsOutput');
   try {
     const today = new Date().toISOString().split('T')[0];
-    // Get events with a date >= today, plus undated events; order by date asc
     const data = await sbFetch(
       `/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`
     );
@@ -295,6 +305,7 @@ async function loadEvents() {
       ...e,
       dateObj: e.date_obj ? new Date(e.date_obj) : null
     }));
+    renderToday();
     renderEvents();
   } catch(err) {
     console.error('[events] load failed:', err.message);
@@ -315,7 +326,6 @@ async function loadSources() {
       <a class="source-dir-item" href="${esc(src.url)}" target="_blank" rel="noopener">
         <div class="source-pip"></div>
         <div class="source-dir-name">${esc(src.name)}</div>
-        <div class="source-dir-url">${esc(src.url)}</div>
         <div class="source-dir-arrow">→</div>
       </a>`).join('');
   } catch(err) {
@@ -357,7 +367,44 @@ async function submitEvent() {
   }
 }
 
-/* ── RENDER ──────────────────────────────────────────────────────── */
+/* ── RENDER TODAY ────────────────────────────────────────────────── */
+function renderToday() {
+  const out = document.getElementById('todayOutput');
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const todayEvents = allEvents.filter(e => {
+    if (!e.dateObj) return false;
+    const ds = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}-${String(e.dateObj.getDate()).padStart(2,'0')}`;
+    return ds === todayStr;
+  });
+  if (!todayEvents.length) {
+    out.innerHTML = `<div style="padding:16px 20px;background:var(--white);border:1px solid var(--rule);font-size:13px;color:var(--ink3);font-style:italic;font-family:'Cormorant Garamond',serif;">Nothing on the calendar for today — check back tomorrow.</div>`;
+    return;
+  }
+  const dateLabel = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  out.innerHTML = `<div class="today-card">
+    <div class="today-banner">
+      <div class="today-banner-label">◉ &nbsp;Happening Today</div>
+      <div class="today-banner-date">${dateLabel}</div>
+    </div>
+    <div class="today-events">
+      ${todayEvents.map(e => {
+        const inner = `
+          <div class="today-ev-source">${esc(e.source || '')}</div>
+          <div class="today-ev-title">${esc(e.title)}</div>
+          <div class="today-ev-meta">
+            ${e.time ? `<span>◷ ${esc(e.time)}</span>` : ''}
+            ${e.location ? `<span>◎ ${esc(e.location)}</span>` : ''}
+          </div>`;
+        return e.url
+          ? `<a class="today-event-card" href="${esc(e.url)}" target="_blank" rel="noopener">${inner}</a>`
+          : `<div class="today-event-card">${inner}</div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ── RENDER EVENTS ───────────────────────────────────────────────── */
 function renderEvents() {
   const out = document.getElementById('eventsOutput');
   const cnt = document.getElementById('eventsCount');
@@ -412,46 +459,38 @@ function eventCard(e, i) {
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
 
-/* ── WEATHER ─────────────────────────────────────────────────────── */
-const wmoIcon = c => { if(c===0)return'☀️'; if(c<=2)return'⛅'; if(c<=3)return'☁️'; if(c<=49)return'🌫️'; if(c<=59)return'🌦️'; if(c<=69)return'🌧️'; if(c<=79)return'❄️'; if(c<=82)return'🌧️'; if(c<=99)return'⛈️'; return'🌡️'; };
-const wmoText = c => { if(c===0)return'Clear'; if(c<=2)return'Partly cloudy'; if(c<=3)return'Overcast'; if(c<=49)return'Foggy'; if(c<=59)return'Drizzle'; if(c<=69)return'Rain'; if(c<=79)return'Snow'; if(c<=82)return'Showers'; if(c<=99)return'Thunderstorm'; return'Mixed'; };
-
-async function fetchWithTimeout(url, ms = 8000) {
-  const ctrl = new AbortController();
-  const id = setTimeout(() => ctrl.abort(), ms);
-  try { const r = await fetch(url, { signal: ctrl.signal }); clearTimeout(id); return r; }
-  catch(e) { clearTimeout(id); throw e; }
-}
-
-async function fetchWeather() {
-  const strip = document.getElementById('weatherStrip');
-  let weatherHTML = '', forecastHTML = '', tideHTML = '';
-  try {
-    const res = await fetchWithTimeout('https://api.open-meteo.com/v1/forecast?latitude=39.2043&longitude=-76.0632&current=temperature_2m,weather_code&daily=temperature_2m_max,weather_code,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=5');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const d = await res.json();
-    const temp = Math.round(d.current.temperature_2m);
-    weatherHTML = `<div class="weather-now"><div class="weather-icon">${wmoIcon(d.current.weather_code)}</div><div><div class="weather-temp">${temp}°</div><div class="weather-cond">${wmoText(d.current.weather_code)} · Chestertown</div></div></div>`;
-    const dow = dt => DAYS[new Date(dt+'T12:00:00').getDay()];
-    forecastHTML = '<div class="weather-forecast">' + d.daily.date.map((dt,i) => {
-      if(i===0) return '';
-      const hi=Math.round(d.daily.temperature_2m_max[i]), rain=d.daily.precipitation_probability_max[i];
-      return `<div class="forecast-day"><div class="fc-dow">${dow(dt)}</div><div class="fc-icon">${wmoIcon(d.daily.weather_code[i])}</div><div class="fc-hi">${hi}°</div><div class="fc-rain">${rain>=20?rain+'%':'&nbsp;'}</div></div>`;
-    }).join('') + '</div>';
-  } catch(e) { console.warn('[weather]', e.message); weatherHTML = `<div class="weather-now"><div style="font-size:11px;color:var(--ink3);">Weather · Chestertown</div></div>`; }
-
+/* ── TIDES IN MASTHEAD ───────────────────────────────────────────── */
+async function fetchTides() {
   try {
     const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const tRes = await fetchWithTimeout(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=24&format=json`);
-    const td = await tRes.json();
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=24&format=json`);
+    const td = await res.json();
     if (td.error) throw new Error(td.error.message);
-    const next = td.predictions.find(p => new Date(p.t) > new Date());
+    const now = new Date();
+    const predictions = td.predictions;
+    const next = predictions.find(p => new Date(p.t) > now);
+    const prev = predictions.slice().reverse().find(p => new Date(p.t) <= now);
     if (next) {
-      tideHTML = `<div class="weather-tide"><div class="tide-label">Chester River</div><div class="tide-val">${next.type==='H'?'High':'Low'} tide ${parseFloat(next.v).toFixed(1)}ft · ${new Date(next.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</div></div>`;
+      const nextTime = new Date(next.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      const nextType = next.type === 'H' ? 'High' : 'Low';
+      const nextFt   = parseFloat(next.v).toFixed(1);
+      document.getElementById('tideVal').textContent  = `${nextFt} ft`;
+      document.getElementById('tideSub').textContent  = `Next ${nextType} tide`;
+      document.getElementById('tideNext').textContent = nextTime;
     }
-  } catch(e) { console.warn('[tides]', e.message); }
-
-  strip.innerHTML = weatherHTML + forecastHTML + tideHTML;
+    if (prev) {
+      const prevType = prev.type === 'H' ? 'High' : 'Low';
+      const prevFt   = parseFloat(prev.v).toFixed(1);
+      const prevTime = new Date(prev.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      if (next) {
+        document.getElementById('tideNext').textContent += ` · ${prevType} was ${prevFt} ft at ${prevTime}`;
+      }
+    }
+  } catch(e) {
+    console.warn('[tides]', e.message);
+    document.getElementById('tideSub').textContent = 'Tide data unavailable';
+    document.getElementById('tideVal').textContent = '—';
+  }
 }
 </script>
 </body>
