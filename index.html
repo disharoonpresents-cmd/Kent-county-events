@@ -40,7 +40,7 @@ body {
 .masthead-eyebrow::before { content: ''; display: inline-block; width: 16px; height: 1px; background: var(--tide); }
 .masthead-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(32px, 5vw, 56px); line-height: 0.95; color: var(--ink); }
 .masthead-title em { font-style: italic; color: var(--tide); }
-.masthead-meta { padding: 36px 0 32px 48px; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+.masthead-meta { padding: 36px 48px 32px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
 .masthead-date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: var(--ink3); }
 .masthead-coord { font-size: 10px; letter-spacing: 0.15em; color: var(--ink3); }
 .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; }
@@ -461,28 +461,37 @@ function showToast(msg) { const t = document.createElement('div'); t.className =
 async function fetchTides() {
   try {
     const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=24&format=json`);
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
     const td = await res.json();
     if (td.error) throw new Error(td.error.message);
-    const now = new Date();
+
+    // NOAA returns local time strings like "2026-04-03 14:30" — compare as strings
+    const nowStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).slice(0, 16); // "2026-04-03 14:30"
     const predictions = td.predictions;
-    const next = predictions.find(p => new Date(p.t) > now);
-    const prev = predictions.slice().reverse().find(p => new Date(p.t) <= now);
+
+    const next = predictions.find(p => p.t > nowStr);
+    const prev = predictions.slice().reverse().find(p => p.t <= nowStr);
+
     if (next) {
-      const nextTime = new Date(next.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      const [datePart, timePart] = next.t.split(' ');
+      const [h, m] = timePart.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      const nextTime = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
       const nextType = next.type === 'H' ? 'High' : 'Low';
       const nextFt   = parseFloat(next.v).toFixed(1);
       document.getElementById('tideVal').textContent  = `${nextFt} ft`;
-      document.getElementById('tideSub').textContent  = `Next ${nextType} tide`;
-      document.getElementById('tideNext').textContent = nextTime;
+      document.getElementById('tideSub').textContent  = `Next ${nextType} tide · ${nextTime}`;
     }
     if (prev) {
+      const [datePart, timePart] = prev.t.split(' ');
+      const [h, m] = timePart.split(':').map(Number);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      const prevTime = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
       const prevType = prev.type === 'H' ? 'High' : 'Low';
       const prevFt   = parseFloat(prev.v).toFixed(1);
-      const prevTime = new Date(prev.t).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-      if (next) {
-        document.getElementById('tideNext').textContent += ` · ${prevType} was ${prevFt} ft at ${prevTime}`;
-      }
+      document.getElementById('tideNext').textContent = `${prevType} was ${prevFt} ft at ${prevTime}`;
     }
   } catch(e) {
     console.warn('[tides]', e.message);
