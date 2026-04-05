@@ -305,19 +305,18 @@ const SB_URL = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
 const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 
 async function sbFetch(path, opts = {}) {
-  const res = await fetch(SB_URL + path, {
-    ...opts,
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': opts.prefer || '',
-      ...(opts.headers || {})
-    }
-  });
+  const headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    ...(opts.headers || {})
+  };
+  if (opts.prefer) headers['Prefer'] = opts.prefer;
+  const res = await fetch(SB_URL + path, { ...opts, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `Supabase error ${res.status}`);
+    const msg = err.message || err.hint || err.error || `HTTP ${res.status}`;
+    throw new Error(`[${res.status}] ${msg}`);
   }
   return res.status === 204 ? null : res.json();
 }
@@ -353,7 +352,7 @@ async function loadEvents() {
     renderEvents();
   } catch(err) {
     console.error('[events] load failed:', err.message);
-    out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Couldn't load events</h3><p>Please try refreshing the page.</p></div>`;
+    out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Couldn't load events</h3><p style="font-family:monospace;font-size:11px;color:var(--ink3);margin-top:8px;">${err.message}</p></div>`;
   }
 }
 
@@ -374,7 +373,7 @@ async function loadSources() {
       </a>`).join('');
   } catch(err) {
     console.error('[sources] load failed:', err.message);
-    el.innerHTML = '<div class="sources-empty">Sources unavailable.</div>';
+    el.innerHTML = `<div class="sources-empty" style="font-family:monospace;font-size:11px;">${err.message}</div>`;
   }
 }
 
