@@ -64,6 +64,17 @@ textarea { resize: vertical; min-height: 64px; }
 .btn-fetch-src:hover:not(:disabled) { border-color: var(--tide); color: var(--tide); }
 .btn-fetch-src:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-remove:hover { color: var(--ink); }
+.event-card-wrap { position: relative; }
+.btn-delete-event {
+  position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  background: none; border: 1px solid var(--rule); color: var(--ink3);
+  font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  font-family: 'Instrument Sans', sans-serif;
+  padding: 5px 10px; cursor: pointer; transition: all 0.15s; border-radius: 0;
+  opacity: 0;
+}
+.event-card-wrap:hover .btn-delete-event { opacity: 1; }
+.btn-delete-event:hover { background: var(--warn); border-color: var(--warn); color: var(--white); }
 .api-card { background: var(--white); border: 1px solid var(--rule); padding: 20px 24px; display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
 .api-card-left { flex: 1; min-width: 200px; }
 .sources-wrap { background: var(--white); border: 1px solid var(--rule); }
@@ -223,21 +234,20 @@ const SB_URL = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
 const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 
 async function sbFetch(path, opts = {}) {
-  const res = await fetch(SB_URL + path, {
-    ...opts,
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': opts.prefer || '',
-      ...(opts.headers || {})
-    }
-  });
+  const headers = {
+    'apikey': SB_KEY,
+    'Content-Type': 'application/json',
+    ...(opts.headers || {})
+  };
+  if (opts.prefer) headers['Prefer'] = opts.prefer;
+  const res = await fetch(SB_URL + path, { ...opts, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `Supabase ${res.status}`);
+    throw new Error(err.message || err.hint || `Supabase ${res.status}`);
   }
-  return res.status === 204 ? null : res.json();
+  if (res.status === 204 || res.status === 201 || res.headers.get('content-length') === '0') return null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 /* ── CONSTANTS ───────────────────────────────────────────────────── */
@@ -790,9 +800,29 @@ function eventCard(e, i) {
       ${e.description ? `<div class="ev-desc">${esc(e.description)}</div>` : ''}
     </div>`;
   const style = `animation-delay:${i*0.04}s`;
-  return e.url
+  const card = e.url
     ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`
     : `<div class="event-card" style="${style}">${inner}</div>`;
+  return `<div class="event-card-wrap" id="ev-${e.id}">
+    ${card}
+    <button class="btn-delete-event" onclick="deleteEvent('${e.id}', event)">Delete</button>
+  </div>`;
+}
+
+/* ── DELETE EVENT ────────────────────────────────────────────────── */
+async function deleteEvent(id, e) {
+  e.preventDefault(); e.stopPropagation();
+  if (!confirm('Remove this event from the calendar?')) return;
+  try {
+    await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'DELETE' });
+    document.getElementById('ev-' + id)?.remove();
+    allEvents = allEvents.filter(ev => ev.id !== id);
+    const cnt = document.getElementById('eventsCount');
+    cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+    showToast('Event deleted');
+  } catch(err) {
+    alert('Delete failed: ' + err.message);
+  }
 }
 
 /* ── UTILS ───────────────────────────────────────────────────────── */
