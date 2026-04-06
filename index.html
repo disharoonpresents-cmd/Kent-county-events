@@ -317,7 +317,7 @@ async function sbFetch(path, opts = {}) {
     const msg = err.message || err.hint || err.error || `HTTP ${res.status}`;
     throw new Error(`[${res.status}] ${msg}`);
   }
-  return res.status === 204 ? null : res.json();
+  return (res.status === 204 || res.status === 201) ? null : res.json();
 }
 
 /* ── CONSTANTS ───────────────────────────────────────────────────── */
