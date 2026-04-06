@@ -307,7 +307,6 @@ const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 async function sbFetch(path, opts = {}) {
   const headers = {
     'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
     'Content-Type': 'application/json',
     ...(opts.headers || {})
   };
