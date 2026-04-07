@@ -690,7 +690,7 @@ async function loadEvents() {
   try {
     const today = new Date().toISOString().split('T')[0];
     const data = await sbFetch(`/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`, {});
-    allEvents = (data || []).map(e => ({ ...e, dateObj: e.date_obj ? new Date(e.date_obj) : null }));
+    allEvents = (data || []).map(e => ({ ...e, dateObj: e.date_obj ? new Date(e.date_obj.slice(0,10) + 'T12:00:00') : null }));
     renderEvents();
   } catch(e) { console.error('[events]', e.message); }
 }

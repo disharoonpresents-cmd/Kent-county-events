@@ -347,7 +347,7 @@ async function loadEvents() {
     );
     allEvents = (data || []).map(e => ({
       ...e,
-      dateObj: e.date_obj ? new Date(e.date_obj) : null
+      dateObj: e.date_obj ? new Date(e.date_obj.slice(0,10) + 'T12:00:00') : null
     }));
     renderToday();
     renderEvents();
