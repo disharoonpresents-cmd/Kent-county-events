@@ -25,8 +25,6 @@ body {
   font-family: 'Instrument Sans', sans-serif; font-weight: 400;
   min-height: 100vh; -webkit-font-smoothing: antialiased;
 }
-.waterline { position: relative; height: 48px; background: var(--white); overflow: hidden; }
-.waterline svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
 /* ── NAVIGATION ── */
 .site-nav {
   position: sticky; top: 0; z-index: 100;
@@ -65,6 +63,7 @@ body {
 .masthead-tide { display: flex; flex-direction: column; gap: 4px; padding: 36px 0 32px 48px; border-left: 1px solid var(--rule); flex-shrink: 0; justify-content: flex-end; }
 .masthead-tide-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tide); display: flex; align-items: center; gap: 8px; }
 .masthead-tide-label::before { content: ''; display: inline-block; width: 12px; height: 1px; background: var(--tide); }
+.masthead-tide-sub2 { font-size: 10px; color: var(--ink3); letter-spacing: 0.08em; margin-top: 1px; }
 .masthead-tide-val { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; line-height: 1; color: var(--ink); }
 .masthead-tide-sub { font-size: 11px; color: var(--ink3); font-style: italic; font-family: 'Cormorant Garamond', serif; }
 .masthead-tide-next { font-size: 11px; color: var(--ink3); margin-top: 2px; }
@@ -213,10 +212,10 @@ textarea { resize: vertical; min-height: 64px; }
     </div>
     <div class="masthead-meta">
       <div class="masthead-date" id="todayDate"></div>
-      <div class="masthead-coord">38°58′N · 76°04′W · Chesapeake Bay</div>
     </div>
     <div class="masthead-tide" id="mastheadTide">
-      <div class="masthead-tide-label">Chester River</div>
+      <div class="masthead-tide-label">Tide Report</div>
+      <div class="masthead-tide-sub2">Eastern Neck Island, Chesapeake Bay</div>
       <div class="masthead-tide-val" id="tideVal">—</div>
       <div class="masthead-tide-sub" id="tideSub">Loading tides…</div>
       <div class="masthead-tide-next" id="tideNext"></div>
@@ -224,13 +223,7 @@ textarea { resize: vertical; min-height: 64px; }
   </div>
 </header>
 
-<div class="waterline">
-  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 30 C180 14 360 42 540 28 C720 14 900 40 1080 26 C1260 12 1380 34 1440 28 L1440 48 L0 48 Z" fill="#2e6b8a" opacity="0.07"/>
-    <path d="M0 26 C120 14 200 36 340 26 C480 16 560 38 700 26 C840 14 920 36 1060 24 C1200 12 1320 34 1440 24" fill="none" stroke="#2e6b8a" stroke-width="1.8" opacity="0.55" stroke-linecap="round"/>
-    <path d="M0 32 C140 20 240 40 400 30 C560 20 640 42 800 30 C960 18 1060 40 1220 28 C1320 20 1390 36 1440 30" fill="none" stroke="#2e6b8a" stroke-width="0.9" opacity="0.3" stroke-linecap="round"/>
-  </svg>
-</div>
+
 
 <nav class="site-nav" id="siteNav">
   <div class="site-nav-inner">
@@ -350,7 +343,10 @@ async function loadEvents() {
       dateObj: e.date_obj ? new Date(e.date_obj.slice(0,10) + 'T12:00:00') : null
     }));
     renderToday();
-    renderEvents();
+    // For upcoming events, exclude today — start from tomorrow
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0,0,0,0);
+    renderEvents(allEvents.filter(e => !e.dateObj || e.dateObj >= tomorrow));
   } catch(err) {
     console.error('[events] load failed:', err.message);
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Couldn't load events</h3><p style="font-family:monospace;font-size:11px;color:var(--ink3);margin-top:8px;">${err.message}</p></div>`;
@@ -449,16 +445,17 @@ function renderToday() {
 }
 
 /* ── RENDER EVENTS ───────────────────────────────────────────────── */
-function renderEvents() {
+function renderEvents(events) {
+  if (!events) events = allEvents;
   const out = document.getElementById('eventsOutput');
   const cnt = document.getElementById('eventsCount');
-  if (!allEvents.length) {
+  if (!events.length) {
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Events will appear here once the calendar is updated.</p></div>`;
     cnt.textContent = ''; return;
   }
-  cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+  cnt.textContent = `${events.length} event${events.length !== 1 ? 's' : ''}`;
   const groups = {}, noDate = [];
-  allEvents.forEach(e => {
+  events.forEach(e => {
     if (!e.dateObj) { noDate.push(e); return; }
     const key = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`;
     if (!groups[key]) groups[key] = { month: MONTH_FULL[e.dateObj.getMonth()], year: e.dateObj.getFullYear(), events: [] };
@@ -507,7 +504,7 @@ function showToast(msg) { const t = document.createElement('div'); t.className =
 async function fetchTides() {
   try {
     const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571421&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
     const td = await res.json();
     if (td.error) throw new Error(td.error.message);
 
