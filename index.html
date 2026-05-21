@@ -25,6 +25,9 @@ body {
   font-family: 'Instrument Sans', sans-serif; font-weight: 400;
   min-height: 100vh; -webkit-font-smoothing: antialiased;
 }
+.waterline { position: relative; height: 48px; background: var(--white); overflow: hidden; }
+.waterline svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
+
 /* ── NAVIGATION ── */
 .site-nav {
   position: sticky; top: 0; z-index: 100;
@@ -55,15 +58,92 @@ body {
 }
 .nav-submit:hover { color: var(--ink) !important; border-bottom-color: var(--marsh) !important; }
 .nav-submit .nav-link-glyph { color: var(--marsh); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  border-top: 1px solid var(--rule2);
+  background: var(--paper);
+}
+.filter-bar-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 40px;
+  display: flex; align-items: center; gap: 0;
+  min-height: 38px; overflow-x: auto; scrollbar-width: none;
+}
+.filter-bar-inner::-webkit-scrollbar { display: none; }
+.filter-group {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 0; flex-shrink: 0;
+}
+.filter-group + .filter-group {
+  padding-left: 16px; margin-left: 16px;
+  border-left: 1px solid var(--rule2);
+}
+.filter-label {
+  font-size: 8px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink3); white-space: nowrap; flex-shrink: 0;
+  padding-right: 6px;
+}
+.filter-pill {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink3); background: var(--white);
+  border: 1px solid var(--rule2);
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: all 0.12s; user-select: none;
+}
+.filter-pill:hover { border-color: var(--ink3); color: var(--ink); }
+.filter-pill.active {
+  background: var(--tide); color: var(--white);
+  border-color: var(--tide);
+}
+.filter-pill.active.cat-arts    { background: #5a4f8a; border-color: #5a4f8a; }
+.filter-pill.active.cat-outdoors { background: var(--marsh); border-color: var(--marsh); }
+.filter-pill.active.cat-food    { background: #8a5a2e; border-color: #8a5a2e; }
+.filter-pill.active.cat-education { background: #2e6b8a; border-color: #2e6b8a; }
+.filter-pill.active.cat-community { background: var(--ink2); border-color: var(--ink2); }
+.filter-clear {
+  font-size: 8px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--ink3); background: none; border: none; cursor: pointer;
+  padding: 4px 8px; margin-left: 4px; flex-shrink: 0;
+  transition: color 0.12s; white-space: nowrap;
+  display: none;
+}
+.filter-clear:hover { color: var(--tide); }
+.filter-clear.visible { display: inline; }
+.filter-no-results {
+  padding: 40px 20px; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 18px; color: var(--ink3);
+  background: var(--white); border: 1px solid var(--rule);
+}
+
+/* ── CATEGORY BADGE on event card ── */
+.ev-category {
+  display: inline-block;
+  font-size: 8px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 2px 7px; margin-bottom: 5px;
+  color: var(--white);
+}
+.ev-category.cat-arts      { background: #5a4f8a; }
+.ev-category.cat-outdoors  { background: var(--marsh); }
+.ev-category.cat-food      { background: #8a5a2e; }
+.ev-category.cat-education { background: var(--tide); }
+.ev-category.cat-community { background: var(--ink3); }
+
 @media (max-width: 620px) {
   .site-nav-inner { padding: 0 8px; overflow-x: auto; scrollbar-width: none; }
   .site-nav-inner::-webkit-scrollbar { display: none; }
   .nav-link { padding: 11px 11px; font-size: 8px; letter-spacing: 0.14em; }
+  .filter-bar-inner { padding: 0 12px; }
+  .filter-group + .filter-group { padding-left: 10px; margin-left: 10px; }
 }
+
+/* ── MASTHEAD ── */
 .masthead-tide { display: flex; flex-direction: column; gap: 4px; padding: 36px 0 32px 48px; border-left: 1px solid var(--rule); flex-shrink: 0; justify-content: flex-end; }
 .masthead-tide-label { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--tide); display: flex; align-items: center; gap: 8px; }
 .masthead-tide-label::before { content: ''; display: inline-block; width: 12px; height: 1px; background: var(--tide); }
-.masthead-tide-sub2 { font-size: 10px; color: var(--ink3); letter-spacing: 0.08em; margin-top: 1px; }
 .masthead-tide-val { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; line-height: 1; color: var(--ink); }
 .masthead-tide-sub { font-size: 11px; color: var(--ink3); font-style: italic; font-family: 'Cormorant Garamond', serif; }
 .masthead-tide-next { font-size: 11px; color: var(--ink3); margin-top: 2px; }
@@ -78,19 +158,24 @@ body {
 .masthead-meta { padding: 36px 48px 32px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; flex: 1; }
 .masthead-date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: var(--ink3); }
 .masthead-coord { font-size: 10px; letter-spacing: 0.15em; color: var(--ink3); }
+
+/* ── PAGE ── */
 .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; }
 .section-head { display: flex; align-items: baseline; gap: 14px; padding: 40px 0 0; margin-bottom: 16px; }
 .section-head h2 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
 .section-head::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 .events-count { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
+
 /* TWO-COLUMN INFO ROW */
 .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+
 /* ABOUT */
 .about-block { background: var(--white); border: 1px solid var(--rule); padding: 32px 36px; }
 .about-lede { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; line-height: 1.4; color: var(--ink); margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--rule2); }
 .about-body { font-size: 13px; line-height: 1.7; color: var(--ink2); }
 .about-subhead { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-top: 24px; margin-bottom: 8px; }
 .about-note { font-size: 11px; line-height: 1.7; color: var(--ink3); margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule2); }
+
 /* SOURCES */
 .sources-column { }
 .sources-directory { background: var(--white); border: 1px solid var(--rule); }
@@ -103,6 +188,7 @@ body {
 .source-dir-arrow { color: var(--rule); font-size: 12px; flex-shrink: 0; transition: color 0.12s; }
 .source-dir-item:hover .source-dir-arrow { color: var(--ink3); }
 .sources-empty { padding: 24px 20px; font-size: 13px; color: var(--ink3); font-style: italic; }
+
 /* HAPPENING TODAY */
 .today-section { margin-bottom: 0; }
 .today-card { background: var(--tide); padding: 0; overflow: hidden; }
@@ -116,12 +202,14 @@ body {
 .today-ev-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; color: var(--white); margin-bottom: 4px; }
 .today-ev-meta { font-size: 11px; color: rgba(255,255,255,0.65); display: flex; gap: 14px; flex-wrap: wrap; }
 .today-ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+
 /* SUBMIT */
 .submit-wrap { background: var(--white); border: 1px solid var(--rule); }
 .submit-intro { padding: 20px 24px 0; font-size: 13px; color: var(--ink2); line-height: 1.6; }
 .submit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 24px 24px; }
 .submit-grid .span2 { grid-column: span 2; }
 .pending-note { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--marsh); padding: 10px 24px; border-top: 1px solid var(--rule2); background: var(--paper); }
+
 /* INPUTS */
 input[type=text], input[type=url], input[type=date], input[type=email], textarea {
   background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
@@ -133,6 +221,7 @@ input::placeholder, textarea::placeholder { color: var(--ink3); }
 input:focus, textarea:focus { border-color: var(--tide); background: var(--white); }
 textarea { resize: vertical; min-height: 64px; }
 .field-label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+
 /* BUTTONS */
 .btn-submit {
   background: var(--marsh); color: var(--white); border: none; width: 100%; padding: 14px;
@@ -141,6 +230,7 @@ textarea { resize: vertical; min-height: 64px; }
 }
 .btn-submit:hover:not(:disabled) { background: #3a6347; }
 .btn-submit:disabled { background: var(--ink3); cursor: not-allowed; }
+
 /* EVENTS */
 .month-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--ink2); padding: 32px 0 12px; border-bottom: 1px solid var(--rule); margin-bottom: 0; display: flex; align-items: baseline; gap: 10px; }
 .month-year { font-size: 11px; font-style: normal; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.1em; color: var(--ink3); font-weight: 400; }
@@ -164,6 +254,7 @@ textarea { resize: vertical; min-height: 64px; }
 .state-empty p  { font-size: 13px; }
 .submit-success { display: none; padding: 24px; text-align: center; color: var(--marsh); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; }
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--white); padding: 10px 20px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.08em; z-index: 9999; animation: riseIn 0.2s ease; }
+
 @media (max-width: 620px) {
   .masthead-inner { flex-direction: column; padding: 0 20px; }
   .masthead-brand { border-right: none; border-bottom: 1px solid var(--rule); padding: 28px 0 20px; }
@@ -212,10 +303,10 @@ textarea { resize: vertical; min-height: 64px; }
     </div>
     <div class="masthead-meta">
       <div class="masthead-date" id="todayDate"></div>
+      <div class="masthead-coord">38°58′N · 76°04′W · Chesapeake Bay</div>
     </div>
     <div class="masthead-tide" id="mastheadTide">
-      <div class="masthead-tide-label">Tide Report</div>
-      <div class="masthead-tide-sub2">Eastern Neck Island, Chesapeake Bay</div>
+      <div class="masthead-tide-label">Chester River</div>
       <div class="masthead-tide-val" id="tideVal">—</div>
       <div class="masthead-tide-sub" id="tideSub">Loading tides…</div>
       <div class="masthead-tide-next" id="tideNext"></div>
@@ -223,7 +314,13 @@ textarea { resize: vertical; min-height: 64px; }
   </div>
 </header>
 
-
+<div class="waterline">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 30 C180 14 360 42 540 28 C720 14 900 40 1080 26 C1260 12 1380 34 1440 28 L1440 48 L0 48 Z" fill="#2e6b8a" opacity="0.07"/>
+    <path d="M0 26 C120 14 200 36 340 26 C480 16 560 38 700 26 C840 14 920 36 1060 24 C1200 12 1320 34 1440 24" fill="none" stroke="#2e6b8a" stroke-width="1.8" opacity="0.55" stroke-linecap="round"/>
+    <path d="M0 32 C140 20 240 40 400 30 C560 20 640 42 800 30 C960 18 1060 40 1220 28 C1320 20 1390 36 1440 30" fill="none" stroke="#2e6b8a" stroke-width="0.9" opacity="0.3" stroke-linecap="round"/>
+  </svg>
+</div>
 
 <nav class="site-nav" id="siteNav">
   <div class="site-nav-inner">
@@ -232,6 +329,20 @@ textarea { resize: vertical; min-height: 64px; }
     <a class="nav-link" href="#today"><span class="nav-link-glyph">◉</span> Happening Today</a>
     <a class="nav-link" href="#calendar"><span class="nav-link-glyph">◷</span> Event Calendar</a>
     <a class="nav-link nav-submit" href="#submit"><span class="nav-link-glyph">✦</span> Submit an Event</a>
+  </div>
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-bar-inner">
+      <div class="filter-group">
+        <span class="filter-label">Month</span>
+        <div id="monthPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Category</span>
+        <div id="categoryPills" style="display:flex;gap:6px;"></div>
+      </div>
+      <button class="filter-clear" id="filterClear" onclick="clearFilters()">Clear filters ×</button>
+    </div>
   </div>
 </nav>
 
@@ -321,14 +432,135 @@ const MONTH_FULL = ['January','February','March','April','May','June','July','Au
 const DAYS       = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let allEvents    = [];
 
+/* ── FILTER STATE ────────────────────────────────────────────────── */
+let activeMonth    = null; // "YYYY-MM" string or null
+let activeCategory = null; // category key string or null
+
+/* ── CATEGORY INFERENCE ──────────────────────────────────────────── */
+const CATEGORIES = [
+  {
+    key: 'arts',
+    label: 'Arts & Music',
+    keywords: ['concert','recital','symphony','orchestra','choir','opera','jazz','bluegrass','folk','band','music','performance','gallery','exhibit','exhibition','art','studio','painting','sculpture','theatre','theater','play','film','movie','screening','dance','ballet','poetry','reading','author','literary','open mic','improv']
+  },
+  {
+    key: 'outdoors',
+    label: 'Outdoors',
+    keywords: ['hike','hiking','trail','paddle','kayak','canoe','sail','sailing','fishing','hunt','birding','bird','nature','garden','gardening','farm','beach','river','bay','creek','park','walk','run','race','5k','10k','marathon','bike','cycling','outdoor','wildlife','conservation','cleanup','environmental']
+  },
+  {
+    key: 'food',
+    label: 'Food & Drink',
+    keywords: ['dinner','lunch','brunch','breakfast','tasting','wine','beer','cocktail','spirits','distillery','brewery','winery','farm-to-table','harvest','oyster','crab','seafood','barbecue','bbq','food','chef','cook','recipe','market','farmers market','restaurant']
+  },
+  {
+    key: 'education',
+    label: 'Education',
+    keywords: ['lecture','talk','workshop','seminar','class','course','lesson','tour','history','historical','heritage','museum','library','book club','learning','demonstration','demo','presentation','panel','forum','symposium','speaker','keynote','genealogy','archive','preservation']
+  }
+  // 'community' is the catch-all — no keywords needed
+];
+
+function inferCategory(event) {
+  const haystack = [(event.title || ''), (event.description || ''), (event.source || '')]
+    .join(' ').toLowerCase();
+  for (const cat of CATEGORIES) {
+    if (cat.keywords.some(kw => haystack.includes(kw))) return cat.key;
+  }
+  return 'community';
+}
+
 /* ── INIT ────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('todayDate').textContent =
     new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  buildCategoryPills();
   loadEvents();
   loadSources();
   fetchTides();
 });
+
+/* ── BUILD CATEGORY PILLS (static) ──────────────────────────────── */
+function buildCategoryPills() {
+  const container = document.getElementById('categoryPills');
+  const allCats = [...CATEGORIES, { key: 'community', label: 'Community' }];
+  container.innerHTML = allCats.map(cat => `
+    <button class="filter-pill cat-${cat.key}" data-cat="${cat.key}" onclick="toggleCategory('${cat.key}')">${cat.label}</button>
+  `).join('');
+}
+
+/* ── BUILD MONTH PILLS (dynamic, from events) ────────────────────── */
+function buildMonthPills() {
+  const container = document.getElementById('monthPills');
+  // Collect unique months from events that have a date
+  const seen = new Set();
+  const months = [];
+  allEvents.forEach(e => {
+    if (!e.dateObj) return;
+    const key = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      months.push({ key, label: `${MONTHS[e.dateObj.getMonth()]} ${e.dateObj.getFullYear()}` });
+    }
+  });
+  months.sort((a,b) => a.key.localeCompare(b.key));
+  container.innerHTML = months.map(m => `
+    <button class="filter-pill" data-month="${m.key}" onclick="toggleMonth('${m.key}')" style="display:inline-flex;">${m.label}</button>
+  `).join('');
+}
+
+/* ── FILTER TOGGLES ──────────────────────────────────────────────── */
+function toggleMonth(key) {
+  activeMonth = activeMonth === key ? null : key;
+  updatePillStates();
+  applyFilters();
+}
+
+function toggleCategory(key) {
+  activeCategory = activeCategory === key ? null : key;
+  updatePillStates();
+  applyFilters();
+}
+
+function clearFilters() {
+  activeMonth = null;
+  activeCategory = null;
+  updatePillStates();
+  applyFilters();
+}
+
+function updatePillStates() {
+  // Month pills
+  document.querySelectorAll('[data-month]').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.month === activeMonth);
+  });
+  // Category pills
+  document.querySelectorAll('[data-cat]').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.cat === activeCategory);
+  });
+  // Clear button
+  const clearBtn = document.getElementById('filterClear');
+  clearBtn.classList.toggle('visible', !!(activeMonth || activeCategory));
+}
+
+/* ── APPLY FILTERS & RE-RENDER ───────────────────────────────────── */
+function applyFilters() {
+  let filtered = allEvents;
+
+  if (activeMonth) {
+    filtered = filtered.filter(e => {
+      if (!e.dateObj) return false;
+      const key = `${e.dateObj.getFullYear()}-${String(e.dateObj.getMonth()+1).padStart(2,'0')}`;
+      return key === activeMonth;
+    });
+  }
+
+  if (activeCategory) {
+    filtered = filtered.filter(e => inferCategory(e) === activeCategory);
+  }
+
+  renderEventsFiltered(filtered);
+}
 
 /* ── LOAD EVENTS FROM SUPABASE ───────────────────────────────────── */
 async function loadEvents() {
@@ -342,11 +574,9 @@ async function loadEvents() {
       ...e,
       dateObj: e.date_obj ? new Date(e.date_obj.slice(0,10) + 'T12:00:00') : null
     }));
+    buildMonthPills();
     renderToday();
-    // For upcoming events, exclude today — start from tomorrow
-    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0,0,0,0);
-    renderEvents(allEvents.filter(e => !e.dateObj || e.dateObj >= tomorrow));
+    renderEvents();
   } catch(err) {
     console.error('[events] load failed:', err.message);
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Couldn't load events</h3><p style="font-family:monospace;font-size:11px;color:var(--ink3);margin-top:8px;">${err.message}</p></div>`;
@@ -444,16 +674,34 @@ function renderToday() {
   </div>`;
 }
 
-/* ── RENDER EVENTS ───────────────────────────────────────────────── */
-function renderEvents(events) {
-  if (!events) events = allEvents;
+/* ── RENDER EVENTS (unfiltered) ──────────────────────────────────── */
+function renderEvents() {
+  renderEventsFiltered(allEvents);
+}
+
+/* ── RENDER EVENTS (filtered) ────────────────────────────────────── */
+function renderEventsFiltered(events) {
   const out = document.getElementById('eventsOutput');
   const cnt = document.getElementById('eventsCount');
-  if (!events.length) {
+
+  if (!allEvents.length) {
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Events will appear here once the calendar is updated.</p></div>`;
     cnt.textContent = ''; return;
   }
-  cnt.textContent = `${events.length} event${events.length !== 1 ? 's' : ''}`;
+
+  // Update count — show filtered vs total when filtered
+  const isFiltered = activeMonth || activeCategory;
+  if (isFiltered) {
+    cnt.textContent = `${events.length} of ${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+  } else {
+    cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
+  }
+
+  if (!events.length) {
+    out.innerHTML = `<div class="filter-no-results">No events match the current filters.</div>`;
+    return;
+  }
+
   const groups = {}, noDate = [];
   events.forEach(e => {
     if (!e.dateObj) { noDate.push(e); return; }
@@ -461,11 +709,12 @@ function renderEvents(events) {
     if (!groups[key]) groups[key] = { month: MONTH_FULL[e.dateObj.getMonth()], year: e.dateObj.getFullYear(), events: [] };
     groups[key].events.push(e);
   });
+
   let html = '';
   Object.keys(groups).sort().forEach(k => {
-    const { month, year, events } = groups[k];
+    const { month, year, events: grpEvents } = groups[k];
     html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`;
-    events.forEach((e, i) => { html += eventCard(e, i); });
+    grpEvents.forEach((e, i) => { html += eventCard(e, i); });
   });
   if (noDate.length) {
     html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`;
@@ -474,8 +723,11 @@ function renderEvents(events) {
   out.innerHTML = html;
 }
 
+/* ── EVENT CARD ──────────────────────────────────────────────────── */
 function eventCard(e, i) {
   const d = e.dateObj;
+  const cat = inferCategory(e);
+  const catLabel = (CATEGORIES.find(c => c.key === cat) || { label: 'Community' }).label;
   const inner = `
     <div class="ev-datecol">
       <div class="ev-month">${d ? MONTHS[d.getMonth()] : ''}</div>
@@ -483,7 +735,10 @@ function eventCard(e, i) {
       <div class="ev-dow">${d ? DAYS[d.getDay()] : ''}</div>
     </div>
     <div class="ev-body">
-      ${e.source ? `<div class="ev-source">${esc(e.source)}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        ${e.source ? `<div class="ev-source" style="margin-bottom:0;">${esc(e.source)}</div>` : ''}
+        <span class="ev-category cat-${cat}">${catLabel}</span>
+      </div>
       <div class="ev-title">${esc(e.title)}</div>
       <div class="ev-meta">
         ${e.time ? `<span class="ev-time">${esc(e.time)}</span>` : ''}
@@ -504,19 +759,18 @@ function showToast(msg) { const t = document.createElement('div'); t.className =
 async function fetchTides() {
   try {
     const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8571421&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
     const td = await res.json();
     if (td.error) throw new Error(td.error.message);
 
-    // NOAA returns local time strings like "2026-04-03 14:30" — compare as strings
-    const nowStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).slice(0, 16); // "2026-04-03 14:30"
+    const nowStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).slice(0, 16);
     const predictions = td.predictions;
 
     const next = predictions.find(p => p.t > nowStr);
     const prev = predictions.slice().reverse().find(p => p.t <= nowStr);
 
     if (next) {
-      const [datePart, timePart] = next.t.split(' ');
+      const [, timePart] = next.t.split(' ');
       const [h, m] = timePart.split(':').map(Number);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const h12 = h % 12 || 12;
@@ -527,7 +781,7 @@ async function fetchTides() {
       document.getElementById('tideSub').textContent  = `Next ${nextType} tide · ${nextTime}`;
     }
     if (prev) {
-      const [datePart, timePart] = prev.t.split(' ');
+      const [, timePart] = prev.t.split(' ');
       const [h, m] = timePart.split(':').map(Number);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const h12 = h % 12 || 12;
@@ -561,13 +815,11 @@ async function fetchTides() {
     });
     navLinks.forEach(link => {
       const href = link.getAttribute('href').replace('#','');
-      // sources links to about section visually
       const match = href === current || (href === 'sources' && current === 'about');
       link.classList.toggle('active', match);
     });
   }
 
-  // Offset scroll-to so nav doesn't cover the section heading
   navLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       const targetId = this.getAttribute('href').replace('#','');
