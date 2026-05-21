@@ -125,6 +125,43 @@ textarea { resize: vertical; min-height: 64px; }
 .state-empty h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 26px; color: var(--ink2); margin-bottom: 8px; }
 .state-empty p  { font-size: 13px; }
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--white); padding: 10px 20px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.08em; z-index: 9999; animation: riseIn 0.2s ease; }
+/* ── QUICK EXTRACT ───────────────────────────────────────────────── */
+.quick-extract { background: var(--white); border: 1px solid var(--rule); }
+.qe-tabs { display: flex; border-bottom: 1px solid var(--rule); }
+.qe-tab { flex: 1; padding: 13px 16px; font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.qe-tab:hover { color: var(--tide); }
+.qe-tab.active { color: var(--tide); border-bottom-color: var(--tide); background: var(--paper); }
+.qe-tab-glyph { font-size: 12px; opacity: 0.6; }
+.qe-tab.active .qe-tab-glyph { opacity: 1; }
+.qe-body { padding: 20px 24px; }
+.qe-panel { display: none; }
+.qe-panel.active { display: block; }
+.qe-url-row { display: flex; gap: 8px; }
+.qe-url-row input { flex: 1; }
+.qe-drop-zone {
+  border: 2px dashed var(--rule); background: var(--paper);
+  padding: 36px 24px; text-align: center; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s; position: relative;
+}
+.qe-drop-zone:hover, .qe-drop-zone.drag-over { border-color: var(--tide); background: var(--tide-lt); }
+.qe-drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.qe-drop-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.35; }
+.qe-drop-label { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+.qe-drop-label strong { color: var(--tide); font-weight: 600; }
+.qe-file-chosen { font-size: 11px; color: var(--marsh); margin-top: 10px; font-weight: 600; display: none; }
+.qe-extract-btn {
+  width: 100%; margin-top: 14px; padding: 14px;
+  background: var(--ink); color: var(--white); border: none;
+  font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+  transition: background 0.15s; border-radius: 0;
+}
+.qe-extract-btn:hover:not(:disabled) { background: var(--tide); }
+.qe-extract-btn:disabled { background: var(--ink3); cursor: not-allowed; }
+.qe-status { margin-top: 12px; font-size: 12px; color: var(--tide); display: none; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.qe-status.err { color: var(--warn); font-style: normal; font-family: 'Instrument Sans', sans-serif; font-size: 11px; }
+.qe-prefilled { background: var(--tide-lt); border: 1px solid var(--tide); padding: 10px 16px; margin-top: 14px; font-size: 11px; color: var(--tide); display: none; display: flex; align-items: center; gap: 10px; }
+.qe-prefilled-glyph { font-size: 14px; flex-shrink: 0; }
 @media (max-width: 620px) {
   .admin-head { padding: 0 20px; }
   .page { padding: 0 20px 60px; }
@@ -133,6 +170,8 @@ textarea { resize: vertical; min-height: 64px; }
   .api-card { flex-direction: column; gap: 12px; }
   .event-card { grid-template-columns: 62px 1fr; }
   .pending-item { grid-template-columns: 1fr; }
+  .qe-url-row { flex-direction: column; }
+  .qe-tabs { flex-direction: row; }
 }
 </style>
 </head>
@@ -188,6 +227,45 @@ textarea { resize: vertical; min-height: 64px; }
     <div class="progress-log" id="progressLog"></div>
   </div>
   <div class="err" id="fetchError"></div>
+
+  <!-- QUICK EXTRACT -->
+  <div class="section-head"><h2>Quick Extract from URL or File</h2></div>
+  <div class="quick-extract">
+    <div class="qe-tabs">
+      <button class="qe-tab active" onclick="qeTab('url', this)">
+        <span class="qe-tab-glyph">⇱</span> From URL
+      </button>
+      <button class="qe-tab" onclick="qeTab('file', this)">
+        <span class="qe-tab-glyph">◫</span> From Image or PDF
+      </button>
+    </div>
+    <div class="qe-body">
+      <!-- URL panel -->
+      <div class="qe-panel active" id="qeUrlPanel">
+        <div class="qe-url-row">
+          <input type="url" id="qeUrl" placeholder="https://… paste any event page URL" />
+          <button class="qe-extract-btn" id="qeUrlBtn" onclick="extractFromUrl()" style="width:auto;margin-top:0;padding:10px 22px;">Extract</button>
+        </div>
+        <div class="hint" style="margin-top:8px;">Works with flyers posted online, individual event pages, Facebook events, newsletter links — anything with event info on the page.</div>
+      </div>
+      <!-- File panel -->
+      <div class="qe-panel" id="qeFilePanel">
+        <div class="qe-drop-zone" id="qeDropZone">
+          <input type="file" id="qeFile" accept="image/*,.pdf" onchange="qeFileChosen(this)" />
+          <div class="qe-drop-icon">◫</div>
+          <div class="qe-drop-label"><strong>Click to choose</strong> or drag &amp; drop<br>JPG, PNG, GIF, WebP, or PDF</div>
+          <div class="qe-file-chosen" id="qeFileChosen"></div>
+        </div>
+        <button class="qe-extract-btn" id="qeFileBtn" onclick="extractFromFile()" disabled>Extract Event Info</button>
+      </div>
+      <!-- Shared status -->
+      <div class="qe-status" id="qeStatus"></div>
+      <div class="qe-prefilled" id="qePrefilled" style="display:none;">
+        <span class="qe-prefilled-glyph">✓</span>
+        <span id="qePrefilledMsg">Fields filled in below — review and save.</span>
+      </div>
+    </div>
+  </div>
 
   <!-- MANUAL EVENT -->
   <div class="section-head"><h2>Add Event Manually</h2></div>
@@ -351,7 +429,7 @@ async function fetchAllEvents() {
 
   // Delete all non-manual events first, then re-fetch
   try {
-    await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' });
+    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events'); }
 
   const months = parseInt(document.getElementById('dateRange').value) || 3;
@@ -658,6 +736,226 @@ function parseDate(str) {
   // Fallback: try as-is
   d = new Date(clean);
   return isNaN(d) ? null : d;
+}
+
+/* ── QUICK EXTRACT ───────────────────────────────────────────────── */
+function qeTab(name, btn) {
+  document.querySelectorAll('.qe-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.qe-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('qe' + name.charAt(0).toUpperCase() + name.slice(1) + 'Panel').classList.add('active');
+  qeHideStatus();
+}
+
+function qeShowStatus(msg, isErr = false) {
+  const el = document.getElementById('qeStatus');
+  el.textContent = msg;
+  el.className = 'qe-status' + (isErr ? ' err' : '');
+  el.style.display = 'block';
+}
+
+function qeHideStatus() {
+  document.getElementById('qeStatus').style.display = 'none';
+  document.getElementById('qePrefilled').style.display = 'none';
+}
+
+function qeFileChosen(input) {
+  const file = input.files[0];
+  const label = document.getElementById('qeFileChosen');
+  const btn = document.getElementById('qeFileBtn');
+  if (file) {
+    label.textContent = '✓ ' + file.name;
+    label.style.display = 'block';
+    btn.disabled = false;
+  } else {
+    label.style.display = 'none';
+    btn.disabled = true;
+  }
+}
+
+// Drag-and-drop on the drop zone
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('qeDropZone');
+  if (!dz) return;
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const input = document.getElementById('qeFile');
+      // DataTransfer trick to set files on the input
+      const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
+      qeFileChosen(input);
+    }
+  });
+});
+
+function qeFillManualFields(ev) {
+  if (ev.title)    document.getElementById('manTitle').value    = ev.title;
+  if (ev.time)     document.getElementById('manTime').value     = ev.time;
+  if (ev.location) document.getElementById('manLocation').value = ev.location;
+  if (ev.description) document.getElementById('manDesc').value  = ev.description;
+  if (ev.source)   document.getElementById('manSource').value   = ev.source;
+  // Parse date string into YYYY-MM-DD for the date input
+  if (ev.date) {
+    const d = parseDate(ev.date);
+    if (d && !isNaN(d)) {
+      const iso = d.toISOString().slice(0, 10);
+      document.getElementById('manDate').value = iso;
+    }
+  }
+  // Scroll to manual section
+  document.getElementById('manTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('qePrefilled').style.display = 'flex';
+  const filled = [ev.title, ev.date, ev.time, ev.location].filter(Boolean);
+  document.getElementById('qePrefilledMsg').textContent =
+    `Filled in: ${filled.join(' · ')} — review and click "Add to List".`;
+}
+
+async function extractFromUrl() {
+  const url = document.getElementById('qeUrl').value.trim();
+  if (!url) { qeShowStatus('Please enter a URL.', true); return; }
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
+
+  const btn = document.getElementById('qeUrlBtn');
+  btn.disabled = true; btn.textContent = 'Extracting…';
+  qeShowStatus('Reading the page…');
+
+  const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const prompt = `Please visit this URL: ${url}
+
+Today is ${today}. Extract the SINGLE event described on this page (or the most prominent upcoming event if there are several).
+
+Return ONLY a JSON object (no markdown, no code fences) with these fields:
+- title: string
+- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always
+- time: string or null (e.g. "7:00 PM" or "2:00 PM – 5:00 PM")
+- location: string or null
+- description: string or null (1–2 sentences)
+- source: string or null (the organization or venue hosting the event)
+- url: "${url}"
+
+Return null if no event info found.`;
+
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    };
+    const messages = [{ role: 'user', content: prompt }];
+    let data;
+    for (let turn = 0; turn < 6; turn++) {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers,
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages })
+      });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
+      data = await res.json();
+      if (data.stop_reason === 'end_turn') break;
+      if (data.stop_reason === 'tool_use') {
+        messages.push({ role: 'assistant', content: data.content });
+        const results = data.content.filter(b => b.type === 'tool_use').map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' }));
+        messages.push({ role: 'user', content: results });
+      } else break;
+    }
+    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+    // Try object first, then array
+    let ev = null;
+    const firstBrace   = text.indexOf('{'), lastBrace   = text.lastIndexOf('}');
+    const firstBracket = text.indexOf('['), lastBracket = text.lastIndexOf(']');
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      ev = JSON.parse(text.slice(firstBrace, lastBrace + 1));
+    } else if (firstBracket !== -1 && lastBracket !== -1) {
+      const arr = JSON.parse(text.slice(firstBracket, lastBracket + 1));
+      ev = arr[0] || null;
+    }
+    if (!ev || !ev.title) { qeShowStatus('Could not find event info on that page.', true); return; }
+    qeHideStatus();
+    qeFillManualFields(ev);
+  } catch(e) {
+    qeShowStatus('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Extract';
+  }
+}
+
+async function extractFromFile() {
+  const input = document.getElementById('qeFile');
+  const file = input.files[0];
+  if (!file) { qeShowStatus('Please choose a file first.', true); return; }
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
+
+  const btn = document.getElementById('qeFileBtn');
+  btn.disabled = true; btn.textContent = 'Reading…';
+  qeShowStatus('Sending to Claude…');
+
+  try {
+    // Read file as base64
+    const base64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload  = () => res(r.result.split(',')[1]);
+      r.onerror = () => rej(new Error('File read failed'));
+      r.readAsDataURL(file);
+    });
+
+    const isPdf = file.type === 'application/pdf';
+    const mediaType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
+    const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+    const prompt = `Today is ${today}. Extract the event information from this ${isPdf ? 'PDF' : 'image'}.
+
+Return ONLY a JSON object (no markdown, no code fences) with these fields:
+- title: string
+- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always. If only a month/day is visible and no year, assume the next upcoming occurrence.
+- time: string or null (e.g. "7:00 PM")
+- location: string or null
+- description: string or null (1–2 sentences max)
+- source: string or null (the organization or venue)
+- url: null
+
+Return null if no event info found.`;
+
+    const contentBlock = isPdf
+      ? { type: 'document', source: { type: 'base64', media_type: mediaType, data: base64 } }
+      : { type: 'image',    source: { type: 'base64', media_type: mediaType, data: base64 } };
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: [contentBlock, { type: 'text', text: prompt }] }]
+      })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
+    const data = await res.json();
+    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+
+    let ev = null;
+    const firstBrace = text.indexOf('{'), lastBrace = text.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      ev = JSON.parse(text.slice(firstBrace, lastBrace + 1));
+    }
+    if (!ev || !ev.title) { qeShowStatus('Could not find event info in this file.', true); return; }
+    qeHideStatus();
+    qeFillManualFields(ev);
+  } catch(e) {
+    qeShowStatus('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Extract Event Info';
+  }
 }
 
 /* ── MANUAL EVENT ────────────────────────────────────────────────── */
