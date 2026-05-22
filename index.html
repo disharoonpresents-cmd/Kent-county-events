@@ -80,8 +80,7 @@ body {
 }
 .filter-label {
   font-size: 8px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--ink3); white-space: nowrap; flex-shrink: 0;
-  padding-right: 6px;
+  color: var(--ink3); white-space: nowrap; flex-shrink: 0; padding-right: 6px;
 }
 .filter-pill {
   display: inline-flex; align-items: center;
@@ -94,21 +93,12 @@ body {
   transition: all 0.12s; user-select: none;
 }
 .filter-pill:hover { border-color: var(--ink3); color: var(--ink); }
-.filter-pill.active {
-  background: var(--tide); color: var(--white);
-  border-color: var(--tide);
-}
-.filter-pill.active.cat-arts    { background: #5a4f8a; border-color: #5a4f8a; }
-.filter-pill.active.cat-outdoors { background: var(--marsh); border-color: var(--marsh); }
-.filter-pill.active.cat-food    { background: #8a5a2e; border-color: #8a5a2e; }
-.filter-pill.active.cat-education { background: #2e6b8a; border-color: #2e6b8a; }
-.filter-pill.active.cat-community { background: var(--ink2); border-color: var(--ink2); }
+.filter-pill.active { color: var(--white); border-color: transparent; }
 .filter-clear {
   font-size: 8px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--ink3); background: none; border: none; cursor: pointer;
   padding: 4px 8px; margin-left: 4px; flex-shrink: 0;
-  transition: color 0.12s; white-space: nowrap;
-  display: none;
+  transition: color 0.12s; white-space: nowrap; display: none;
 }
 .filter-clear:hover { color: var(--tide); }
 .filter-clear.visible { display: inline; }
@@ -119,18 +109,12 @@ body {
   background: var(--white); border: 1px solid var(--rule);
 }
 
-/* ── CATEGORY BADGE on event card ── */
+/* ── CATEGORY BADGE ── */
 .ev-category {
   display: inline-block;
   font-size: 8px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-  padding: 2px 7px; margin-bottom: 5px;
-  color: var(--white);
+  padding: 2px 7px; margin-bottom: 5px; color: var(--white);
 }
-.ev-category.cat-arts      { background: #5a4f8a; }
-.ev-category.cat-outdoors  { background: var(--marsh); }
-.ev-category.cat-food      { background: #8a5a2e; }
-.ev-category.cat-education { background: var(--tide); }
-.ev-category.cat-community { background: var(--ink3); }
 
 @media (max-width: 620px) {
   .site-nav-inner { padding: 0 8px; overflow-x: auto; scrollbar-width: none; }
@@ -165,18 +149,12 @@ body {
 .section-head h2 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); white-space: nowrap; }
 .section-head::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 .events-count { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
-
-/* TWO-COLUMN INFO ROW */
 .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-
-/* ABOUT */
 .about-block { background: var(--white); border: 1px solid var(--rule); padding: 32px 36px; }
 .about-lede { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; line-height: 1.4; color: var(--ink); margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--rule2); }
 .about-body { font-size: 13px; line-height: 1.7; color: var(--ink2); }
 .about-subhead { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-top: 24px; margin-bottom: 8px; }
 .about-note { font-size: 11px; line-height: 1.7; color: var(--ink3); margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule2); }
-
-/* SOURCES */
 .sources-column { }
 .sources-directory { background: var(--white); border: 1px solid var(--rule); }
 .source-dir-item { display: flex; align-items: center; padding: 13px 20px; border-bottom: 1px solid var(--rule2); gap: 12px; text-decoration: none; color: inherit; transition: background 0.12s; }
@@ -188,8 +166,6 @@ body {
 .source-dir-arrow { color: var(--rule); font-size: 12px; flex-shrink: 0; transition: color 0.12s; }
 .source-dir-item:hover .source-dir-arrow { color: var(--ink3); }
 .sources-empty { padding: 24px 20px; font-size: 13px; color: var(--ink3); font-style: italic; }
-
-/* HAPPENING TODAY */
 .today-section { margin-bottom: 0; }
 .today-card { background: var(--tide); padding: 0; overflow: hidden; }
 .today-banner { padding: 10px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15); }
@@ -202,15 +178,11 @@ body {
 .today-ev-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; color: var(--white); margin-bottom: 4px; }
 .today-ev-meta { font-size: 11px; color: rgba(255,255,255,0.65); display: flex; gap: 14px; flex-wrap: wrap; }
 .today-ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
-
-/* SUBMIT */
 .submit-wrap { background: var(--white); border: 1px solid var(--rule); }
 .submit-intro { padding: 20px 24px 0; font-size: 13px; color: var(--ink2); line-height: 1.6; }
 .submit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 24px 24px; }
 .submit-grid .span2 { grid-column: span 2; }
 .pending-note { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--marsh); padding: 10px 24px; border-top: 1px solid var(--rule2); background: var(--paper); }
-
-/* INPUTS */
 input[type=text], input[type=url], input[type=date], input[type=email], textarea {
   background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
   font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 10px 14px;
@@ -221,8 +193,6 @@ input::placeholder, textarea::placeholder { color: var(--ink3); }
 input:focus, textarea:focus { border-color: var(--tide); background: var(--white); }
 textarea { resize: vertical; min-height: 64px; }
 .field-label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
-
-/* BUTTONS */
 .btn-submit {
   background: var(--marsh); color: var(--white); border: none; width: 100%; padding: 14px;
   font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600;
@@ -230,8 +200,6 @@ textarea { resize: vertical; min-height: 64px; }
 }
 .btn-submit:hover:not(:disabled) { background: #3a6347; }
 .btn-submit:disabled { background: var(--ink3); cursor: not-allowed; }
-
-/* EVENTS */
 .month-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--ink2); padding: 32px 0 12px; border-bottom: 1px solid var(--rule); margin-bottom: 0; display: flex; align-items: baseline; gap: 10px; }
 .month-year { font-size: 11px; font-style: normal; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.1em; color: var(--ink3); font-weight: 400; }
 .event-card { display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid var(--rule2); background: var(--white); transition: background 0.12s; text-decoration: none; color: inherit; animation: riseIn 0.35s ease both; }
@@ -330,18 +298,17 @@ textarea { resize: vertical; min-height: 64px; }
     <a class="nav-link" href="#calendar"><span class="nav-link-glyph">◷</span> Event Calendar</a>
     <a class="nav-link nav-submit" href="#submit"><span class="nav-link-glyph">✦</span> Submit an Event</a>
   </div>
-  <!-- FILTER BAR -->
   <div class="filter-bar">
     <div class="filter-bar-inner">
       <div class="filter-group">
         <span class="filter-label">Month</span>
-        <div id="monthPills"></div>
+        <div id="monthPills" style="display:flex;gap:6px;"></div>
       </div>
       <div class="filter-group">
         <span class="filter-label">Category</span>
         <div id="categoryPills" style="display:flex;gap:6px;"></div>
       </div>
-      <button class="filter-clear" id="filterClear" onclick="clearFilters()">Clear filters ×</button>
+      <button class="filter-clear" id="filterClear" onclick="clearFilters()">Clear ×</button>
     </div>
   </div>
 </nav>
@@ -409,17 +376,12 @@ const SB_URL = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
 const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 
 async function sbFetch(path, opts = {}) {
-  const headers = {
-    'apikey': SB_KEY,
-    'Content-Type': 'application/json',
-    ...(opts.headers || {})
-  };
+  const headers = { 'apikey': SB_KEY, 'Content-Type': 'application/json', ...(opts.headers || {}) };
   if (opts.prefer) headers['Prefer'] = opts.prefer;
   const res = await fetch(SB_URL + path, { ...opts, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    const msg = err.message || err.hint || err.error || `HTTP ${res.status}`;
-    throw new Error(`[${res.status}] ${msg}`);
+    throw new Error(err.message || err.hint || err.error || `HTTP ${res.status}`);
   }
   if (res.status === 204 || res.status === 201 || res.headers.get('content-length') === '0') return null;
   const text = await res.text();
@@ -431,68 +393,73 @@ const MONTHS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
 const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS       = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let allEvents    = [];
+let allCategories = [];
+
+const CAT_COLORS = {
+  arts:      '#5a4f8a',
+  outdoors:  '#4a7c59',
+  food:      '#8a5a2e',
+  education: '#2e6b8a',
+  family:    '#a0522d',
+};
+function catColor(key) { return CAT_COLORS[key] || '#6b7f89'; }
 
 /* ── FILTER STATE ────────────────────────────────────────────────── */
-let activeMonth    = null; // "YYYY-MM" string or null
-let activeCategory = null; // category key string or null
+let activeMonth    = null;
+let activeCategory = null;
 
 /* ── CATEGORY INFERENCE ──────────────────────────────────────────── */
-const CATEGORIES = [
-  {
-    key: 'arts',
-    label: 'Arts & Music',
-    keywords: ['concert','recital','symphony','orchestra','choir','opera','jazz','bluegrass','folk','band','music','performance','gallery','exhibit','exhibition','art','studio','painting','sculpture','theatre','theater','play','film','movie','screening','dance','ballet','poetry','reading','author','literary','open mic','improv']
-  },
-  {
-    key: 'outdoors',
-    label: 'Outdoors',
-    keywords: ['hike','hiking','trail','paddle','kayak','canoe','sail','sailing','fishing','hunt','birding','bird','nature','garden','gardening','farm','beach','river','bay','creek','park','walk','run','race','5k','10k','marathon','bike','cycling','outdoor','wildlife','conservation','cleanup','environmental']
-  },
-  {
-    key: 'food',
-    label: 'Food & Drink',
-    keywords: ['dinner','lunch','brunch','breakfast','tasting','wine','beer','cocktail','spirits','distillery','brewery','winery','farm-to-table','harvest','oyster','crab','seafood','barbecue','bbq','food','chef','cook','recipe','market','farmers market','restaurant']
-  },
-  {
-    key: 'education',
-    label: 'Education',
-    keywords: ['lecture','talk','workshop','seminar','class','course','lesson','tour','history','historical','heritage','museum','library','book club','learning','demonstration','demo','presentation','panel','forum','symposium','speaker','keynote','genealogy','archive','preservation']
-  }
-  // 'community' is the catch-all — no keywords needed
-];
-
 function inferCategory(event) {
+  if (event.category) return event.category; // manual override wins
   const haystack = [(event.title || ''), (event.description || ''), (event.source || '')]
     .join(' ').toLowerCase();
-  for (const cat of CATEGORIES) {
-    if (cat.keywords.some(kw => haystack.includes(kw))) return cat.key;
+  for (const cat of allCategories) {
+    if ((cat.keywords || []).some(kw => haystack.includes(kw))) return cat.key;
   }
-  return 'community';
+  return null;
+}
+
+function catLabel(key) {
+  if (!key) return null;
+  const cat = allCategories.find(c => c.key === key);
+  return cat ? cat.label : key;
 }
 
 /* ── INIT ────────────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('todayDate').textContent =
     new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  buildCategoryPills();
+  // Load categories first so inference works when events render
+  await loadCategories();
   loadEvents();
   loadSources();
   fetchTides();
 });
 
-/* ── BUILD CATEGORY PILLS (static) ──────────────────────────────── */
+/* ── LOAD CATEGORIES ─────────────────────────────────────────────── */
+async function loadCategories() {
+  try {
+    const data = await sbFetch('/rest/v1/categories?order=key.asc');
+    allCategories = data || [];
+    buildCategoryPills();
+  } catch(e) {
+    console.warn('[categories]', e.message);
+    allCategories = [];
+  }
+}
+
+/* ── BUILD FILTER PILLS ──────────────────────────────────────────── */
 function buildCategoryPills() {
   const container = document.getElementById('categoryPills');
-  const allCats = [...CATEGORIES, { key: 'community', label: 'Community' }];
-  container.innerHTML = allCats.map(cat => `
-    <button class="filter-pill cat-${cat.key}" data-cat="${cat.key}" onclick="toggleCategory('${cat.key}')">${cat.label}</button>
+  container.innerHTML = allCategories.map(cat => `
+    <button class="filter-pill" data-cat="${cat.key}"
+      style="--cat-color:${catColor(cat.key)};"
+      onclick="toggleCategory('${cat.key}')">${esc(cat.label)}</button>
   `).join('');
 }
 
-/* ── BUILD MONTH PILLS (dynamic, from events) ────────────────────── */
 function buildMonthPills() {
   const container = document.getElementById('monthPills');
-  // Collect unique months from events that have a date
   const seen = new Set();
   const months = [];
   allEvents.forEach(e => {
@@ -505,48 +472,40 @@ function buildMonthPills() {
   });
   months.sort((a,b) => a.key.localeCompare(b.key));
   container.innerHTML = months.map(m => `
-    <button class="filter-pill" data-month="${m.key}" onclick="toggleMonth('${m.key}')" style="display:inline-flex;">${m.label}</button>
+    <button class="filter-pill" data-month="${m.key}" onclick="toggleMonth('${m.key}')">${m.label}</button>
   `).join('');
 }
 
 /* ── FILTER TOGGLES ──────────────────────────────────────────────── */
 function toggleMonth(key) {
   activeMonth = activeMonth === key ? null : key;
-  updatePillStates();
-  applyFilters();
+  updatePillStates(); applyFilters();
 }
-
 function toggleCategory(key) {
   activeCategory = activeCategory === key ? null : key;
-  updatePillStates();
-  applyFilters();
+  updatePillStates(); applyFilters();
 }
-
 function clearFilters() {
-  activeMonth = null;
-  activeCategory = null;
-  updatePillStates();
-  applyFilters();
+  activeMonth = null; activeCategory = null;
+  updatePillStates(); applyFilters();
 }
-
 function updatePillStates() {
-  // Month pills
-  document.querySelectorAll('[data-month]').forEach(pill => {
-    pill.classList.toggle('active', pill.dataset.month === activeMonth);
+  document.querySelectorAll('[data-month]').forEach(p => {
+    p.classList.toggle('active', p.dataset.month === activeMonth);
+    p.style.background = p.classList.contains('active') ? '#1c2b35' : '';
+    p.style.borderColor = p.classList.contains('active') ? '#1c2b35' : '';
   });
-  // Category pills
-  document.querySelectorAll('[data-cat]').forEach(pill => {
-    pill.classList.toggle('active', pill.dataset.cat === activeCategory);
+  document.querySelectorAll('[data-cat]').forEach(p => {
+    const isActive = p.dataset.cat === activeCategory;
+    p.classList.toggle('active', isActive);
+    p.style.background = isActive ? catColor(p.dataset.cat) : '';
+    p.style.borderColor = isActive ? catColor(p.dataset.cat) : '';
   });
-  // Clear button
-  const clearBtn = document.getElementById('filterClear');
-  clearBtn.classList.toggle('visible', !!(activeMonth || activeCategory));
+  document.getElementById('filterClear').classList.toggle('visible', !!(activeMonth || activeCategory));
 }
 
-/* ── APPLY FILTERS & RE-RENDER ───────────────────────────────────── */
 function applyFilters() {
   let filtered = allEvents;
-
   if (activeMonth) {
     filtered = filtered.filter(e => {
       if (!e.dateObj) return false;
@@ -554,22 +513,18 @@ function applyFilters() {
       return key === activeMonth;
     });
   }
-
   if (activeCategory) {
     filtered = filtered.filter(e => inferCategory(e) === activeCategory);
   }
-
   renderEventsFiltered(filtered);
 }
 
-/* ── LOAD EVENTS FROM SUPABASE ───────────────────────────────────── */
+/* ── LOAD EVENTS ─────────────────────────────────────────────────── */
 async function loadEvents() {
   const out = document.getElementById('eventsOutput');
   try {
     const today = new Date().toISOString().split('T')[0];
-    const data = await sbFetch(
-      `/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`
-    );
+    const data = await sbFetch(`/rest/v1/events?or=(date_obj.gte.${today},date_obj.is.null)&order=date_obj.asc.nullslast`);
     allEvents = (data || []).map(e => ({
       ...e,
       dateObj: e.date_obj ? new Date(e.date_obj.slice(0,10) + 'T12:00:00') : null
@@ -578,20 +533,17 @@ async function loadEvents() {
     renderToday();
     renderEvents();
   } catch(err) {
-    console.error('[events] load failed:', err.message);
+    console.error('[events]', err.message);
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Couldn't load events</h3><p style="font-family:monospace;font-size:11px;color:var(--ink3);margin-top:8px;">${err.message}</p></div>`;
   }
 }
 
-/* ── LOAD SOURCES FROM SUPABASE ──────────────────────────────────── */
+/* ── LOAD SOURCES ────────────────────────────────────────────────── */
 async function loadSources() {
   const el = document.getElementById('sourcesDirectory');
   try {
     const data = await sbFetch('/rest/v1/sources?order=name.asc');
-    if (!data || !data.length) {
-      el.innerHTML = '<div class="sources-empty">No sources listed yet.</div>';
-      return;
-    }
+    if (!data || !data.length) { el.innerHTML = '<div class="sources-empty">No sources listed yet.</div>'; return; }
     el.innerHTML = data.map(src => `
       <a class="source-dir-item" href="${esc(src.url)}" target="_blank" rel="noopener">
         <div class="source-pip"></div>
@@ -599,7 +551,6 @@ async function loadSources() {
         <div class="source-dir-arrow">→</div>
       </a>`).join('');
   } catch(err) {
-    console.error('[sources] load failed:', err.message);
     el.innerHTML = `<div class="sources-empty" style="font-family:monospace;font-size:11px;">${err.message}</div>`;
   }
 }
@@ -608,15 +559,12 @@ async function loadSources() {
 async function submitEvent() {
   const title = document.getElementById('subTitle').value.trim();
   if (!title) { alert('Please enter an event title.'); return; }
-
   const dateVal = document.getElementById('subDate').value;
   const btn = document.getElementById('subBtn');
   btn.disabled = true; btn.textContent = 'Submitting…';
-
   try {
     await sbFetch('/rest/v1/pending_submissions', {
-      method: 'POST',
-      prefer: 'return=minimal',
+      method: 'POST', prefer: 'return=minimal',
       body: JSON.stringify({
         title,
         date:        dateVal ? new Date(dateVal + 'T12:00:00').toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
@@ -632,7 +580,6 @@ async function submitEvent() {
     document.getElementById('submitSuccess').style.display = 'block';
   } catch(err) {
     alert('Submission failed — please try again.');
-    console.error('[submit] failed:', err.message);
     btn.disabled = false; btn.textContent = 'Submit for Review';
   }
 }
@@ -674,34 +621,24 @@ function renderToday() {
   </div>`;
 }
 
-/* ── RENDER EVENTS (unfiltered) ──────────────────────────────────── */
-function renderEvents() {
-  renderEventsFiltered(allEvents);
-}
+/* ── RENDER EVENTS ───────────────────────────────────────────────── */
+function renderEvents() { renderEventsFiltered(allEvents); }
 
-/* ── RENDER EVENTS (filtered) ────────────────────────────────────── */
 function renderEventsFiltered(events) {
   const out = document.getElementById('eventsOutput');
   const cnt = document.getElementById('eventsCount');
-
   if (!allEvents.length) {
     out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Events will appear here once the calendar is updated.</p></div>`;
     cnt.textContent = ''; return;
   }
-
-  // Update count — show filtered vs total when filtered
   const isFiltered = activeMonth || activeCategory;
-  if (isFiltered) {
-    cnt.textContent = `${events.length} of ${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
-  } else {
-    cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
-  }
-
+  cnt.textContent = isFiltered
+    ? `${events.length} of ${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`
+    : `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
   if (!events.length) {
     out.innerHTML = `<div class="filter-no-results">No events match the current filters.</div>`;
     return;
   }
-
   const groups = {}, noDate = [];
   events.forEach(e => {
     if (!e.dateObj) { noDate.push(e); return; }
@@ -709,12 +646,11 @@ function renderEventsFiltered(events) {
     if (!groups[key]) groups[key] = { month: MONTH_FULL[e.dateObj.getMonth()], year: e.dateObj.getFullYear(), events: [] };
     groups[key].events.push(e);
   });
-
   let html = '';
   Object.keys(groups).sort().forEach(k => {
-    const { month, year, events: grpEvents } = groups[k];
+    const { month, year, events: grp } = groups[k];
     html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`;
-    grpEvents.forEach((e, i) => { html += eventCard(e, i); });
+    grp.forEach((e, i) => { html += eventCard(e, i); });
   });
   if (noDate.length) {
     html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`;
@@ -723,11 +659,11 @@ function renderEventsFiltered(events) {
   out.innerHTML = html;
 }
 
-/* ── EVENT CARD ──────────────────────────────────────────────────── */
 function eventCard(e, i) {
   const d = e.dateObj;
   const cat = inferCategory(e);
-  const catLabel = (CATEGORIES.find(c => c.key === cat) || { label: 'Community' }).label;
+  const label = catLabel(cat);
+  const color = catColor(cat || '');
   const inner = `
     <div class="ev-datecol">
       <div class="ev-month">${d ? MONTHS[d.getMonth()] : ''}</div>
@@ -737,7 +673,7 @@ function eventCard(e, i) {
     <div class="ev-body">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
         ${e.source ? `<div class="ev-source" style="margin-bottom:0;">${esc(e.source)}</div>` : ''}
-        <span class="ev-category cat-${cat}">${catLabel}</span>
+        ${label ? `<span class="ev-category" style="background:${color};">${esc(label)}</span>` : ''}
       </div>
       <div class="ev-title">${esc(e.title)}</div>
       <div class="ev-meta">
@@ -753,45 +689,34 @@ function eventCard(e, i) {
 }
 
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
 
-/* ── TIDES IN MASTHEAD ───────────────────────────────────────────── */
+/* ── TIDES ───────────────────────────────────────────────────────── */
 async function fetchTides() {
   try {
     const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
     const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=goings_on_kent&begin_date=${today}&range=36&format=json`);
     const td = await res.json();
     if (td.error) throw new Error(td.error.message);
-
     const nowStr = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).slice(0, 16);
     const predictions = td.predictions;
-
     const next = predictions.find(p => p.t > nowStr);
     const prev = predictions.slice().reverse().find(p => p.t <= nowStr);
-
     if (next) {
-      const [, timePart] = next.t.split(' ');
+      const [,timePart] = next.t.split(' ');
       const [h, m] = timePart.split(':').map(Number);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const h12 = h % 12 || 12;
-      const nextTime = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
-      const nextType = next.type === 'H' ? 'High' : 'Low';
-      const nextFt   = parseFloat(next.v).toFixed(1);
-      document.getElementById('tideVal').textContent  = `${nextFt} ft`;
-      document.getElementById('tideSub').textContent  = `Next ${nextType} tide · ${nextTime}`;
+      document.getElementById('tideVal').textContent  = `${parseFloat(next.v).toFixed(1)} ft`;
+      document.getElementById('tideSub').textContent  = `Next ${next.type === 'H' ? 'High' : 'Low'} tide · ${h12}:${String(m).padStart(2,'0')} ${ampm}`;
     }
     if (prev) {
-      const [, timePart] = prev.t.split(' ');
+      const [,timePart] = prev.t.split(' ');
       const [h, m] = timePart.split(':').map(Number);
       const ampm = h >= 12 ? 'PM' : 'AM';
       const h12 = h % 12 || 12;
-      const prevTime = `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
-      const prevType = prev.type === 'H' ? 'High' : 'Low';
-      const prevFt   = parseFloat(prev.v).toFixed(1);
-      document.getElementById('tideNext').textContent = `${prevType} was ${prevFt} ft at ${prevTime}`;
+      document.getElementById('tideNext').textContent = `${prev.type === 'H' ? 'High' : 'Low'} was ${parseFloat(prev.v).toFixed(1)} ft at ${h12}:${String(m).padStart(2,'0')} ${ampm}`;
     }
   } catch(e) {
-    console.warn('[tides]', e.message);
     document.getElementById('tideSub').textContent = 'Tide data unavailable';
     document.getElementById('tideVal').textContent = '—';
   }
@@ -801,40 +726,28 @@ async function fetchTides() {
 (function() {
   const anchors = ['today','calendar','about','submit'];
   const navLinks = document.querySelectorAll('.nav-link');
-
-  function getNavHeight() {
-    return document.getElementById('siteNav').offsetHeight;
-  }
-
+  function getNavHeight() { return document.getElementById('siteNav').offsetHeight; }
   function updateActive() {
     const scrollY = window.scrollY + getNavHeight() + 24;
     let current = '';
-    anchors.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.offsetTop <= scrollY) current = id;
-    });
+    anchors.forEach(id => { const el = document.getElementById(id); if (el && el.offsetTop <= scrollY) current = id; });
     navLinks.forEach(link => {
       const href = link.getAttribute('href').replace('#','');
-      const match = href === current || (href === 'sources' && current === 'about');
-      link.classList.toggle('active', match);
+      link.classList.toggle('active', href === current || (href === 'sources' && current === 'about'));
     });
   }
-
   navLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       const targetId = this.getAttribute('href').replace('#','');
       const target = document.getElementById(targetId);
       if (!target) return;
       e.preventDefault();
-      const offset = target.offsetTop - getNavHeight() - 12;
-      window.scrollTo({ top: offset, behavior: 'smooth' });
+      window.scrollTo({ top: target.offsetTop - getNavHeight() - 12, behavior: 'smooth' });
     });
   });
-
   window.addEventListener('scroll', updateActive, { passive: true });
   updateActive();
 })();
-
 </script>
 </body>
 </html>
