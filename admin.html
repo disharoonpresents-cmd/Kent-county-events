@@ -62,41 +62,30 @@ textarea { resize: vertical; min-height: 64px; }
 .btn-fetch:hover:not(:disabled) { background: #245571; }
 .btn-fetch:disabled { background: var(--ink3); cursor: not-allowed; }
 .btn-remove { background: none; border: none; color: var(--rule); cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 6px; transition: color 0.15s; flex-shrink: 0; }
+.btn-remove:hover { color: var(--ink); }
 .btn-fetch-src { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 4px 10px; font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; flex-shrink: 0; border-radius: 0; }
 .btn-fetch-src:hover:not(:disabled) { border-color: var(--tide); color: var(--tide); }
 .btn-fetch-src:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-remove:hover { color: var(--ink); }
 /* ── EVENT CARDS ── */
 .event-card-wrap { position: relative; }
-.event-card-actions {
-  position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
-  display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s;
-}
+.event-card-actions { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
 .event-card-wrap:hover .event-card-actions { opacity: 1; }
 .btn-edit-event, .btn-delete-event {
   background: none; border: 1px solid var(--rule); color: var(--ink3);
   font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
-  font-family: 'Instrument Sans', sans-serif;
-  padding: 5px 10px; cursor: pointer; transition: all 0.15s; border-radius: 0;
+  font-family: 'Instrument Sans', sans-serif; padding: 5px 10px; cursor: pointer; transition: all 0.15s; border-radius: 0;
 }
 .btn-edit-event:hover { border-color: var(--tide); color: var(--tide); background: var(--tide-lt); }
 .btn-delete-event:hover { background: var(--warn); border-color: var(--warn); color: var(--white); }
 /* ── EDIT PANEL ── */
-.edit-panel {
-  display: none;
-  background: var(--tide-lt);
-  border: 1px solid var(--tide);
-  border-top: none;
-  padding: 20px 24px;
-  animation: riseIn 0.2s ease;
-}
+.edit-panel { display: none; background: var(--tide-lt); border: 1px solid var(--tide); border-top: none; padding: 20px 24px; animation: riseIn 0.2s ease; }
 .edit-panel.open { display: block; }
 .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .edit-grid .span2 { grid-column: span 2; }
 .edit-actions { display: flex; gap: 8px; margin-top: 10px; }
 .edit-cancel { background: none; border: 1px solid var(--tide); color: var(--tide); padding: 10px 20px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 0; transition: all 0.15s; }
 .edit-cancel:hover { background: var(--tide); color: var(--white); }
-/* ── CATEGORIES SECTION ── */
+/* ── CATEGORIES ── */
 .categories-wrap { background: var(--white); border: 1px solid var(--rule); }
 .category-row { border-bottom: 1px solid var(--rule2); }
 .category-row:last-child { border-bottom: none; }
@@ -117,6 +106,33 @@ textarea { resize: vertical; min-height: 64px; }
 .kw-add-row input { flex: 1; font-size: 13px; padding: 8px 12px; }
 .kw-add-btn { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 8px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 0; transition: all 0.15s; white-space: nowrap; }
 .kw-add-btn:hover { border-color: var(--tide); color: var(--tide); }
+/* ── QUICK EXTRACT ── */
+.quick-extract { background: var(--white); border: 1px solid var(--rule); }
+.qe-tabs { display: flex; border-bottom: 1px solid var(--rule); }
+.qe-tab { flex: 1; padding: 13px 16px; font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.qe-tab:hover { color: var(--tide); }
+.qe-tab.active { color: var(--tide); border-bottom-color: var(--tide); background: var(--paper); }
+.qe-tab-glyph { font-size: 12px; opacity: 0.6; }
+.qe-tab.active .qe-tab-glyph { opacity: 1; }
+.qe-body { padding: 20px 24px; }
+.qe-panel { display: none; }
+.qe-panel.active { display: block; }
+.qe-url-row { display: flex; gap: 8px; }
+.qe-url-row input { flex: 1; }
+.qe-drop-zone { border: 2px dashed var(--rule); background: var(--paper); padding: 36px 24px; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; position: relative; }
+.qe-drop-zone:hover, .qe-drop-zone.drag-over { border-color: var(--tide); background: var(--tide-lt); }
+.qe-drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.qe-drop-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.35; }
+.qe-drop-label { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+.qe-drop-label strong { color: var(--tide); font-weight: 600; }
+.qe-file-chosen { font-size: 11px; color: var(--marsh); margin-top: 10px; font-weight: 600; display: none; }
+.qe-extract-btn { width: 100%; margin-top: 14px; padding: 14px; background: var(--ink); color: var(--white); border: none; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; border-radius: 0; }
+.qe-extract-btn:hover:not(:disabled) { background: var(--tide); }
+.qe-extract-btn:disabled { background: var(--ink3); cursor: not-allowed; }
+.qe-status { margin-top: 12px; font-size: 12px; color: var(--tide); display: none; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.qe-status.err { color: var(--warn); font-style: normal; font-family: 'Instrument Sans', sans-serif; font-size: 11px; }
+.qe-prefilled { background: var(--tide-lt); border: 1px solid var(--tide); padding: 10px 16px; margin-top: 14px; font-size: 11px; color: var(--tide); display: none; align-items: center; gap: 10px; }
+.qe-prefilled-glyph { font-size: 14px; flex-shrink: 0; }
 /* ── REST ── */
 .api-card { background: var(--white); border: 1px solid var(--rule); padding: 20px 24px; display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
 .api-card-left { flex: 1; min-width: 200px; }
@@ -180,6 +196,7 @@ textarea { resize: vertical; min-height: 64px; }
   .edit-grid { grid-template-columns: 1fr; }
   .edit-grid .span2 { grid-column: span 1; }
   .ev-body { padding-right: 18px; }
+  .qe-url-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -236,6 +253,38 @@ textarea { resize: vertical; min-height: 64px; }
   </div>
   <div class="err" id="fetchError"></div>
 
+  <!-- QUICK EXTRACT -->
+  <div class="section-head"><h2>Quick Extract from URL or File</h2></div>
+  <div class="quick-extract">
+    <div class="qe-tabs">
+      <button class="qe-tab active" onclick="qeTab('url', this)"><span class="qe-tab-glyph">⇱</span> From URL</button>
+      <button class="qe-tab" onclick="qeTab('file', this)"><span class="qe-tab-glyph">◫</span> From Image or PDF</button>
+    </div>
+    <div class="qe-body">
+      <div class="qe-panel active" id="qeUrlPanel">
+        <div class="qe-url-row">
+          <input type="url" id="qeUrl" placeholder="https://… paste any event page URL" />
+          <button class="qe-extract-btn" id="qeUrlBtn" onclick="extractFromUrl()" style="width:auto;margin-top:0;padding:10px 22px;">Extract</button>
+        </div>
+        <div class="hint" style="margin-top:8px;">Works with flyers posted online, individual event pages, Facebook events, newsletter links — anything with event info on the page.</div>
+      </div>
+      <div class="qe-panel" id="qeFilePanel">
+        <div class="qe-drop-zone" id="qeDropZone">
+          <input type="file" id="qeFile" accept="image/*,.pdf" onchange="qeFileChosen(this)" />
+          <div class="qe-drop-icon">◫</div>
+          <div class="qe-drop-label"><strong>Click to choose</strong> or drag &amp; drop<br>JPG, PNG, GIF, WebP, or PDF</div>
+          <div class="qe-file-chosen" id="qeFileChosen"></div>
+        </div>
+        <button class="qe-extract-btn" id="qeFileBtn" onclick="extractFromFile()" disabled>Extract Event Info</button>
+      </div>
+      <div class="qe-status" id="qeStatus"></div>
+      <div class="qe-prefilled" id="qePrefilled" style="display:none;">
+        <span class="qe-prefilled-glyph">✓</span>
+        <span id="qePrefilledMsg">Fields filled in below — review and save.</span>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORIES -->
   <div class="section-head"><h2>Categories</h2></div>
   <div class="categories-wrap" id="categoriesWrap">
@@ -287,11 +336,7 @@ const SB_URL = 'https://kvsqldnajdcpgwrnahgd.supabase.co';
 const SB_KEY = 'sb_publishable_yOwjNx7cxTxsUVruawpcNA_He85yYe7';
 
 async function sbFetch(path, opts = {}) {
-  const headers = {
-    'apikey': SB_KEY,
-    'Content-Type': 'application/json',
-    ...(opts.headers || {})
-  };
+  const headers = { 'apikey': SB_KEY, 'Content-Type': 'application/json', ...(opts.headers || {}) };
   if (opts.prefer) headers['Prefer'] = opts.prefer;
   const res = await fetch(SB_URL + path, { ...opts, headers });
   if (!res.ok) {
@@ -308,7 +353,7 @@ const MONTHS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct',
 const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS       = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let allEvents    = [];
-let allCategories = []; // loaded from Supabase
+let allCategories = [];
 
 const CAT_COLORS = {
   arts:      '#5a4f8a',
@@ -324,6 +369,17 @@ function catColor(key) { return CAT_COLORS[key] || '#6b7f89'; }
 document.addEventListener('DOMContentLoaded', () => {
   const k = localStorage.getItem('kce_apikey');
   if (k) document.getElementById('apiKey').value = k;
+  // drag-drop
+  const dz = document.getElementById('qeDropZone');
+  if (dz) {
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) { const dt = new DataTransfer(); dt.items.add(file); const inp = document.getElementById('qeFile'); inp.files = dt.files; qeFileChosen(inp); }
+    });
+  }
   loadCategories();
   loadSources();
   loadEvents();
@@ -340,22 +396,18 @@ function saveApiKey() {
 
 /* ── CATEGORIES ──────────────────────────────────────────────────── */
 async function loadCategories() {
-  const wrap = document.getElementById('categoriesWrap');
   try {
     const data = await sbFetch('/rest/v1/categories?order=key.asc', {});
     allCategories = data || [];
     renderCategories();
   } catch(e) {
-    wrap.innerHTML = `<div class="pending-empty" style="color:var(--warn);">Error loading categories: ${e.message}</div>`;
+    document.getElementById('categoriesWrap').innerHTML = `<div class="pending-empty" style="color:var(--warn);">Error loading categories: ${e.message}</div>`;
   }
 }
 
 function renderCategories() {
   const wrap = document.getElementById('categoriesWrap');
-  if (!allCategories.length) {
-    wrap.innerHTML = '<div class="pending-empty">No categories found. Run the SQL setup first.</div>';
-    return;
-  }
+  if (!allCategories.length) { wrap.innerHTML = '<div class="pending-empty">No categories found. Run the SQL setup first.</div>'; return; }
   wrap.innerHTML = allCategories.map(cat => `
     <div class="category-row" id="catrow-${cat.key}">
       <div class="category-header" onclick="toggleCatRow('${cat.key}')">
@@ -365,9 +417,7 @@ function renderCategories() {
         <div class="category-chevron">▶</div>
       </div>
       <div class="category-body">
-        <div class="kw-list" id="kwlist-${cat.key}">
-          ${cat.keywords.map(kw => kwTag(cat.key, kw)).join('')}
-        </div>
+        <div class="kw-list" id="kwlist-${cat.key}">${cat.keywords.map(kw => kwTag(cat.key, kw)).join('')}</div>
         <div class="kw-add-row">
           <input type="text" id="kwinput-${cat.key}" placeholder="Add keyword…" onkeydown="if(event.key==='Enter')addKeyword('${cat.key}')" />
           <button class="kw-add-btn" onclick="addKeyword('${cat.key}')">Add</button>
@@ -379,10 +429,7 @@ function renderCategories() {
 function kwTag(catKey, kw) {
   return `<span class="kw-tag">${esc(kw)}<button onclick="removeKeyword('${catKey}','${esc(kw)}')" title="Remove">×</button></span>`;
 }
-
-function toggleCatRow(key) {
-  document.getElementById('catrow-' + key).classList.toggle('open');
-}
+function toggleCatRow(key) { document.getElementById('catrow-' + key).classList.toggle('open'); }
 
 async function addKeyword(catKey) {
   const input = document.getElementById('kwinput-' + catKey);
@@ -393,16 +440,11 @@ async function addKeyword(catKey) {
   if (cat.keywords.includes(kw)) { input.value = ''; showToast('Keyword already exists'); return; }
   const updated = [...cat.keywords, kw];
   try {
-    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, {
-      method: 'PATCH', prefer: 'return=minimal',
-      body: JSON.stringify({ keywords: updated })
-    });
+    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify({ keywords: updated }) });
     cat.keywords = updated;
     input.value = '';
     document.getElementById('kwlist-' + catKey).innerHTML = updated.map(k => kwTag(catKey, k)).join('');
-    // update count
-    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent =
-      `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
+    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent = `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
     showToast('Keyword added');
   } catch(e) { alert('Error: ' + e.message); }
 }
@@ -412,42 +454,31 @@ async function removeKeyword(catKey, kw) {
   if (!cat) return;
   const updated = cat.keywords.filter(k => k !== kw);
   try {
-    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, {
-      method: 'PATCH', prefer: 'return=minimal',
-      body: JSON.stringify({ keywords: updated })
-    });
+    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify({ keywords: updated }) });
     cat.keywords = updated;
     document.getElementById('kwlist-' + catKey).innerHTML = updated.map(k => kwTag(catKey, k)).join('');
-    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent =
-      `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
+    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent = `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
     showToast('Keyword removed');
   } catch(e) { alert('Error: ' + e.message); }
 }
 
-/* ── CATEGORY INFERENCE (mirrors index.html, uses live allCategories) */
+/* ── CATEGORY INFERENCE ──────────────────────────────────────────── */
 function inferCategory(event) {
-  if (event.category) return event.category; // manual override wins
-  const haystack = [(event.title || ''), (event.description || ''), (event.source || '')]
-    .join(' ').toLowerCase();
+  if (event.category) return event.category;
+  const haystack = [(event.title || ''), (event.description || ''), (event.source || '')].join(' ').toLowerCase();
   for (const cat of allCategories) {
-    if (cat.keywords.some(kw => haystack.includes(kw))) return cat.key;
+    if ((cat.keywords || []).some(kw => haystack.includes(kw))) return cat.key;
   }
-  return null 'general';
+  return 'general';
 }
-
 function catLabel(key) {
   if (!key) return 'General';
   const cat = allCategories.find(c => c.key === key);
   return cat ? cat.label : key;
 }
-
-/* ── CATEGORY SELECT OPTIONS ─────────────────────────────────────── */
 function catOptions(selected) {
   const none = `<option value=""${!selected ? ' selected' : ''}>Auto-infer</option>`;
-  const opts = allCategories.map(c =>
-    `<option value="${esc(c.key)}"${selected === c.key ? ' selected' : ''}>${esc(c.label)}</option>`
-  ).join('');
-  return none + opts;
+  return none + allCategories.map(c => `<option value="${esc(c.key)}"${selected === c.key ? ' selected' : ''}>${esc(c.label)}</option>`).join('');
 }
 
 /* ── SOURCES ─────────────────────────────────────────────────────── */
@@ -463,10 +494,7 @@ async function loadSources() {
 
 function renderSources(sources) {
   const el = document.getElementById('sourceList');
-  if (!sources.length) {
-    el.innerHTML = '<li class="source-item"><span style="color:var(--ink3);font-size:13px;">No sources yet.</span></li>';
-    return;
-  }
+  if (!sources.length) { el.innerHTML = '<li class="source-item"><span style="color:var(--ink3);font-size:13px;">No sources yet.</span></li>'; return; }
   el.innerHTML = sources.map(src => `
     <li class="source-item">
       <div class="source-pip"></div>
@@ -479,63 +507,42 @@ function renderSources(sources) {
 
 async function addSource() {
   const name = document.getElementById('newSourceName').value.trim();
-  let url    = document.getElementById('newSourceUrl').value.trim();
+  let url = document.getElementById('newSourceUrl').value.trim();
   if (!name || !url) { showErr('sourceError', 'Please enter both a name and URL.'); return; }
-  try {
-    const u = new URL(url);
-    if (!u.search && !u.pathname.includes('.')) {
-      if (!u.pathname.endsWith('/')) u.pathname += '/';
-    }
-    url = u.toString();
-  } catch(_) {}
+  try { const u = new URL(url); if (!u.search && !u.pathname.includes('.')) { if (!u.pathname.endsWith('/')) u.pathname += '/'; } url = u.toString(); } catch(_) {}
   try {
     await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) });
     document.getElementById('newSourceName').value = '';
     document.getElementById('newSourceUrl').value  = '';
-    hideErr('sourceError');
-    loadSources();
-    showToast('Source added');
+    hideErr('sourceError'); loadSources(); showToast('Source added');
   } catch(e) { showErr('sourceError', 'Error adding source: ' + e.message); }
 }
 
 async function removeSource(id) {
   if (!confirm('Remove this source?')) return;
-  try {
-    await sbFetch(`/rest/v1/sources?id=eq.${id}`, { method: 'DELETE' });
-    loadSources();
-    showToast('Source removed');
-  } catch(e) { alert('Error removing source: ' + e.message); }
+  try { await sbFetch(`/rest/v1/sources?id=eq.${id}`, { method: 'DELETE' }); loadSources(); showToast('Source removed'); }
+  catch(e) { alert('Error removing source: ' + e.message); }
 }
 
-/* ── FETCH EVENTS ────────────────────────────────────────────────── */
+/* ── FETCH ALL EVENTS ────────────────────────────────────────────── */
 async function fetchAllEvents() {
   const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
   if (!apiKey) { showErr('fetchError', 'Please enter your Anthropic API key first.'); return; }
-
   let sources;
-  try {
-    sources = await sbFetch('/rest/v1/sources?order=name.asc', {});
-  } catch(e) { showErr('fetchError', 'Could not load sources: ' + e.message); return; }
+  try { sources = await sbFetch('/rest/v1/sources?order=name.asc', {}); } catch(e) { showErr('fetchError', 'Could not load sources: ' + e.message); return; }
   if (!sources || !sources.length) { showErr('fetchError', 'Please add at least one source URL.'); return; }
-
   hideErr('fetchError');
   const btn = document.getElementById('fetchBtn');
   btn.disabled = true; btn.textContent = 'Fetching…';
   document.getElementById('progressPanel').style.display = 'block';
   setProgress(0); log('Starting…');
-
-  try {
-    await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' });
-  } catch(e) { log('Warning: could not clear old events'); }
-
+  try { await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' }); } catch(e) { log('Warning: could not clear old events'); }
   const months = parseInt(document.getElementById('dateRange').value) || 3;
   const allFetched = [];
-
   for (let i = 0; i < sources.length; i++) {
     const src = sources[i];
     if (i > 0) { log('Pausing…'); await new Promise(r => setTimeout(r, 8000)); }
-    log(`Fetching from ${src.name}…`);
-    setProgress((i / sources.length) * 100);
+    log(`Fetching from ${src.name}…`); setProgress((i / sources.length) * 100);
     try {
       const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
       allFetched.push(...events);
@@ -544,30 +551,20 @@ async function fetchAllEvents() {
       if (err.message.includes('rate limit')) {
         log(`Rate limit — waiting 35s then retrying ${src.name}…`);
         await new Promise(r => setTimeout(r, 35000));
-        try {
-          const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months);
-          allFetched.push(...events);
-          log(`✓ ${events.length} from ${src.name} (retry)`);
-        } catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
+        try { const events = await fetchAndExtractWithClaude(src.name, src.url, apiKey, months); allFetched.push(...events); log(`✓ ${events.length} from ${src.name} (retry)`); }
+        catch(e2) { log(`✗ ${src.name}: ${e2.message}`); }
       } else { log(`✗ ${src.name}: ${err.message}`); }
     }
   }
-
-  const deduped = [];
-  const seen = new Set();
+  const deduped = []; const seen = new Set();
   for (const ev of allFetched) {
     const key = (ev.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (ev.date || '');
     if (!seen.has(key)) { seen.add(key); deduped.push(ev); }
   }
   const dupeCount = allFetched.length - deduped.length;
   if (dupeCount > 0) log(`Removed ${dupeCount} duplicate${dupeCount !== 1 ? 's' : ''}`);
-
-  if (deduped.length) {
-    await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(deduped) });
-  }
-
-  setProgress(100);
-  log(`Done! ${deduped.length} events saved. Loading…`);
+  if (deduped.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(deduped) });
+  setProgress(100); log(`Done! ${deduped.length} events saved. Loading…`);
   await loadEvents();
   btn.disabled = false; btn.textContent = 'Fetch Events from All Sources';
   setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2000);
@@ -577,43 +574,25 @@ async function fetchAllEvents() {
 async function fetchSingleSource(id, name, url) {
   const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
   if (!apiKey) { showErr('fetchError', 'Please enter your Anthropic API key first.'); return; }
-
   const btn = document.getElementById(`fetchsrc-${id}`);
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
   hideErr('fetchError');
   document.getElementById('progressPanel').style.display = 'block';
   setProgress(0); log(`Fetching from ${name}…`);
-
   const months = parseInt(document.getElementById('dateRange').value) || 3;
-
-  try {
-    await sbFetch(`/rest/v1/events?source=eq.${encodeURIComponent(name)}`, { method: 'DELETE' });
-  } catch(e) { log('Warning: could not clear old events for this source'); }
-
+  try { await sbFetch(`/rest/v1/events?source=eq.${encodeURIComponent(name)}`, { method: 'DELETE' }); } catch(e) { log('Warning: could not clear old events for this source'); }
   try {
     let events = await fetchAndExtractWithClaude(name, url, apiKey, months);
     const existing = await sbFetch(`/rest/v1/events?select=title,date`, {});
-    const seen = new Set((existing || []).map(e =>
-      (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '')
-    ));
+    const seen = new Set((existing || []).map(e => (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '')));
     const before = events.length;
-    events = events.filter(e => {
-      const key = (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '');
-      return !seen.has(key);
-    });
+    events = events.filter(e => { const key = (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || ''); return !seen.has(key); });
     const dupes = before - events.length;
-
-    if (events.length) {
-      await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
-    }
+    if (events.length) await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify(events) });
     setProgress(100);
     log(`✓ ${events.length} event${events.length !== 1 ? 's' : ''} from ${name}${dupes > 0 ? ` (${dupes} duplicate${dupes !== 1 ? 's' : ''} skipped)` : ''}`);
     await loadEvents();
-  } catch(err) {
-    log(`✗ ${name}: ${err.message}`);
-    showErr('fetchError', `Failed to fetch ${name}: ${err.message}`);
-  }
-
+  } catch(err) { log(`✗ ${name}: ${err.message}`); showErr('fetchError', `Failed to fetch ${name}: ${err.message}`); }
   if (btn) { btn.disabled = false; btn.textContent = 'Fetch'; }
   setTimeout(() => { document.getElementById('progressPanel').style.display = 'none'; }, 2500);
 }
@@ -624,54 +603,28 @@ function parseIcal(text, months = 3) {
   const blocks = text.split('BEGIN:VEVENT');
   for (let i = 1; i < blocks.length; i++) {
     const block = blocks[i];
-    const get = (key) => {
-      const unfolded = block.replace(/\r?\n[ \t]/g, '');
-      const m = unfolded.match(new RegExp(key + '(?:;[^:]*)?:([^\r\n]+)', 'i'));
-      return m ? m[1].trim() : null;
-    };
+    const get = (key) => { const unfolded = block.replace(/\r?\n[ \t]/g, ''); const m = unfolded.match(new RegExp(key + '(?:;[^:]*)?:([^\r\n]+)', 'i')); return m ? m[1].trim() : null; };
     const title = get('SUMMARY');
     if (!title) continue;
     const dtRaw = get('DTSTART') || '';
     let dateObj = null;
     const dtMatch = dtRaw.replace(/[TZ]/g, '').match(/^(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?/);
-    if (dtMatch) {
-      const [,yr,mo,dy,hr='12',mn='00'] = dtMatch;
-      dateObj = new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00`);
-      if (isNaN(dateObj)) dateObj = null;
-    }
+    if (dtMatch) { const [,yr,mo,dy,hr='12',mn='00'] = dtMatch; dateObj = new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00`); if (isNaN(dateObj)) dateObj = null; }
     const today0 = new Date(); today0.setHours(0,0,0,0);
     const cutoff = new Date(today0); cutoff.setMonth(cutoff.getMonth() + months);
     if (dateObj && dateObj < today0) continue;
     if (dateObj && dateObj > cutoff) continue;
     let time = null;
-    if (dtRaw.includes('T')) {
-      const tMatch = dtRaw.match(/T(\d{2})(\d{2})/);
-      if (tMatch) {
-        let h = parseInt(tMatch[1]), m = tMatch[2];
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        time = `${h}:${m} ${ampm}`;
-      }
-    }
-    const dateStr = dateObj
-      ? dateObj.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
-      : null;
+    if (dtRaw.includes('T')) { const tMatch = dtRaw.match(/T(\d{2})(\d{2})/); if (tMatch) { let h = parseInt(tMatch[1]), m = tMatch[2]; const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; time = `${h}:${m} ${ampm}`; } }
+    const dateStr = dateObj ? dateObj.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : null;
     let desc = get('DESCRIPTION') || null;
     if (desc) desc = desc.replace(/\\n/g,' ').replace(/\\,/g,',').replace(/\\/g,'').slice(0, 300);
-    events.push({
-      title:       title.replace(/\\,/g,',').replace(/\\/g,''),
-      date:        dateStr,
-      date_obj:    dateObj ? dateObj.toISOString() : null,
-      time, location: (get('LOCATION') || '').replace(/\\,/g,',').replace(/\\/g,'') || null,
-      description: desc,
-      url:         get('URL') || null,
-    });
+    events.push({ title: title.replace(/\\,/g,',').replace(/\\/g,''), date: dateStr, date_obj: dateObj ? dateObj.toISOString() : null, time, location: (get('LOCATION') || '').replace(/\\,/g,',').replace(/\\/g,'') || null, description: desc, url: get('URL') || null });
   }
   return events;
 }
 
 const CORS_PROXY = 'https://corsproxy.io/?url=';
-
 async function tryFetchIcal(sourceUrl) {
   const u = new URL(sourceUrl);
   const candidates = [];
@@ -681,104 +634,35 @@ async function tryFetchIcal(sourceUrl) {
   candidates.push(`${u.origin}/ical/`);
   for (const url of candidates) {
     for (const fetchUrl of [url, CORS_PROXY + encodeURIComponent(url)]) {
-      try {
-        const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(10000) });
-        if (!res.ok) continue;
-        const text = await res.text();
-        if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) return text;
-      } catch(_) { continue; }
+      try { const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(10000) }); if (!res.ok) continue; const text = await res.text(); if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) return text; } catch(_) { continue; }
     }
   }
   return null;
 }
 
 async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey, months = 3) {
-  try {
-    const ical = await tryFetchIcal(sourceUrl);
-    if (ical) {
-      log(`  ↳ Using iCal feed for ${sourceName}`);
-      const events = parseIcal(ical, months);
-      return events.map(e => ({ ...e, url: e.url || sourceUrl, source: sourceName }));
-    }
-  } catch(e) {}
-
+  try { const ical = await tryFetchIcal(sourceUrl); if (ical) { log(`  ↳ Using iCal feed for ${sourceName}`); const events = parseIcal(ical, months); return events.map(e => ({ ...e, url: e.url || sourceUrl, source: sourceName })); } } catch(e) {}
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const cleanUrl = sourceUrl.replace(/[?&](view|month|day|year)=[^&]*/g, '').replace(/[?&]$/, '');
-  const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${cleanUrl}
-
-Today is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination. Do not truncate or limit the list.
-
-Return ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:
-- title: string
-- date: string in EXACTLY this format: "Month D, YYYY" — e.g. "April 5, 2026". Never abbreviate the month. Always include the 4-digit year.
-- time: string or null (e.g. "1:00 PM" or "1:00 PM – 3:30 PM")
-- location: string or null
-- description: string or null (1-2 sentences max)
-- url: string or null (direct link to the event page if available, otherwise null)
-
-Return [] if no events found.`;
-
-  const headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'anthropic-version': '2023-06-01',
-    'anthropic-dangerous-direct-browser-access': 'true'
-  };
-
+  const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${cleanUrl}\n\nToday is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination. Do not truncate or limit the list.\n\nReturn ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:\n- title: string\n- date: string in EXACTLY this format: "Month D, YYYY" — e.g. "April 5, 2026". Never abbreviate the month. Always include the 4-digit year.\n- time: string or null\n- location: string or null\n- description: string or null (1-2 sentences max)\n- url: string or null\n\nReturn [] if no events found.`;
+  const headers = { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
   const messages = [{ role: 'user', content: prompt }];
   let data;
-
   for (let turn = 0; turn < 8; turn++) {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages
-      })
-    });
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      const status = res.status;
-      const msg = e.error?.message || `API ${status}`;
-      if (status === 429) throw new Error('rate limit: ' + msg);
-      throw new Error(msg);
-    }
+    const res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers, body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 8000, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages }) });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); const status = res.status; const msg = e.error?.message || `API ${status}`; if (status === 429) throw new Error('rate limit: ' + msg); throw new Error(msg); }
     data = await res.json();
     if (data.stop_reason === 'end_turn') break;
-    if (data.stop_reason === 'tool_use') {
-      messages.push({ role: 'assistant', content: data.content });
-      const toolResults = data.content
-        .filter(b => b.type === 'tool_use')
-        .map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' }));
-      messages.push({ role: 'user', content: toolResults });
-    } else { break; }
+    if (data.stop_reason === 'tool_use') { messages.push({ role: 'assistant', content: data.content }); const toolResults = data.content.filter(b => b.type === 'tool_use').map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' })); messages.push({ role: 'user', content: toolResults }); } else break;
   }
-
   const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
   try {
-    const firstBracket = text.indexOf('[');
-    const lastBracket  = text.lastIndexOf(']');
+    const firstBracket = text.indexOf('['), lastBracket = text.lastIndexOf(']');
     if (firstBracket === -1 || lastBracket === -1) return [];
     const raw = JSON.parse(text.slice(firstBracket, lastBracket + 1));
     const today0 = new Date(); today0.setHours(0,0,0,0);
     const cutoff = new Date(today0); cutoff.setMonth(cutoff.getMonth() + months);
-    return raw.map(e => {
-      const dateObj = parseDate(e.date);
-      if (dateObj && dateObj < today0) return null;
-      if (dateObj && dateObj > cutoff) return null;
-      return {
-        title:       e.title || 'Untitled',
-        date:        e.date || null,
-        date_obj:    dateObj ? dateObj.toISOString() : null,
-        time:        e.time || null,
-        location:    e.location || null,
-        description: e.description || null,
-        url:         e.url || sourceUrl,
-        source:      sourceName
-      };
-    }).filter(Boolean);
+    return raw.map(e => { const dateObj = parseDate(e.date); if (dateObj && dateObj < today0) return null; if (dateObj && dateObj > cutoff) return null; return { title: e.title || 'Untitled', date: e.date || null, date_obj: dateObj ? dateObj.toISOString() : null, time: e.time || null, location: e.location || null, description: e.description || null, url: e.url || sourceUrl, source: sourceName }; }).filter(Boolean);
   } catch(_) { return []; }
 }
 
@@ -791,6 +675,93 @@ function parseDate(str) {
   return isNaN(d) ? null : d;
 }
 
+/* ── QUICK EXTRACT ───────────────────────────────────────────────── */
+function qeTab(name, btn) {
+  document.querySelectorAll('.qe-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.qe-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('qe' + name.charAt(0).toUpperCase() + name.slice(1) + 'Panel').classList.add('active');
+  qeHideStatus();
+}
+function qeShowStatus(msg, isErr = false) { const el = document.getElementById('qeStatus'); el.textContent = msg; el.className = 'qe-status' + (isErr ? ' err' : ''); el.style.display = 'block'; }
+function qeHideStatus() { document.getElementById('qeStatus').style.display = 'none'; document.getElementById('qePrefilled').style.display = 'none'; }
+function qeFileChosen(input) { const file = input.files[0]; const label = document.getElementById('qeFileChosen'); const btn = document.getElementById('qeFileBtn'); if (file) { label.textContent = '✓ ' + file.name; label.style.display = 'block'; btn.disabled = false; } else { label.style.display = 'none'; btn.disabled = true; } }
+
+function qeFillManualFields(ev) {
+  if (ev.title)    document.getElementById('manTitle').value    = ev.title;
+  if (ev.time)     document.getElementById('manTime').value     = ev.time;
+  if (ev.location) document.getElementById('manLocation').value = ev.location;
+  if (ev.description) document.getElementById('manDesc').value  = ev.description;
+  if (ev.source)   document.getElementById('manSource').value   = ev.source;
+  if (ev.date) { const d = parseDate(ev.date); if (d && !isNaN(d)) document.getElementById('manDate').value = d.toISOString().slice(0, 10); }
+  document.getElementById('manTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('qePrefilled').style.display = 'flex';
+  const filled = [ev.title, ev.date, ev.time, ev.location].filter(Boolean);
+  document.getElementById('qePrefilledMsg').textContent = `Filled in: ${filled.join(' · ')} — review and click "Add to List".`;
+}
+
+async function extractFromUrl() {
+  const url = document.getElementById('qeUrl').value.trim();
+  if (!url) { qeShowStatus('Please enter a URL.', true); return; }
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
+  const btn = document.getElementById('qeUrlBtn');
+  btn.disabled = true; btn.textContent = 'Extracting…';
+  qeShowStatus('Reading the page…');
+  const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const prompt = `Please visit this URL: ${url}\n\nToday is ${today}. Extract the SINGLE event described on this page (or the most prominent upcoming event if there are several).\n\nReturn ONLY a JSON object (no markdown, no code fences) with these fields:\n- title: string\n- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always\n- time: string or null\n- location: string or null\n- description: string or null (1–2 sentences)\n- source: string or null (the organization or venue hosting the event)\n- url: "${url}"\n\nReturn null if no event info found.`;
+  try {
+    const headers = { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' };
+    const messages = [{ role: 'user', content: prompt }];
+    let data;
+    for (let turn = 0; turn < 6; turn++) {
+      const res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers, body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages }) });
+      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
+      data = await res.json();
+      if (data.stop_reason === 'end_turn') break;
+      if (data.stop_reason === 'tool_use') { messages.push({ role: 'assistant', content: data.content }); const results = data.content.filter(b => b.type === 'tool_use').map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' })); messages.push({ role: 'user', content: results }); } else break;
+    }
+    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+    let ev = null;
+    const firstBrace = text.indexOf('{'), lastBrace = text.lastIndexOf('}');
+    const firstBracket = text.indexOf('['), lastBracket = text.lastIndexOf(']');
+    if (firstBrace !== -1 && lastBrace !== -1) { ev = JSON.parse(text.slice(firstBrace, lastBrace + 1)); }
+    else if (firstBracket !== -1 && lastBracket !== -1) { const arr = JSON.parse(text.slice(firstBracket, lastBracket + 1)); ev = arr[0] || null; }
+    if (!ev || !ev.title) { qeShowStatus('Could not find event info on that page.', true); return; }
+    qeHideStatus(); qeFillManualFields(ev);
+  } catch(e) { qeShowStatus('Error: ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = 'Extract'; }
+}
+
+async function extractFromFile() {
+  const input = document.getElementById('qeFile');
+  const file = input.files[0];
+  if (!file) { qeShowStatus('Please choose a file first.', true); return; }
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
+  const btn = document.getElementById('qeFileBtn');
+  btn.disabled = true; btn.textContent = 'Reading…';
+  qeShowStatus('Sending to Claude…');
+  try {
+    const base64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = () => rej(new Error('File read failed')); r.readAsDataURL(file); });
+    const isPdf = file.type === 'application/pdf';
+    const mediaType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
+    const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    const prompt = `Today is ${today}. Extract the event information from this ${isPdf ? 'PDF' : 'image'}.\n\nReturn ONLY a JSON object (no markdown, no code fences) with these fields:\n- title: string\n- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always. If only a month/day is visible and no year, assume the next upcoming occurrence.\n- time: string or null\n- location: string or null\n- description: string or null (1–2 sentences max)\n- source: string or null (the organization or venue)\n- url: null\n\nReturn null if no event info found.`;
+    const contentBlock = isPdf ? { type: 'document', source: { type: 'base64', media_type: mediaType, data: base64 } } : { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } };
+    const res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: [contentBlock, { type: 'text', text: prompt }] }] }) });
+    if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
+    const data = await res.json();
+    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+    let ev = null;
+    const firstBrace = text.indexOf('{'), lastBrace = text.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1) ev = JSON.parse(text.slice(firstBrace, lastBrace + 1));
+    if (!ev || !ev.title) { qeShowStatus('Could not find event info in this file.', true); return; }
+    qeHideStatus(); qeFillManualFields(ev);
+  } catch(e) { qeShowStatus('Error: ' + e.message, true); }
+  finally { btn.disabled = false; btn.textContent = 'Extract Event Info'; }
+}
+
 /* ── MANUAL EVENT ────────────────────────────────────────────────── */
 async function addManualEvent() {
   const title = document.getElementById('manTitle').value.trim();
@@ -798,21 +769,9 @@ async function addManualEvent() {
   const dateVal = document.getElementById('manDate').value;
   const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : null;
   try {
-    await sbFetch('/rest/v1/events', {
-      method: 'POST', prefer: 'return=minimal',
-      body: JSON.stringify({
-        title,
-        date: dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
-        date_obj: dateObj ? dateObj.toISOString() : null,
-        time:        document.getElementById('manTime').value.trim() || null,
-        location:    document.getElementById('manLocation').value.trim() || null,
-        description: document.getElementById('manDesc').value.trim() || null,
-        source:      document.getElementById('manSource').value.trim() || '✏️ Manual Entry'
-      })
-    });
+    await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ title, date: dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null, date_obj: dateObj ? dateObj.toISOString() : null, time: document.getElementById('manTime').value.trim() || null, location: document.getElementById('manLocation').value.trim() || null, description: document.getElementById('manDesc').value.trim() || null, source: document.getElementById('manSource').value.trim() || '✏️ Manual Entry' }) });
     ['manTitle','manDate','manTime','manLocation','manDesc','manSource'].forEach(id => document.getElementById(id).value = '');
-    loadEvents();
-    showToast('Event added');
+    loadEvents(); showToast('Event added');
   } catch(e) { alert('Error adding event: ' + e.message); }
 }
 
@@ -833,10 +792,7 @@ async function loadPending() {
   try {
     const data = await sbFetch('/rest/v1/pending_submissions?order=submitted_at.asc', {});
     const pending = data || [];
-    if (!pending.length) {
-      el.innerHTML = '<div class="pending-empty">No pending submissions.</div>';
-      countEl.textContent = ''; return;
-    }
+    if (!pending.length) { el.innerHTML = '<div class="pending-empty">No pending submissions.</div>'; countEl.textContent = ''; return; }
     countEl.textContent = `${pending.length} pending`;
     el.innerHTML = pending.map(sub => `
       <div class="pending-item" id="psub-${sub.id}">
@@ -847,6 +803,7 @@ async function loadPending() {
             ${sub.time ? `<span>⏱ ${esc(sub.time)}</span>` : ''}
             ${sub.location ? `<span>📍 ${esc(sub.location)}</span>` : ''}
             ${sub.source ? `<span>🏷 ${esc(sub.source)}</span>` : ''}
+            ${sub.attachment_url ? `<span>📎 <a href="${esc(sub.attachment_url)}" target="_blank" style="color:var(--tide);">Attachment</a></span>` : ''}
           </div>
           ${sub.description ? `<div class="pending-item-desc">${esc(sub.description)}</div>` : ''}
           <div class="pending-item-submitted">Submitted ${new Date(sub.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
@@ -866,32 +823,22 @@ async function approveSubmission(id) {
     const rows = await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, {});
     const sub = rows && rows[0];
     if (!sub) { alert('Submission not found.'); return; }
-    await sbFetch('/rest/v1/events', {
-      method: 'POST', prefer: 'return=minimal',
-      body: JSON.stringify({ title: sub.title, date: sub.date, date_obj: sub.date_obj, time: sub.time, location: sub.location, description: sub.description, url: sub.url, source: sub.source || 'Community Submission' })
-    });
+    await sbFetch('/rest/v1/events', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ title: sub.title, date: sub.date, date_obj: sub.date_obj, time: sub.time, location: sub.location, description: sub.description, url: sub.url || sub.attachment_url, source: sub.source || 'Community Submission' }) });
     await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' });
-    loadPending(); loadEvents();
-    showToast('Event approved & published');
+    loadPending(); loadEvents(); showToast('Event approved & published');
   } catch(e) { alert('Error approving: ' + e.message); }
 }
 
 async function rejectSubmission(id) {
-  try {
-    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' });
-    loadPending();
-    showToast('Submission rejected');
-  } catch(e) { alert('Error rejecting: ' + e.message); }
+  try { await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method: 'DELETE' }); loadPending(); showToast('Submission rejected'); }
+  catch(e) { alert('Error rejecting: ' + e.message); }
 }
 
 /* ── RENDER EVENTS ───────────────────────────────────────────────── */
 function renderEvents() {
   const out = document.getElementById('eventsOutput');
   const cnt = document.getElementById('eventsCount');
-  if (!allEvents.length) {
-    out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Add a source and click Fetch Events to get started.</p></div>`;
-    cnt.textContent = ''; return;
-  }
+  if (!allEvents.length) { out.innerHTML = `<div class="state-empty"><div class="state-empty-glyph">⚓</div><h3>Nothing on the water yet</h3><p>Add a source and click Fetch Events to get started.</p></div>`; cnt.textContent = ''; return; }
   cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
   const groups = {}, noDate = [];
   allEvents.forEach(e => {
@@ -901,15 +848,8 @@ function renderEvents() {
     groups[key].events.push(e);
   });
   let html = '';
-  Object.keys(groups).sort().forEach(k => {
-    const { month, year, events } = groups[k];
-    html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`;
-    events.forEach((e, i) => { html += eventCard(e, i); });
-  });
-  if (noDate.length) {
-    html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`;
-    noDate.forEach((e, i) => { html += eventCard(e, i); });
-  }
+  Object.keys(groups).sort().forEach(k => { const { month, year, events } = groups[k]; html += `<div class="month-label">${month} <span class="month-year">${year}</span></div>`; events.forEach((e, i) => { html += eventCard(e, i); }); });
+  if (noDate.length) { html += `<div class="month-label"><span class="month-year" style="font-style:italic;font-size:15px;">Date TBD</span></div>`; noDate.forEach((e, i) => { html += eventCard(e, i); }); }
   out.innerHTML = html;
 }
 
@@ -938,55 +878,25 @@ function eventCard(e, i) {
       </div>
       ${e.description ? `<div class="ev-desc">${esc(e.description)}</div>` : ''}
     </div>`;
-  const card = e.url
-    ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`
-    : `<div class="event-card" style="${style}">${inner}</div>`;
-
-  // Date value for edit form
+  const card = e.url ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>` : `<div class="event-card" style="${style}">${inner}</div>`;
   const dateForInput = e.date_obj ? e.date_obj.slice(0,10) : '';
-
   const editPanel = `
     <div class="edit-panel" id="editpanel-${e.id}">
       <div class="edit-grid">
-        <div class="span2">
-          <label class="field-label">Title</label>
-          <input type="text" id="ed-title-${e.id}" value="${esc(e.title)}" />
-        </div>
-        <div>
-          <label class="field-label">Date</label>
-          <input type="date" id="ed-date-${e.id}" value="${dateForInput}" />
-        </div>
-        <div>
-          <label class="field-label">Time</label>
-          <input type="text" id="ed-time-${e.id}" value="${esc(e.time || '')}" placeholder="e.g. 7:00 PM" />
-        </div>
-        <div>
-          <label class="field-label">Location</label>
-          <input type="text" id="ed-loc-${e.id}" value="${esc(e.location || '')}" />
-        </div>
-        <div>
-          <label class="field-label">Source</label>
-          <input type="text" id="ed-source-${e.id}" value="${esc(e.source || '')}" />
-        </div>
-        <div>
-          <label class="field-label">URL</label>
-          <input type="url" id="ed-url-${e.id}" value="${esc(e.url || '')}" />
-        </div>
-        <div>
-          <label class="field-label">Category override</label>
-          <select class="field-select" id="ed-cat-${e.id}">${catOptions(e.category || '')}</select>
-        </div>
-        <div class="span2">
-          <label class="field-label">Description</label>
-          <textarea id="ed-desc-${e.id}">${esc(e.description || '')}</textarea>
-        </div>
+        <div class="span2"><label class="field-label">Title</label><input type="text" id="ed-title-${e.id}" value="${esc(e.title)}" /></div>
+        <div><label class="field-label">Date</label><input type="date" id="ed-date-${e.id}" value="${dateForInput}" /></div>
+        <div><label class="field-label">Time</label><input type="text" id="ed-time-${e.id}" value="${esc(e.time || '')}" placeholder="e.g. 7:00 PM" /></div>
+        <div><label class="field-label">Location</label><input type="text" id="ed-loc-${e.id}" value="${esc(e.location || '')}" /></div>
+        <div><label class="field-label">Source</label><input type="text" id="ed-source-${e.id}" value="${esc(e.source || '')}" /></div>
+        <div><label class="field-label">URL</label><input type="url" id="ed-url-${e.id}" value="${esc(e.url || '')}" /></div>
+        <div><label class="field-label">Category override</label><select class="field-select" id="ed-cat-${e.id}">${catOptions(e.category || '')}</select></div>
+        <div class="span2"><label class="field-label">Description</label><textarea id="ed-desc-${e.id}">${esc(e.description || '')}</textarea></div>
       </div>
       <div class="edit-actions">
         <button class="btn-save" onclick="saveEvent('${e.id}')">Save changes</button>
         <button class="edit-cancel" onclick="closeEdit('${e.id}')">Cancel</button>
       </div>
     </div>`;
-
   return `<div class="event-card-wrap" id="ev-${e.id}">
     ${card}
     <div class="event-card-actions">
@@ -1000,70 +910,22 @@ function eventCard(e, i) {
 /* ── EDIT EVENT ──────────────────────────────────────────────────── */
 function openEdit(id, e) {
   e.preventDefault(); e.stopPropagation();
-  // Close any other open panels first
-  document.querySelectorAll('.edit-panel.open').forEach(p => {
-    if (p.id !== 'editpanel-' + id) p.classList.remove('open');
-  });
+  document.querySelectorAll('.edit-panel.open').forEach(p => { if (p.id !== 'editpanel-' + id) p.classList.remove('open'); });
   document.getElementById('editpanel-' + id).classList.toggle('open');
 }
-
-function closeEdit(id) {
-  document.getElementById('editpanel-' + id).classList.remove('open');
-}
+function closeEdit(id) { document.getElementById('editpanel-' + id).classList.remove('open'); }
 
 async function saveEvent(id) {
   const dateVal = document.getElementById('ed-date-' + id).value;
   const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : null;
   const catVal  = document.getElementById('ed-cat-' + id).value || null;
-
-  const payload = {
-    title:       document.getElementById('ed-title-' + id).value.trim(),
-    date:        dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
-    date_obj:    dateObj ? dateObj.toISOString() : null,
-    time:        document.getElementById('ed-time-' + id).value.trim() || null,
-    location:    document.getElementById('ed-loc-' + id).value.trim() || null,
-    source:      document.getElementById('ed-source-' + id).value.trim() || null,
-    url:         document.getElementById('ed-url-' + id).value.trim() || null,
-    description: document.getElementById('ed-desc-' + id).value.trim() || null,
-    category:    catVal,
-  };
-
-  try {
-    await sbFetch(`/rest/v1/events?id=eq.${id}`, {
-      method: 'PATCH', prefer: 'return=minimal',
-      body: JSON.stringify(payload)
-    });
-    closeEdit(id);
-    await loadEvents();
-    showToast('Event saved');
-  } catch(err) {
-    alert('Save failed: ' + err.message);
-  }
+  const payload = { title: document.getElementById('ed-title-' + id).value.trim(), date: dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null, date_obj: dateObj ? dateObj.toISOString() : null, time: document.getElementById('ed-time-' + id).value.trim() || null, location: document.getElementById('ed-loc-' + id).value.trim() || null, source: document.getElementById('ed-source-' + id).value.trim() || null, url: document.getElementById('ed-url-' + id).value.trim() || null, description: document.getElementById('ed-desc-' + id).value.trim() || null, category: catVal };
+  try { await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify(payload) }); closeEdit(id); await loadEvents(); showToast('Event saved'); }
+  catch(err) { alert('Save failed: ' + err.message); }
 }
 
 /* ── DELETE EVENT ────────────────────────────────────────────────── */
 async function deleteEvent(id, e) {
   e.preventDefault(); e.stopPropagation();
   if (!confirm('Remove this event from the calendar?')) return;
-  try {
-    await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'DELETE' });
-    document.getElementById('ev-' + id)?.remove();
-    allEvents = allEvents.filter(ev => ev.id !== id);
-    const cnt = document.getElementById('eventsCount');
-    cnt.textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;
-    showToast('Event deleted');
-  } catch(err) {
-    alert('Delete failed: ' + err.message);
-  }
-}
-
-/* ── UTILS ───────────────────────────────────────────────────────── */
-function setProgress(p) { document.getElementById('progressBar').style.width = p + '%'; }
-function log(m) { const el = document.getElementById('progressLog'); el.innerHTML += m + '<br>'; el.scrollTop = el.scrollHeight; }
-function showErr(id, m) { const e = document.getElementById(id); e.textContent = m; e.style.display = 'block'; }
-function hideErr(id) { document.getElementById(id).style.display = 'none'; }
-function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
-</script>
-</body>
-</html>
+  try { await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'DELETE' }); document.getElementById('ev-' + id)?.remove(); allEvents = allEvents.filter(ev => ev.id !== id); document.getElementById('eventsCount').textContent = `${allEvents.length} event${allEvents.length !== 1
