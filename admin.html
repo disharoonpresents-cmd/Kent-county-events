@@ -316,6 +316,7 @@ const CAT_COLORS = {
   food:      '#8a5a2e',
   education: '#2e6b8a',
   family:    '#a0522d',
+  general:   '#6b7f89',
 };
 function catColor(key) { return CAT_COLORS[key] || '#6b7f89'; }
 
@@ -431,7 +432,7 @@ function inferCategory(event) {
   for (const cat of allCategories) {
     if (cat.keywords.some(kw => haystack.includes(kw))) return cat.key;
   }
-  return null; // no match
+  return null 'general';
 }
 
 function catLabel(key) {
