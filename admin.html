@@ -37,14 +37,14 @@ body { background: var(--paper); color: var(--ink); font-family: 'Instrument San
 .badge-count { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
 .badge-count.pending { color: var(--warn); }
 .badge-count.normal  { color: var(--ink3); }
-input[type=text], input[type=password], input[type=url], input[type=date], textarea {
+input[type=text], input[type=password], input[type=url], input[type=date], textarea, select.field-select {
   background: var(--paper); border: 1px solid var(--rule); color: var(--ink);
   font-family: 'Instrument Sans', sans-serif; font-size: 14px; padding: 10px 14px;
   outline: none; width: 100%; transition: border-color 0.15s, background 0.15s;
   -webkit-appearance: none; border-radius: 0;
 }
 input::placeholder, textarea::placeholder { color: var(--ink3); }
-input:focus, textarea:focus { border-color: var(--tide); background: var(--white); }
+input:focus, textarea:focus, select.field-select:focus { border-color: var(--tide); background: var(--white); }
 textarea { resize: vertical; min-height: 64px; }
 .field-label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
 .hint { font-size: 11px; color: var(--ink3); margin-top: 7px; line-height: 1.6; }
@@ -52,6 +52,8 @@ textarea { resize: vertical; min-height: 64px; }
 .btn { background: var(--white); color: var(--ink); border: 1px solid var(--rule); padding: 10px 20px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap; border-radius: 0; }
 .btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-save { background: var(--tide); color: var(--white); border: none; padding: 10px 20px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; white-space: nowrap; border-radius: 0; }
+.btn-save:hover { background: #245571; }
 .btn-approve { background: var(--marsh); color: var(--white); border: none; padding: 7px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; border-radius: 0; }
 .btn-approve:hover { background: #3a6347; }
 .btn-reject { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 7px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; border-radius: 0; }
@@ -64,17 +66,58 @@ textarea { resize: vertical; min-height: 64px; }
 .btn-fetch-src:hover:not(:disabled) { border-color: var(--tide); color: var(--tide); }
 .btn-fetch-src:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-remove:hover { color: var(--ink); }
+/* ── EVENT CARDS ── */
 .event-card-wrap { position: relative; }
-.btn-delete-event {
+.event-card-actions {
   position: absolute; top: 50%; right: 14px; transform: translateY(-50%);
+  display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s;
+}
+.event-card-wrap:hover .event-card-actions { opacity: 1; }
+.btn-edit-event, .btn-delete-event {
   background: none; border: 1px solid var(--rule); color: var(--ink3);
   font-size: 9px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
   font-family: 'Instrument Sans', sans-serif;
   padding: 5px 10px; cursor: pointer; transition: all 0.15s; border-radius: 0;
-  opacity: 0;
 }
-.event-card-wrap:hover .btn-delete-event { opacity: 1; }
+.btn-edit-event:hover { border-color: var(--tide); color: var(--tide); background: var(--tide-lt); }
 .btn-delete-event:hover { background: var(--warn); border-color: var(--warn); color: var(--white); }
+/* ── EDIT PANEL ── */
+.edit-panel {
+  display: none;
+  background: var(--tide-lt);
+  border: 1px solid var(--tide);
+  border-top: none;
+  padding: 20px 24px;
+  animation: riseIn 0.2s ease;
+}
+.edit-panel.open { display: block; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.edit-grid .span2 { grid-column: span 2; }
+.edit-actions { display: flex; gap: 8px; margin-top: 10px; }
+.edit-cancel { background: none; border: 1px solid var(--tide); color: var(--tide); padding: 10px 20px; font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 0; transition: all 0.15s; }
+.edit-cancel:hover { background: var(--tide); color: var(--white); }
+/* ── CATEGORIES SECTION ── */
+.categories-wrap { background: var(--white); border: 1px solid var(--rule); }
+.category-row { border-bottom: 1px solid var(--rule2); }
+.category-row:last-child { border-bottom: none; }
+.category-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.12s; }
+.category-header:hover { background: var(--paper); }
+.category-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.category-name { font-size: 13px; font-weight: 600; flex: 1; }
+.category-kw-count { font-size: 10px; color: var(--ink3); letter-spacing: 0.1em; }
+.category-chevron { font-size: 10px; color: var(--ink3); transition: transform 0.2s; }
+.category-row.open .category-chevron { transform: rotate(90deg); }
+.category-body { display: none; padding: 0 18px 16px; }
+.category-row.open .category-body { display: block; }
+.kw-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 32px; }
+.kw-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--paper); border: 1px solid var(--rule); padding: 3px 10px; font-size: 11px; color: var(--ink2); }
+.kw-tag button { background: none; border: none; cursor: pointer; color: var(--ink3); font-size: 14px; line-height: 1; padding: 0; transition: color 0.12s; }
+.kw-tag button:hover { color: var(--warn); }
+.kw-add-row { display: flex; gap: 8px; }
+.kw-add-row input { flex: 1; font-size: 13px; padding: 8px 12px; }
+.kw-add-btn { background: none; border: 1px solid var(--rule); color: var(--ink3); padding: 8px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 0; transition: all 0.15s; white-space: nowrap; }
+.kw-add-btn:hover { border-color: var(--tide); color: var(--tide); }
+/* ── REST ── */
 .api-card { background: var(--white); border: 1px solid var(--rule); padding: 20px 24px; display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
 .api-card-left { flex: 1; min-width: 200px; }
 .sources-wrap { background: var(--white); border: 1px solid var(--rule); }
@@ -113,55 +156,19 @@ textarea { resize: vertical; min-height: 64px; }
 .ev-month { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--tide); }
 .ev-day   { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 34px; line-height: 1; color: var(--ink); }
 .ev-dow   { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); }
-.ev-body  { padding: 18px 0 18px 24px; }
+.ev-body  { padding: 18px 0 18px 24px; padding-right: 120px; }
 .ev-source { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--marsh); margin-bottom: 6px; }
 .ev-title  { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 21px; line-height: 1.2; color: var(--ink); margin-bottom: 8px; }
 .ev-meta   { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--ink3); }
 .ev-time::before { content: '◷  '; font-size: 10px; }
 .ev-loc::before  { content: '◎  '; font-size: 10px; }
 .ev-desc   { font-size: 13px; color: var(--ink3); margin-top: 8px; line-height: 1.55; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.ev-cat-badge { display: inline-block; font-size: 8px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; padding: 2px 7px; margin-bottom: 5px; color: var(--white); }
 .state-empty { text-align: center; padding: 80px 20px; color: var(--ink3); }
 .state-empty-glyph { font-size: 40px; margin-bottom: 20px; opacity: 0.3; }
 .state-empty h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 26px; color: var(--ink2); margin-bottom: 8px; }
 .state-empty p  { font-size: 13px; }
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--white); padding: 10px 20px; font-size: 12px; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.08em; z-index: 9999; animation: riseIn 0.2s ease; }
-/* ── QUICK EXTRACT ───────────────────────────────────────────────── */
-.quick-extract { background: var(--white); border: 1px solid var(--rule); }
-.qe-tabs { display: flex; border-bottom: 1px solid var(--rule); }
-.qe-tab { flex: 1; padding: 13px 16px; font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink3); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
-.qe-tab:hover { color: var(--tide); }
-.qe-tab.active { color: var(--tide); border-bottom-color: var(--tide); background: var(--paper); }
-.qe-tab-glyph { font-size: 12px; opacity: 0.6; }
-.qe-tab.active .qe-tab-glyph { opacity: 1; }
-.qe-body { padding: 20px 24px; }
-.qe-panel { display: none; }
-.qe-panel.active { display: block; }
-.qe-url-row { display: flex; gap: 8px; }
-.qe-url-row input { flex: 1; }
-.qe-drop-zone {
-  border: 2px dashed var(--rule); background: var(--paper);
-  padding: 36px 24px; text-align: center; cursor: pointer;
-  transition: border-color 0.15s, background 0.15s; position: relative;
-}
-.qe-drop-zone:hover, .qe-drop-zone.drag-over { border-color: var(--tide); background: var(--tide-lt); }
-.qe-drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-.qe-drop-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.35; }
-.qe-drop-label { font-size: 12px; color: var(--ink3); line-height: 1.6; }
-.qe-drop-label strong { color: var(--tide); font-weight: 600; }
-.qe-file-chosen { font-size: 11px; color: var(--marsh); margin-top: 10px; font-weight: 600; display: none; }
-.qe-extract-btn {
-  width: 100%; margin-top: 14px; padding: 14px;
-  background: var(--ink); color: var(--white); border: none;
-  font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 600;
-  letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
-  transition: background 0.15s; border-radius: 0;
-}
-.qe-extract-btn:hover:not(:disabled) { background: var(--tide); }
-.qe-extract-btn:disabled { background: var(--ink3); cursor: not-allowed; }
-.qe-status { margin-top: 12px; font-size: 12px; color: var(--tide); display: none; font-style: italic; font-family: 'Cormorant Garamond', serif; }
-.qe-status.err { color: var(--warn); font-style: normal; font-family: 'Instrument Sans', sans-serif; font-size: 11px; }
-.qe-prefilled { background: var(--tide-lt); border: 1px solid var(--tide); padding: 10px 16px; margin-top: 14px; font-size: 11px; color: var(--tide); display: none; display: flex; align-items: center; gap: 10px; }
-.qe-prefilled-glyph { font-size: 14px; flex-shrink: 0; }
 @media (max-width: 620px) {
   .admin-head { padding: 0 20px; }
   .page { padding: 0 20px 60px; }
@@ -170,8 +177,9 @@ textarea { resize: vertical; min-height: 64px; }
   .api-card { flex-direction: column; gap: 12px; }
   .event-card { grid-template-columns: 62px 1fr; }
   .pending-item { grid-template-columns: 1fr; }
-  .qe-url-row { flex-direction: column; }
-  .qe-tabs { flex-direction: row; }
+  .edit-grid { grid-template-columns: 1fr; }
+  .edit-grid .span2 { grid-column: span 1; }
+  .ev-body { padding-right: 18px; }
 }
 </style>
 </head>
@@ -228,43 +236,10 @@ textarea { resize: vertical; min-height: 64px; }
   </div>
   <div class="err" id="fetchError"></div>
 
-  <!-- QUICK EXTRACT -->
-  <div class="section-head"><h2>Quick Extract from URL or File</h2></div>
-  <div class="quick-extract">
-    <div class="qe-tabs">
-      <button class="qe-tab active" onclick="qeTab('url', this)">
-        <span class="qe-tab-glyph">⇱</span> From URL
-      </button>
-      <button class="qe-tab" onclick="qeTab('file', this)">
-        <span class="qe-tab-glyph">◫</span> From Image or PDF
-      </button>
-    </div>
-    <div class="qe-body">
-      <!-- URL panel -->
-      <div class="qe-panel active" id="qeUrlPanel">
-        <div class="qe-url-row">
-          <input type="url" id="qeUrl" placeholder="https://… paste any event page URL" />
-          <button class="qe-extract-btn" id="qeUrlBtn" onclick="extractFromUrl()" style="width:auto;margin-top:0;padding:10px 22px;">Extract</button>
-        </div>
-        <div class="hint" style="margin-top:8px;">Works with flyers posted online, individual event pages, Facebook events, newsletter links — anything with event info on the page.</div>
-      </div>
-      <!-- File panel -->
-      <div class="qe-panel" id="qeFilePanel">
-        <div class="qe-drop-zone" id="qeDropZone">
-          <input type="file" id="qeFile" accept="image/*,.pdf" onchange="qeFileChosen(this)" />
-          <div class="qe-drop-icon">◫</div>
-          <div class="qe-drop-label"><strong>Click to choose</strong> or drag &amp; drop<br>JPG, PNG, GIF, WebP, or PDF</div>
-          <div class="qe-file-chosen" id="qeFileChosen"></div>
-        </div>
-        <button class="qe-extract-btn" id="qeFileBtn" onclick="extractFromFile()" disabled>Extract Event Info</button>
-      </div>
-      <!-- Shared status -->
-      <div class="qe-status" id="qeStatus"></div>
-      <div class="qe-prefilled" id="qePrefilled" style="display:none;">
-        <span class="qe-prefilled-glyph">✓</span>
-        <span id="qePrefilledMsg">Fields filled in below — review and save.</span>
-      </div>
-    </div>
+  <!-- CATEGORIES -->
+  <div class="section-head"><h2>Categories</h2></div>
+  <div class="categories-wrap" id="categoriesWrap">
+    <div class="pending-empty">Loading categories…</div>
   </div>
 
   <!-- MANUAL EVENT -->
@@ -332,13 +307,23 @@ async function sbFetch(path, opts = {}) {
 const MONTHS     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS       = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-let allEvents = [];
+let allEvents    = [];
+let allCategories = []; // loaded from Supabase
+
+const CAT_COLORS = {
+  arts:      '#5a4f8a',
+  outdoors:  '#4a7c59',
+  food:      '#8a5a2e',
+  education: '#2e6b8a',
+  family:    '#a0522d',
+};
+function catColor(key) { return CAT_COLORS[key] || '#6b7f89'; }
 
 /* ── INIT ────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   const k = localStorage.getItem('kce_apikey');
   if (k) document.getElementById('apiKey').value = k;
-
+  loadCategories();
   loadSources();
   loadEvents();
   loadPending();
@@ -350,6 +335,118 @@ function saveApiKey() {
   if (!k) return;
   localStorage.setItem('kce_apikey', k);
   showToast('Anthropic key saved');
+}
+
+/* ── CATEGORIES ──────────────────────────────────────────────────── */
+async function loadCategories() {
+  const wrap = document.getElementById('categoriesWrap');
+  try {
+    const data = await sbFetch('/rest/v1/categories?order=key.asc', {});
+    allCategories = data || [];
+    renderCategories();
+  } catch(e) {
+    wrap.innerHTML = `<div class="pending-empty" style="color:var(--warn);">Error loading categories: ${e.message}</div>`;
+  }
+}
+
+function renderCategories() {
+  const wrap = document.getElementById('categoriesWrap');
+  if (!allCategories.length) {
+    wrap.innerHTML = '<div class="pending-empty">No categories found. Run the SQL setup first.</div>';
+    return;
+  }
+  wrap.innerHTML = allCategories.map(cat => `
+    <div class="category-row" id="catrow-${cat.key}">
+      <div class="category-header" onclick="toggleCatRow('${cat.key}')">
+        <div class="category-swatch" style="background:${catColor(cat.key)};"></div>
+        <div class="category-name">${esc(cat.label)}</div>
+        <div class="category-kw-count">${cat.keywords.length} keyword${cat.keywords.length !== 1 ? 's' : ''}</div>
+        <div class="category-chevron">▶</div>
+      </div>
+      <div class="category-body">
+        <div class="kw-list" id="kwlist-${cat.key}">
+          ${cat.keywords.map(kw => kwTag(cat.key, kw)).join('')}
+        </div>
+        <div class="kw-add-row">
+          <input type="text" id="kwinput-${cat.key}" placeholder="Add keyword…" onkeydown="if(event.key==='Enter')addKeyword('${cat.key}')" />
+          <button class="kw-add-btn" onclick="addKeyword('${cat.key}')">Add</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function kwTag(catKey, kw) {
+  return `<span class="kw-tag">${esc(kw)}<button onclick="removeKeyword('${catKey}','${esc(kw)}')" title="Remove">×</button></span>`;
+}
+
+function toggleCatRow(key) {
+  document.getElementById('catrow-' + key).classList.toggle('open');
+}
+
+async function addKeyword(catKey) {
+  const input = document.getElementById('kwinput-' + catKey);
+  const kw = input.value.trim().toLowerCase();
+  if (!kw) return;
+  const cat = allCategories.find(c => c.key === catKey);
+  if (!cat) return;
+  if (cat.keywords.includes(kw)) { input.value = ''; showToast('Keyword already exists'); return; }
+  const updated = [...cat.keywords, kw];
+  try {
+    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, {
+      method: 'PATCH', prefer: 'return=minimal',
+      body: JSON.stringify({ keywords: updated })
+    });
+    cat.keywords = updated;
+    input.value = '';
+    document.getElementById('kwlist-' + catKey).innerHTML = updated.map(k => kwTag(catKey, k)).join('');
+    // update count
+    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent =
+      `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
+    showToast('Keyword added');
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function removeKeyword(catKey, kw) {
+  const cat = allCategories.find(c => c.key === catKey);
+  if (!cat) return;
+  const updated = cat.keywords.filter(k => k !== kw);
+  try {
+    await sbFetch(`/rest/v1/categories?key=eq.${catKey}`, {
+      method: 'PATCH', prefer: 'return=minimal',
+      body: JSON.stringify({ keywords: updated })
+    });
+    cat.keywords = updated;
+    document.getElementById('kwlist-' + catKey).innerHTML = updated.map(k => kwTag(catKey, k)).join('');
+    document.querySelector(`#catrow-${catKey} .category-kw-count`).textContent =
+      `${updated.length} keyword${updated.length !== 1 ? 's' : ''}`;
+    showToast('Keyword removed');
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+/* ── CATEGORY INFERENCE (mirrors index.html, uses live allCategories) */
+function inferCategory(event) {
+  if (event.category) return event.category; // manual override wins
+  const haystack = [(event.title || ''), (event.description || ''), (event.source || '')]
+    .join(' ').toLowerCase();
+  for (const cat of allCategories) {
+    if (cat.keywords.some(kw => haystack.includes(kw))) return cat.key;
+  }
+  return null; // no match
+}
+
+function catLabel(key) {
+  if (!key) return 'General';
+  const cat = allCategories.find(c => c.key === key);
+  return cat ? cat.label : key;
+}
+
+/* ── CATEGORY SELECT OPTIONS ─────────────────────────────────────── */
+function catOptions(selected) {
+  const none = `<option value=""${!selected ? ' selected' : ''}>Auto-infer</option>`;
+  const opts = allCategories.map(c =>
+    `<option value="${esc(c.key)}"${selected === c.key ? ' selected' : ''}>${esc(c.label)}</option>`
+  ).join('');
+  return none + opts;
 }
 
 /* ── SOURCES ─────────────────────────────────────────────────────── */
@@ -383,14 +480,13 @@ async function addSource() {
   const name = document.getElementById('newSourceName').value.trim();
   let url    = document.getElementById('newSourceUrl').value.trim();
   if (!name || !url) { showErr('sourceError', 'Please enter both a name and URL.'); return; }
-  // Normalize: ensure URL ends with / unless it has a query string or file extension
   try {
     const u = new URL(url);
     if (!u.search && !u.pathname.includes('.')) {
       if (!u.pathname.endsWith('/')) u.pathname += '/';
     }
     url = u.toString();
-  } catch(_) { /* leave url as-is if parsing fails */ }
+  } catch(_) {}
   try {
     await sbFetch('/rest/v1/sources', { method: 'POST', prefer: 'return=minimal', body: JSON.stringify({ name, url }) });
     document.getElementById('newSourceName').value = '';
@@ -427,14 +523,11 @@ async function fetchAllEvents() {
   document.getElementById('progressPanel').style.display = 'block';
   setProgress(0); log('Starting…');
 
-  // Delete all non-manual events first, then re-fetch
   try {
-    await sbFetch(`/rest/v1/events?source=neq.✏️ Manual Entry`, { method: 'DELETE' });
+    await sbFetch(`/rest/v1/events?source=neq.${encodeURIComponent('✏️ Manual Entry')}`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events'); }
 
   const months = parseInt(document.getElementById('dateRange').value) || 3;
-
-  // Collect all events from all sources, then deduplicate before inserting
   const allFetched = [];
 
   for (let i = 0; i < sources.length; i++) {
@@ -459,7 +552,6 @@ async function fetchAllEvents() {
     }
   }
 
-  // Deduplicate: same title (normalized) + same date = duplicate; keep first occurrence
   const deduped = [];
   const seen = new Set();
   for (const ev of allFetched) {
@@ -494,14 +586,11 @@ async function fetchSingleSource(id, name, url) {
   const months = parseInt(document.getElementById('dateRange').value) || 3;
 
   try {
-    // Delete only this source's existing events
     await sbFetch(`/rest/v1/events?source=eq.${encodeURIComponent(name)}`, { method: 'DELETE' });
   } catch(e) { log('Warning: could not clear old events for this source'); }
 
   try {
     let events = await fetchAndExtractWithClaude(name, url, apiKey, months);
-
-    // Deduplicate against events already in DB (other sources)
     const existing = await sbFetch(`/rest/v1/events?select=title,date`, {});
     const seen = new Set((existing || []).map(e =>
       (e.title || '').toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (e.date || '')
@@ -535,15 +624,12 @@ function parseIcal(text, months = 3) {
   for (let i = 1; i < blocks.length; i++) {
     const block = blocks[i];
     const get = (key) => {
-      // Handle folded lines (lines starting with space are continuations)
       const unfolded = block.replace(/\r?\n[ \t]/g, '');
       const m = unfolded.match(new RegExp(key + '(?:;[^:]*)?:([^\r\n]+)', 'i'));
       return m ? m[1].trim() : null;
     };
     const title = get('SUMMARY');
     if (!title) continue;
-
-    // Parse DTSTART — handles both date-only (20260411) and datetime (20260411T090000)
     const dtRaw = get('DTSTART') || '';
     let dateObj = null;
     const dtMatch = dtRaw.replace(/[TZ]/g, '').match(/^(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?/);
@@ -552,13 +638,10 @@ function parseIcal(text, months = 3) {
       dateObj = new Date(`${yr}-${mo}-${dy}T${hr}:${mn}:00`);
       if (isNaN(dateObj)) dateObj = null;
     }
-
     const today0 = new Date(); today0.setHours(0,0,0,0);
     const cutoff = new Date(today0); cutoff.setMonth(cutoff.getMonth() + months);
     if (dateObj && dateObj < today0) continue;
     if (dateObj && dateObj > cutoff) continue;
-
-    // Build human-readable time
     let time = null;
     if (dtRaw.includes('T')) {
       const tMatch = dtRaw.match(/T(\d{2})(\d{2})/);
@@ -569,21 +652,16 @@ function parseIcal(text, months = 3) {
         time = `${h}:${m} ${ampm}`;
       }
     }
-
     const dateStr = dateObj
       ? dateObj.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
       : null;
-
-    // Clean description — unescape iCal escaped chars
     let desc = get('DESCRIPTION') || null;
     if (desc) desc = desc.replace(/\\n/g,' ').replace(/\\,/g,',').replace(/\\/g,'').slice(0, 300);
-
     events.push({
       title:       title.replace(/\\,/g,',').replace(/\\/g,''),
       date:        dateStr,
       date_obj:    dateObj ? dateObj.toISOString() : null,
-      time,
-      location:    (get('LOCATION') || '').replace(/\\,/g,',').replace(/\\/g,'') || null,
+      time, location: (get('LOCATION') || '').replace(/\\,/g,',').replace(/\\/g,'') || null,
       description: desc,
       url:         get('URL') || null,
     });
@@ -591,30 +669,22 @@ function parseIcal(text, months = 3) {
   return events;
 }
 
-/* ── TRY TO FETCH iCAL FEED (via CORS proxy fallback) ───────────── */
 const CORS_PROXY = 'https://corsproxy.io/?url=';
 
 async function tryFetchIcal(sourceUrl) {
   const u = new URL(sourceUrl);
   const candidates = [];
-
-  if (sourceUrl.includes('.ics') || sourceUrl.includes('ical=1')) {
-    candidates.push(sourceUrl);
-  }
+  if (sourceUrl.includes('.ics') || sourceUrl.includes('ical=1')) candidates.push(sourceUrl);
   candidates.push(`${u.origin}/?post_type=tribe_events&ical=1&eventDisplay=list`);
   candidates.push(`${u.origin}/events/?ical=1`);
   candidates.push(`${u.origin}/ical/`);
-
   for (const url of candidates) {
-    // Try direct first, then via CORS proxy
     for (const fetchUrl of [url, CORS_PROXY + encodeURIComponent(url)]) {
       try {
         const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(10000) });
         if (!res.ok) continue;
         const text = await res.text();
-        if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) {
-          return text;
-        }
+        if (text.includes('BEGIN:VCALENDAR') && text.includes('BEGIN:VEVENT')) return text;
       } catch(_) { continue; }
     }
   }
@@ -622,7 +692,6 @@ async function tryFetchIcal(sourceUrl) {
 }
 
 async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey, months = 3) {
-  // ── 1. Try iCal feed first (faster, more complete, no token cost) ──
   try {
     const ical = await tryFetchIcal(sourceUrl);
     if (ical) {
@@ -630,15 +699,13 @@ async function fetchAndExtractWithClaude(sourceName, sourceUrl, apiKey, months =
       const events = parseIcal(ical, months);
       return events.map(e => ({ ...e, url: e.url || sourceUrl, source: sourceName }));
     }
-  } catch(e) { /* fall through to Claude */ }
+  } catch(e) {}
 
-  // ── 2. Fall back to Claude web search ─────────────────────────────
   const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  // For JS-rendered calendars, strip date params so Claude searches broadly
   const cleanUrl = sourceUrl.replace(/[?&](view|month|day|year)=[^&]*/g, '').replace(/[?&]$/, '');
   const prompt = `Please visit this URL and extract ALL upcoming events listed on the page: ${cleanUrl}
 
-Today is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination (e.g. "Next Events" links). Do not truncate or limit the list.
+Today is ${today}. Only include events from today through the next ${months} months. Extract EVERY event in that window — including events on additional pages if there is pagination. Do not truncate or limit the list.
 
 Return ONLY a valid JSON array (no markdown, no code fences, no explanation before or after). Each item must have:
 - title: string
@@ -660,11 +727,9 @@ Return [] if no events found.`;
   const messages = [{ role: 'user', content: prompt }];
   let data;
 
-  // Loop until Claude finishes — web_search requires multiple turns
   for (let turn = 0; turn < 8; turn++) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 8000,
@@ -680,30 +745,20 @@ Return [] if no events found.`;
       throw new Error(msg);
     }
     data = await res.json();
-
     if (data.stop_reason === 'end_turn') break;
-
     if (data.stop_reason === 'tool_use') {
       messages.push({ role: 'assistant', content: data.content });
       const toolResults = data.content
         .filter(b => b.type === 'tool_use')
         .map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' }));
       messages.push({ role: 'user', content: toolResults });
-    } else {
-      break;
-    }
+    } else { break; }
   }
 
-  // Extract the final text block(s)
-  const text = (data?.content || [])
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('\n');
-
+  const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
   try {
-    // Find the outermost JSON array — greedy from first [ to last ]
     const firstBracket = text.indexOf('[');
-    const lastBracket = text.lastIndexOf(']');
+    const lastBracket  = text.lastIndexOf(']');
     if (firstBracket === -1 || lastBracket === -1) return [];
     const raw = JSON.parse(text.slice(firstBracket, lastBracket + 1));
     const today0 = new Date(); today0.setHours(0,0,0,0);
@@ -728,234 +783,11 @@ Return [] if no events found.`;
 
 function parseDate(str) {
   if (!str) return null;
-  // Remove ordinal suffixes: 4th → 4, 21st → 21
   let clean = str.replace(/(\d+)(st|nd|rd|th)/gi, '$1');
-  // Try appending T12:00:00 to anchor to local noon (avoids UTC date shift)
   let d = new Date(clean + 'T12:00:00');
   if (!isNaN(d)) return d;
-  // Fallback: try as-is
   d = new Date(clean);
   return isNaN(d) ? null : d;
-}
-
-/* ── QUICK EXTRACT ───────────────────────────────────────────────── */
-function qeTab(name, btn) {
-  document.querySelectorAll('.qe-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.qe-panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('qe' + name.charAt(0).toUpperCase() + name.slice(1) + 'Panel').classList.add('active');
-  qeHideStatus();
-}
-
-function qeShowStatus(msg, isErr = false) {
-  const el = document.getElementById('qeStatus');
-  el.textContent = msg;
-  el.className = 'qe-status' + (isErr ? ' err' : '');
-  el.style.display = 'block';
-}
-
-function qeHideStatus() {
-  document.getElementById('qeStatus').style.display = 'none';
-  document.getElementById('qePrefilled').style.display = 'none';
-}
-
-function qeFileChosen(input) {
-  const file = input.files[0];
-  const label = document.getElementById('qeFileChosen');
-  const btn = document.getElementById('qeFileBtn');
-  if (file) {
-    label.textContent = '✓ ' + file.name;
-    label.style.display = 'block';
-    btn.disabled = false;
-  } else {
-    label.style.display = 'none';
-    btn.disabled = true;
-  }
-}
-
-// Drag-and-drop on the drop zone
-document.addEventListener('DOMContentLoaded', () => {
-  const dz = document.getElementById('qeDropZone');
-  if (!dz) return;
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      const input = document.getElementById('qeFile');
-      // DataTransfer trick to set files on the input
-      const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
-      qeFileChosen(input);
-    }
-  });
-});
-
-function qeFillManualFields(ev) {
-  if (ev.title)    document.getElementById('manTitle').value    = ev.title;
-  if (ev.time)     document.getElementById('manTime').value     = ev.time;
-  if (ev.location) document.getElementById('manLocation').value = ev.location;
-  if (ev.description) document.getElementById('manDesc').value  = ev.description;
-  if (ev.source)   document.getElementById('manSource').value   = ev.source;
-  // Parse date string into YYYY-MM-DD for the date input
-  if (ev.date) {
-    const d = parseDate(ev.date);
-    if (d && !isNaN(d)) {
-      const iso = d.toISOString().slice(0, 10);
-      document.getElementById('manDate').value = iso;
-    }
-  }
-  // Scroll to manual section
-  document.getElementById('manTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  document.getElementById('qePrefilled').style.display = 'flex';
-  const filled = [ev.title, ev.date, ev.time, ev.location].filter(Boolean);
-  document.getElementById('qePrefilledMsg').textContent =
-    `Filled in: ${filled.join(' · ')} — review and click "Add to List".`;
-}
-
-async function extractFromUrl() {
-  const url = document.getElementById('qeUrl').value.trim();
-  if (!url) { qeShowStatus('Please enter a URL.', true); return; }
-  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
-  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
-
-  const btn = document.getElementById('qeUrlBtn');
-  btn.disabled = true; btn.textContent = 'Extracting…';
-  qeShowStatus('Reading the page…');
-
-  const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  const prompt = `Please visit this URL: ${url}
-
-Today is ${today}. Extract the SINGLE event described on this page (or the most prominent upcoming event if there are several).
-
-Return ONLY a JSON object (no markdown, no code fences) with these fields:
-- title: string
-- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always
-- time: string or null (e.g. "7:00 PM" or "2:00 PM – 5:00 PM")
-- location: string or null
-- description: string or null (1–2 sentences)
-- source: string or null (the organization or venue hosting the event)
-- url: "${url}"
-
-Return null if no event info found.`;
-
-  try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    };
-    const messages = [{ role: 'user', content: prompt }];
-    let data;
-    for (let turn = 0; turn < 6; turn++) {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers,
-        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages })
-      });
-      if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
-      data = await res.json();
-      if (data.stop_reason === 'end_turn') break;
-      if (data.stop_reason === 'tool_use') {
-        messages.push({ role: 'assistant', content: data.content });
-        const results = data.content.filter(b => b.type === 'tool_use').map(b => ({ type: 'tool_result', tool_use_id: b.id, content: '' }));
-        messages.push({ role: 'user', content: results });
-      } else break;
-    }
-    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-    // Try object first, then array
-    let ev = null;
-    const firstBrace   = text.indexOf('{'), lastBrace   = text.lastIndexOf('}');
-    const firstBracket = text.indexOf('['), lastBracket = text.lastIndexOf(']');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      ev = JSON.parse(text.slice(firstBrace, lastBrace + 1));
-    } else if (firstBracket !== -1 && lastBracket !== -1) {
-      const arr = JSON.parse(text.slice(firstBracket, lastBracket + 1));
-      ev = arr[0] || null;
-    }
-    if (!ev || !ev.title) { qeShowStatus('Could not find event info on that page.', true); return; }
-    qeHideStatus();
-    qeFillManualFields(ev);
-  } catch(e) {
-    qeShowStatus('Error: ' + e.message, true);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Extract';
-  }
-}
-
-async function extractFromFile() {
-  const input = document.getElementById('qeFile');
-  const file = input.files[0];
-  if (!file) { qeShowStatus('Please choose a file first.', true); return; }
-  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
-  if (!apiKey) { qeShowStatus('Please save your Anthropic API key in Setup first.', true); return; }
-
-  const btn = document.getElementById('qeFileBtn');
-  btn.disabled = true; btn.textContent = 'Reading…';
-  qeShowStatus('Sending to Claude…');
-
-  try {
-    // Read file as base64
-    const base64 = await new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload  = () => res(r.result.split(',')[1]);
-      r.onerror = () => rej(new Error('File read failed'));
-      r.readAsDataURL(file);
-    });
-
-    const isPdf = file.type === 'application/pdf';
-    const mediaType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
-    const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-
-    const prompt = `Today is ${today}. Extract the event information from this ${isPdf ? 'PDF' : 'image'}.
-
-Return ONLY a JSON object (no markdown, no code fences) with these fields:
-- title: string
-- date: string in format "Month D, YYYY" e.g. "June 14, 2026" — include the year always. If only a month/day is visible and no year, assume the next upcoming occurrence.
-- time: string or null (e.g. "7:00 PM")
-- location: string or null
-- description: string or null (1–2 sentences max)
-- source: string or null (the organization or venue)
-- url: null
-
-Return null if no event info found.`;
-
-    const contentBlock = isPdf
-      ? { type: 'document', source: { type: 'base64', media_type: mediaType, data: base64 } }
-      : { type: 'image',    source: { type: 'base64', media_type: mediaType, data: base64 } };
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: [contentBlock, { type: 'text', text: prompt }] }]
-      })
-    });
-    if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || `API ${res.status}`); }
-    const data = await res.json();
-    const text = (data?.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
-
-    let ev = null;
-    const firstBrace = text.indexOf('{'), lastBrace = text.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      ev = JSON.parse(text.slice(firstBrace, lastBrace + 1));
-    }
-    if (!ev || !ev.title) { qeShowStatus('Could not find event info in this file.', true); return; }
-    qeHideStatus();
-    qeFillManualFields(ev);
-  } catch(e) {
-    qeShowStatus('Error: ' + e.message, true);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Extract Event Info';
-  }
 }
 
 /* ── MANUAL EVENT ────────────────────────────────────────────────── */
@@ -1082,6 +914,10 @@ function renderEvents() {
 
 function eventCard(e, i) {
   const d = e.dateObj;
+  const cat = inferCategory(e);
+  const label = catLabel(cat);
+  const color = catColor(cat || '');
+  const style = `animation-delay:${i*0.04}s`;
   const inner = `
     <div class="ev-datecol">
       <div class="ev-month">${d ? MONTHS[d.getMonth()] : ''}</div>
@@ -1089,7 +925,11 @@ function eventCard(e, i) {
       <div class="ev-dow">${d ? DAYS[d.getDay()] : ''}</div>
     </div>
     <div class="ev-body">
-      ${e.source ? `<div class="ev-source">${esc(e.source)}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        ${e.source ? `<div class="ev-source" style="margin-bottom:0;">${esc(e.source)}</div>` : ''}
+        <span class="ev-cat-badge" style="background:${color};">${esc(label)}</span>
+        ${e.category ? '<span style="font-size:8px;color:var(--tide);letter-spacing:0.1em;text-transform:uppercase;">✎ override</span>' : ''}
+      </div>
       <div class="ev-title">${esc(e.title)}</div>
       <div class="ev-meta">
         ${e.time ? `<span class="ev-time">${esc(e.time)}</span>` : ''}
@@ -1097,14 +937,107 @@ function eventCard(e, i) {
       </div>
       ${e.description ? `<div class="ev-desc">${esc(e.description)}</div>` : ''}
     </div>`;
-  const style = `animation-delay:${i*0.04}s`;
   const card = e.url
     ? `<a class="event-card" href="${esc(e.url)}" target="_blank" rel="noopener" style="${style}">${inner}</a>`
     : `<div class="event-card" style="${style}">${inner}</div>`;
+
+  // Date value for edit form
+  const dateForInput = e.date_obj ? e.date_obj.slice(0,10) : '';
+
+  const editPanel = `
+    <div class="edit-panel" id="editpanel-${e.id}">
+      <div class="edit-grid">
+        <div class="span2">
+          <label class="field-label">Title</label>
+          <input type="text" id="ed-title-${e.id}" value="${esc(e.title)}" />
+        </div>
+        <div>
+          <label class="field-label">Date</label>
+          <input type="date" id="ed-date-${e.id}" value="${dateForInput}" />
+        </div>
+        <div>
+          <label class="field-label">Time</label>
+          <input type="text" id="ed-time-${e.id}" value="${esc(e.time || '')}" placeholder="e.g. 7:00 PM" />
+        </div>
+        <div>
+          <label class="field-label">Location</label>
+          <input type="text" id="ed-loc-${e.id}" value="${esc(e.location || '')}" />
+        </div>
+        <div>
+          <label class="field-label">Source</label>
+          <input type="text" id="ed-source-${e.id}" value="${esc(e.source || '')}" />
+        </div>
+        <div>
+          <label class="field-label">URL</label>
+          <input type="url" id="ed-url-${e.id}" value="${esc(e.url || '')}" />
+        </div>
+        <div>
+          <label class="field-label">Category override</label>
+          <select class="field-select" id="ed-cat-${e.id}">${catOptions(e.category || '')}</select>
+        </div>
+        <div class="span2">
+          <label class="field-label">Description</label>
+          <textarea id="ed-desc-${e.id}">${esc(e.description || '')}</textarea>
+        </div>
+      </div>
+      <div class="edit-actions">
+        <button class="btn-save" onclick="saveEvent('${e.id}')">Save changes</button>
+        <button class="edit-cancel" onclick="closeEdit('${e.id}')">Cancel</button>
+      </div>
+    </div>`;
+
   return `<div class="event-card-wrap" id="ev-${e.id}">
     ${card}
-    <button class="btn-delete-event" onclick="deleteEvent('${e.id}', event)">Delete</button>
+    <div class="event-card-actions">
+      <button class="btn-edit-event" onclick="openEdit('${e.id}', event)">Edit</button>
+      <button class="btn-delete-event" onclick="deleteEvent('${e.id}', event)">Delete</button>
+    </div>
+    ${editPanel}
   </div>`;
+}
+
+/* ── EDIT EVENT ──────────────────────────────────────────────────── */
+function openEdit(id, e) {
+  e.preventDefault(); e.stopPropagation();
+  // Close any other open panels first
+  document.querySelectorAll('.edit-panel.open').forEach(p => {
+    if (p.id !== 'editpanel-' + id) p.classList.remove('open');
+  });
+  document.getElementById('editpanel-' + id).classList.toggle('open');
+}
+
+function closeEdit(id) {
+  document.getElementById('editpanel-' + id).classList.remove('open');
+}
+
+async function saveEvent(id) {
+  const dateVal = document.getElementById('ed-date-' + id).value;
+  const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : null;
+  const catVal  = document.getElementById('ed-cat-' + id).value || null;
+
+  const payload = {
+    title:       document.getElementById('ed-title-' + id).value.trim(),
+    date:        dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
+    date_obj:    dateObj ? dateObj.toISOString() : null,
+    time:        document.getElementById('ed-time-' + id).value.trim() || null,
+    location:    document.getElementById('ed-loc-' + id).value.trim() || null,
+    source:      document.getElementById('ed-source-' + id).value.trim() || null,
+    url:         document.getElementById('ed-url-' + id).value.trim() || null,
+    description: document.getElementById('ed-desc-' + id).value.trim() || null,
+    category:    catVal,
+  };
+
+  try {
+    await sbFetch(`/rest/v1/events?id=eq.${id}`, {
+      method: 'PATCH', prefer: 'return=minimal',
+      body: JSON.stringify(payload)
+    });
+    closeEdit(id);
+    await loadEvents();
+    showToast('Event saved');
+  } catch(err) {
+    alert('Save failed: ' + err.message);
+  }
 }
 
 /* ── DELETE EVENT ────────────────────────────────────────────────── */
