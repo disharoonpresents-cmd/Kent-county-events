@@ -928,4 +928,16 @@ async function saveEvent(id) {
 async function deleteEvent(id, e) {
   e.preventDefault(); e.stopPropagation();
   if (!confirm('Remove this event from the calendar?')) return;
-  try { await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'DELETE' }); document.getElementById('ev-' + id)?.remove(); allEvents = allEvents.filter(ev => ev.id !== id); document.getElementById('eventsCount').textContent = `${allEvents.length} event${allEvents.length !== 1
+  try { await sbFetch(`/rest/v1/events?id=eq.${id}`, { method: 'DELETE' }); document.getElementById('ev-' + id)?.remove(); allEvents = allEvents.filter(ev => ev.id !== id); document.getElementById('eventsCount').textContent = `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`;  showToast('Event deleted'); } catch(err) { alert('Delete failed: ' + err.message); }
+}
+
+/* ── UTILS ───────────────────────────────────────────────────────── */
+function setProgress(p) { document.getElementById('progressBar').style.width = p + '%'; }
+function log(m) { const el = document.getElementById('progressLog'); el.innerHTML += m + '<br>'; el.scrollTop = el.scrollHeight; }
+function showErr(id, m) { const e = document.getElementById(id); e.textContent = m; e.style.display = 'block'; }
+function hideErr(id) { document.getElementById(id).style.display = 'none'; }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+</script>
+</body>
+</html>
