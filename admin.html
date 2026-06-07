@@ -162,6 +162,14 @@ textarea { resize: vertical; min-height: 64px; }
 .pending-item-meta { font-size: 11px; color: var(--ink3); margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 12px; }
 .pending-item-desc { font-size: 12px; color: var(--ink3); font-style: italic; font-family: 'Cormorant Garamond', serif; }
 .pending-item-submitted { font-size: 9px; letter-spacing: 0.1em; color: var(--ink3); margin-top: 6px; }
+.pending-preview { background: var(--paper); border-top: 1px solid var(--rule2); padding: 14px 20px; display: none; }
+.pending-preview.open { display: block; }
+.pending-preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.pending-preview-grid .span2 { grid-column: span 2; }
+.pending-preview-actions { display: flex; gap: 8px; margin-top: 10px; }
+.btn-extract { background: var(--tide); color: var(--white); border: none; padding: 7px 14px; font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.15s; border-radius: 0; }
+.btn-extract:hover:not(:disabled) { background: #245571; }
+.btn-extract:disabled { opacity: 0.5; cursor: not-allowed; }
 .pending-actions { display: flex; gap: 8px; align-items: flex-start; flex-shrink: 0; }
 .month-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--ink2); padding: 32px 0 12px; border-bottom: 1px solid var(--rule); margin-bottom: 0; display: flex; align-items: baseline; gap: 10px; }
 .month-year { font-size: 11px; font-style: normal; font-family: 'Instrument Sans', sans-serif; letter-spacing: 0.1em; color: var(--ink3); font-weight: 400; }
@@ -794,28 +802,136 @@ async function loadPending() {
     const pending = data || [];
     if (!pending.length) { el.innerHTML = '<div class="pending-empty">No pending submissions.</div>'; countEl.textContent = ''; return; }
     countEl.textContent = `${pending.length} pending`;
-    el.innerHTML = pending.map(sub => `
-      <div class="pending-item" id="psub-${sub.id}">
-        <div>
-          <div class="pending-item-title">${esc(sub.title)}</div>
-          <div class="pending-item-meta">
-            ${sub.date ? `<span>📅 ${esc(sub.date)}</span>` : ''}
-            ${sub.time ? `<span>⏱ ${esc(sub.time)}</span>` : ''}
-            ${sub.location ? `<span>📍 ${esc(sub.location)}</span>` : ''}
-            ${sub.source ? `<span>🏷 ${esc(sub.source)}</span>` : ''}
-            ${sub.attachment_url ? `<span>📎 <a href="${esc(sub.attachment_url)}" target="_blank" style="color:var(--tide);">Attachment</a></span>` : ''}
+    const isLinkOnly = sub => sub.title === 'Link submission' && sub.url && !sub.date;
+    el.innerHTML = pending.map(sub => {
+      const linkOnly = isLinkOnly(sub);
+      return `
+      <div class="pending-item" id="psub-${sub.id}" style="display:block;padding:0;">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;padding:16px 20px;">
+          <div>
+            <div class="pending-item-title">${esc(sub.title)}</div>
+            <div class="pending-item-meta">
+              ${sub.date ? `<span>📅 ${esc(sub.date)}</span>` : ''}
+              ${sub.time ? `<span>⏱ ${esc(sub.time)}</span>` : ''}
+              ${sub.location ? `<span>📍 ${esc(sub.location)}</span>` : ''}
+              ${sub.source ? `<span>🏷 ${esc(sub.source)}</span>` : ''}
+              ${sub.url ? `<span>🔗 <a href="${esc(sub.url)}" target="_blank" style="color:var(--tide);">${esc(sub.url).slice(0,60)}${sub.url.length>60?'…':''}</a></span>` : ''}
+              ${sub.attachment_url ? `<span>📎 <a href="${esc(sub.attachment_url)}" target="_blank" style="color:var(--tide);">Attachment</a></span>` : ''}
+            </div>
+            ${sub.description ? `<div class="pending-item-desc">${esc(sub.description)}</div>` : ''}
+            <div class="pending-item-submitted">Submitted ${new Date(sub.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
           </div>
-          ${sub.description ? `<div class="pending-item-desc">${esc(sub.description)}</div>` : ''}
-          <div class="pending-item-submitted">Submitted ${new Date(sub.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+          <div class="pending-actions">
+            ${linkOnly
+              ? `<button class="btn-extract" id="extractbtn-${sub.id}" onclick="extractAndPreview('${sub.id}','${esc(sub.url)}')">Extract &amp; Preview</button>`
+              : `<button class="btn-approve" onclick="approveFromQueue('${sub.id}')">Approve</button>`}
+            <button class="btn-reject" onclick="rejectSubmission('${sub.id}')">Reject</button>
+          </div>
         </div>
-        <div class="pending-actions">
-          <button class="btn-approve" onclick="approveSubmission('${sub.id}')">Approve</button>
-          <button class="btn-reject"  onclick="rejectSubmission('${sub.id}')">Reject</button>
+        <div class="pending-preview" id="preview-${sub.id}">
+          <div style="font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">Review extracted details — edit anything before approving</div>
+          <div class="pending-preview-grid">
+            <input type="text"  id="pv-title-${sub.id}"    placeholder="Event title *" />
+            <div><label class="field-label">Date</label><input type="date" id="pv-date-${sub.id}" /></div>
+            <input type="text"  id="pv-time-${sub.id}"     placeholder="Time" />
+            <input type="text"  id="pv-loc-${sub.id}"      placeholder="Location" />
+            <input type="text"  id="pv-source-${sub.id}"   placeholder="Organizer / Source" />
+            <input type="url"   id="pv-url-${sub.id}"      placeholder="URL" />
+            <textarea class="span2" id="pv-desc-${sub.id}" placeholder="Description" style="min-height:52px;"></textarea>
+          </div>
+          <div class="pending-preview-actions">
+            <button class="btn-approve" onclick="approveFromPreview('${sub.id}')">Approve &amp; Publish</button>
+            <button class="btn-reject"  onclick="rejectSubmission('${sub.id}')">Reject</button>
+          </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } catch(e) {
     el.innerHTML = `<div class="pending-empty" style="color:var(--warn);">Error loading submissions: ${e.message}</div>`;
   }
+}
+
+async function extractAndPreview(id, url) {
+  const apiKey = document.getElementById('apiKey').value.trim() || localStorage.getItem('kce_apikey');
+  if (!apiKey) { alert('Please enter your Anthropic API key first.'); return; }
+  const btn = document.getElementById(`extractbtn-${id}`);
+  btn.disabled = true; btn.textContent = 'Extracting…';
+  try {
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    const prompt = `Visit this URL and extract the event details: ${url}\n\nToday is ${today}. Return ONLY a JSON object (no markdown) with these fields:\n- title: string\n- date: "Month D, YYYY" format or null\n- time: string or null\n- location: string or null\n- description: string (1-2 sentences) or null\n- source: organizer name or null`;
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    // Handle multi-turn tool use
+    let finalData = data;
+    if (data.stop_reason === 'tool_use') {
+      const msgs = [{role:'user',content:prompt},{role:'assistant',content:data.content}];
+      const toolResults = data.content.filter(b=>b.type==='tool_use').map(b=>({type:'tool_result',tool_use_id:b.id,content:''}));
+      msgs.push({role:'user',content:toolResults});
+      const res2 = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:msgs})
+      });
+      finalData = await res2.json();
+    }
+    const text = (finalData.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    const first = text.indexOf('{'), last = text.lastIndexOf('}');
+    const ev = first !== -1 ? JSON.parse(text.slice(first, last+1)) : {};
+    // Populate preview fields
+    document.getElementById(`pv-title-${id}`).value  = ev.title || '';
+    document.getElementById(`pv-time-${id}`).value   = ev.time || '';
+    document.getElementById(`pv-loc-${id}`).value    = ev.location || '';
+    document.getElementById(`pv-source-${id}`).value = ev.source || '';
+    document.getElementById(`pv-url-${id}`).value    = url;
+    document.getElementById(`pv-desc-${id}`).value   = ev.description || '';
+    if (ev.date) {
+      const d = new Date(ev.date + 'T12:00:00');
+      if (!isNaN(d)) document.getElementById(`pv-date-${id}`).value = d.toISOString().slice(0,10);
+    }
+    document.getElementById(`preview-${id}`).classList.add('open');
+    btn.textContent = 'Re-extract';
+    btn.disabled = false;
+  } catch(e) {
+    btn.textContent = 'Extract & Preview';
+    btn.disabled = false;
+    alert('Extraction failed: ' + e.message);
+  }
+}
+
+async function approveFromPreview(id) {
+  const title = document.getElementById(`pv-title-${id}`).value.trim();
+  if (!title) { alert('Please enter an event title.'); return; }
+  const dateVal = document.getElementById(`pv-date-${id}`).value;
+  const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : null;
+  try {
+    await sbFetch('/rest/v1/events', { method:'POST', prefer:'return=minimal', body: JSON.stringify({
+      title,
+      date:        dateObj ? dateObj.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : null,
+      date_obj:    dateObj ? dateObj.toISOString() : null,
+      time:        document.getElementById(`pv-time-${id}`).value.trim() || null,
+      location:    document.getElementById(`pv-loc-${id}`).value.trim() || null,
+      description: document.getElementById(`pv-desc-${id}`).value.trim() || null,
+      url:         document.getElementById(`pv-url-${id}`).value.trim() || null,
+      source:      document.getElementById(`pv-source-${id}`).value.trim() || 'Community Submission'
+    })});
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method:'DELETE' });
+    loadPending(); loadEvents(); showToast('Event approved & published');
+  } catch(e) { alert('Error approving: ' + e.message); }
+}
+
+async function approveFromQueue(id) {
+  try {
+    const rows = await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, {});
+    const sub = rows && rows[0];
+    if (!sub) { alert('Submission not found.'); return; }
+    await sbFetch('/rest/v1/events', { method:'POST', prefer:'return=minimal', body: JSON.stringify({ title:sub.title, date:sub.date, date_obj:sub.date_obj, time:sub.time, location:sub.location, description:sub.description, url:sub.url||sub.attachment_url, source:sub.source||'Community Submission' })});
+    await sbFetch(`/rest/v1/pending_submissions?id=eq.${id}`, { method:'DELETE' });
+    loadPending(); loadEvents(); showToast('Event approved & published');
+  } catch(e) { alert('Error approving: ' + e.message); }
 }
 
 async function approveSubmission(id) {
