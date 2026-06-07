@@ -856,31 +856,46 @@ async function extractAndPreview(id, url) {
   if (!apiKey) { alert('Please enter your Anthropic API key first.'); return; }
   const btn = document.getElementById(`extractbtn-${id}`);
   btn.disabled = true; btn.textContent = 'Extracting…';
+
+  // Facebook share links are login-walled — open preview empty for manual fill
+  if (url.includes('facebook.com')) {
+    document.getElementById(`pv-url-${id}`).value = url;
+    document.getElementById(`preview-${id}`).classList.add('open');
+    const note = document.getElementById(`preview-${id}`).querySelector('div');
+    if (note) note.textContent = '⚠️ Facebook links require a login — please fill in the details manually, or reject and ask the submitter to use a direct event link.';
+    btn.textContent = 'Re-extract';
+    btn.disabled = false;
+    return;
+  }
+
   try {
     const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    const prompt = `Visit this URL and extract the event details: ${url}\n\nToday is ${today}. Return ONLY a JSON object (no markdown) with these fields:\n- title: string\n- date: "Month D, YYYY" format or null\n- time: string or null\n- location: string or null\n- description: string (1-2 sentences) or null\n- source: organizer name or null`;
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
-    });
-    const data = await res.json();
-    // Handle multi-turn tool use
-    let finalData = data;
-    if (data.stop_reason === 'tool_use') {
-      const msgs = [{role:'user',content:prompt},{role:'assistant',content:data.content}];
-      const toolResults = data.content.filter(b=>b.type==='tool_use').map(b=>({type:'tool_result',tool_use_id:b.id,content:''}));
-      msgs.push({role:'user',content:toolResults});
-      const res2 = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:msgs})
+    const prompt = `Visit this URL and extract the event details: ${url}\n\nToday is ${today}. Return ONLY a valid JSON object (no markdown, no code fences) with these exact fields:\n{\n  "title": "string",\n  "date": "Month D, YYYY or null",\n  "time": "string or null",\n  "location": "string or null",\n  "description": "1-2 sentence string or null",\n  "source": "organizer name or null"\n}`;
+
+    const headers = { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' };
+    const messages = [{ role:'user', content:prompt }];
+    let data;
+
+    // Full multi-turn loop (same pattern as main fetch)
+    for (let turn = 0; turn < 8; turn++) {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers,
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, tools:[{type:'web_search_20250305',name:'web_search'}], messages })
       });
-      finalData = await res2.json();
+      if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
+      data = await res.json();
+      if (data.stop_reason === 'end_turn') break;
+      if (data.stop_reason === 'tool_use') {
+        messages.push({ role:'assistant', content:data.content });
+        const toolResults = data.content.filter(b=>b.type==='tool_use').map(b=>({type:'tool_result',tool_use_id:b.id,content:''}));
+        messages.push({ role:'user', content:toolResults });
+      } else break;
     }
-    const text = (finalData.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+
+    const text = (data?.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
     const first = text.indexOf('{'), last = text.lastIndexOf('}');
     const ev = first !== -1 ? JSON.parse(text.slice(first, last+1)) : {};
+
     // Populate preview fields
     document.getElementById(`pv-title-${id}`).value  = ev.title || '';
     document.getElementById(`pv-time-${id}`).value   = ev.time || '';
@@ -889,9 +904,15 @@ async function extractAndPreview(id, url) {
     document.getElementById(`pv-url-${id}`).value    = url;
     document.getElementById(`pv-desc-${id}`).value   = ev.description || '';
     if (ev.date) {
-      const d = new Date(ev.date + 'T12:00:00');
+      const d = new Date(ev.date.replace(/(\d+)(st|nd|rd|th)/i,'$1') + 'T12:00:00');
       if (!isNaN(d)) document.getElementById(`pv-date-${id}`).value = d.toISOString().slice(0,10);
     }
+
+    const note = document.getElementById(`preview-${id}`).querySelector('div');
+    if (note) note.textContent = ev.title
+      ? 'Review extracted details — edit anything before approving'
+      : '⚠️ Could not extract details from this page — please fill in manually.';
+
     document.getElementById(`preview-${id}`).classList.add('open');
     btn.textContent = 'Re-extract';
     btn.disabled = false;
